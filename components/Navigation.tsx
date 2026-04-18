@@ -52,13 +52,16 @@ export const Navigation: React.FC<NavigationProps> = ({ currentPage, onNavigate 
         />
 
         <button
-          className="flex items-center gap-2 cursor-pointer"
+          className="flex items-center cursor-pointer"
           onClick={() => onNavigate('home')}
           aria-label="HAIM8 home"
         >
-          <span className="heading text-lg md:text-xl font-bold tracking-tight text-white">
-            HA<span className="text-[#60a5fa]">I</span>M<span className="text-[#9b5fd4]">8</span>
-          </span>
+          <img
+            src="/haim8-logo-flat.png"
+            alt="HAIM8"
+            className="h-7 md:h-8 w-auto object-contain"
+            draggable={false}
+          />
         </button>
 
         <div className="hidden md:flex items-center gap-7">

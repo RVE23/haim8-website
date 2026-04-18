@@ -23,19 +23,39 @@ export function M8Mates() {
           style={{ opacity: m8Opacity, scale: m8Scale }}
           className="flex flex-col items-center gap-10 max-w-5xl mx-auto text-center"
         >
-          <span
-            className="heading font-black leading-[0.8] select-none"
-            style={{
-              fontSize: 'clamp(10rem, 24vw, 24rem)',
-              background: 'linear-gradient(160deg, #7D41B9 0%, #3b82f6 60%, #60a5fa 100%)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              filter: 'drop-shadow(0 0 80px rgba(125,65,185,0.3))',
-              letterSpacing: '-0.06em',
-            }}
-          >
-            M8
-          </span>
+          <div className="relative flex items-center justify-center">
+            <div
+              className="absolute inset-0"
+              style={{
+                background:
+                  'radial-gradient(circle at 50% 50%, rgba(125,65,185,0.28) 0%, transparent 65%)',
+                filter: 'blur(28px)',
+              }}
+              aria-hidden="true"
+            />
+            <img
+              src="/haim8-M.png"
+              alt="M"
+              className="relative select-none"
+              style={{
+                height: 'clamp(10rem, 28vw, 26rem)',
+                width: 'auto',
+                filter: 'drop-shadow(0 0 70px rgba(125,65,185,0.5))',
+              }}
+              draggable={false}
+            />
+            <img
+              src="/haim8-8.png"
+              alt="8"
+              className="relative select-none -ml-4"
+              style={{
+                height: 'clamp(10rem, 28vw, 26rem)',
+                width: 'auto',
+                filter: 'drop-shadow(0 0 70px rgba(59,130,246,0.5))',
+              }}
+              draggable={false}
+            />
+          </div>
 
           <TypingTagline />
 

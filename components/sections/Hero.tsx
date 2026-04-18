@@ -24,9 +24,9 @@ export function Hero() {
           className="relative flex flex-col items-center justify-center gap-8"
         >
           <motion.img
-            src="/haim8-logo.png"
+            src="/haim8-noBG.png"
             alt="HAIM8"
-            className="w-[min(640px,80vw)] aspect-square object-contain drop-shadow-[0_0_80px_rgba(59,130,246,0.25)]"
+            className="w-[min(820px,92vw)] h-auto object-contain drop-shadow-[0_0_100px_rgba(59,130,246,0.35)]"
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1.4, ease: EASE.outExpo }}

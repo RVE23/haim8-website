@@ -24,18 +24,26 @@ export function HValues() {
             style={{ opacity: hOpacity, x: hX }}
             className="relative flex items-center justify-center md:justify-start"
           >
-            <span
-              className="heading font-black leading-[0.8] select-none"
+            <div
+              className="absolute inset-0 flex items-center justify-center"
               style={{
-                fontSize: 'clamp(12rem, 28vw, 28rem)',
-                background: 'linear-gradient(160deg, #60a5fa 0%, #3b82f6 45%, #7D41B9 100%)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                filter: 'drop-shadow(0 0 60px rgba(59,130,246,0.2))',
+                background:
+                  'radial-gradient(circle at 50% 50%, rgba(59,130,246,0.25) 0%, transparent 60%)',
+                filter: 'blur(20px)',
               }}
-            >
-              H
-            </span>
+              aria-hidden="true"
+            />
+            <img
+              src="/haim8-H.png"
+              alt="H"
+              className="relative select-none"
+              style={{
+                height: 'clamp(14rem, 36vw, 34rem)',
+                width: 'auto',
+                filter: 'drop-shadow(0 0 80px rgba(59,130,246,0.45))',
+              }}
+              draggable={false}
+            />
           </motion.div>
 
           <div className="relative flex flex-col gap-20 md:gap-28 py-[30vh]">
