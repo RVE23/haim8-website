@@ -19,10 +19,11 @@ export function AIServices() {
       style={{ minHeight: '320vh' }}
     >
       <div className="sticky top-0 h-screen flex items-center overflow-hidden">
-        <div className="w-full max-w-[1400px] mx-auto px-6 md:px-12 grid grid-cols-1 md:grid-cols-[auto_1fr] gap-8 md:gap-16 items-center">
+        <div className="w-full max-w-[1400px] mx-auto px-6 md:px-12 md:grid md:grid-cols-[auto_1fr] gap-8 md:gap-16 items-center">
           <motion.div
             style={{ opacity: aiOpacity, y: aiY }}
-            className="relative flex items-center justify-center md:justify-start gap-1"
+            className="pointer-events-none absolute md:static inset-0 md:inset-auto flex items-center justify-center md:justify-start gap-1 opacity-15 md:opacity-100"
+            aria-hidden="true"
           >
             <div
               className="absolute inset-0"
@@ -79,7 +80,7 @@ export function AIServices() {
               <span className="text-[#9b5fd4]"> intent</span>.
             </motion.h2>
 
-            <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-[60vh] overflow-y-auto pr-2 scrollbar-hide">
+            <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-3 md:max-h-[62vh] md:overflow-y-auto md:pr-2 scrollbar-hide">
               {SERVICES.map((s, i) => (
                 <ServiceCard key={s.id} index={i} service={s} />
               ))}

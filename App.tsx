@@ -1,11 +1,24 @@
 import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
 import { ChevronUp } from 'lucide-react';
 import { Toaster } from './components/ui/sonner';
 import { Navigation } from './components/Navigation';
 import { Footer } from './components/Footer';
 import { GradientBackground } from './components/GradientBackground';
 import { StarScene } from './components/scene/StarScene';
+
+function useIsMobile(breakpoint = 768) {
+  const [isMobile, setIsMobile] = useState(
+    typeof window !== 'undefined' ? window.innerWidth < breakpoint : false
+  );
+  useEffect(() => {
+    const mq = window.matchMedia(`(max-width: ${breakpoint - 1}px)`);
+    const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
+    mq.addEventListener('change', handler);
+    return () => mq.removeEventListener('change', handler);
+  }, [breakpoint]);
+  return isMobile;
+}
 
 import { HomePage } from './pages/HomePage';
 import { AIConciergeDetailPage } from './pages/AIConciergeDetailPage';
@@ -31,6 +44,9 @@ export type PageType =
 export default function App() {
   const [currentPage, setCurrentPage] = useState<PageType>('home');
   const [showScrollTop, setShowScrollTop] = useState(false);
+  const reduceMotion = useReducedMotion();
+  const isMobile = useIsMobile();
+  const show3DStar = !reduceMotion && !isMobile;
 
   useEffect(() => {
     const handleScroll = () => {
@@ -78,7 +94,7 @@ export default function App() {
   return (
     <div className="relative min-h-screen">
       <GradientBackground />
-      {isHome && <StarScene />}
+      {isHome && show3DStar && <StarScene />}
 
       <Toaster position="top-right" />
       <Navigation currentPage={currentPage} onNavigate={setCurrentPage} />

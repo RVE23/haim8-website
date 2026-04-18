@@ -19,10 +19,11 @@ export function HValues() {
       style={{ minHeight: '260vh' }}
     >
       <div className="sticky top-0 h-screen flex items-center">
-        <div className="w-full max-w-[1400px] mx-auto px-6 md:px-12 grid grid-cols-1 md:grid-cols-[1fr_1.2fr] gap-12 items-center">
+        <div className="w-full max-w-[1400px] mx-auto px-6 md:px-12 md:grid md:grid-cols-[1fr_1.2fr] gap-12 items-center">
           <motion.div
             style={{ opacity: hOpacity, x: hX }}
-            className="relative flex items-center justify-center md:justify-start"
+            className="pointer-events-none absolute md:static inset-0 md:inset-auto flex items-center justify-center md:justify-start opacity-20 md:opacity-100"
+            aria-hidden="true"
           >
             <div
               className="absolute inset-0 flex items-center justify-center"
@@ -31,14 +32,13 @@ export function HValues() {
                   'radial-gradient(circle at 50% 50%, rgba(59,130,246,0.25) 0%, transparent 60%)',
                 filter: 'blur(20px)',
               }}
-              aria-hidden="true"
             />
             <img
               src="/haim8-H.png"
-              alt="H"
+              alt=""
               className="relative select-none"
               style={{
-                height: 'clamp(14rem, 36vw, 34rem)',
+                height: 'clamp(18rem, 36vw, 34rem)',
                 width: 'auto',
                 filter: 'drop-shadow(0 0 80px rgba(59,130,246,0.45))',
               }}
@@ -46,7 +46,7 @@ export function HValues() {
             />
           </motion.div>
 
-          <div className="relative flex flex-col gap-20 md:gap-28 py-[30vh]">
+          <div className="relative flex flex-col gap-12 md:gap-28 py-[12vh] md:py-[30vh]">
             <div className="heading text-sm uppercase tracking-[0.3em] text-white/40">
               The H stands for
             </div>
