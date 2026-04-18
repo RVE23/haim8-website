@@ -1,89 +1,120 @@
 import React from 'react';
-import { motion } from 'motion/react';
+import { motion, useScroll, useTransform } from 'motion/react';
 import { Menu, X } from 'lucide-react';
 import { PageType } from '../App';
 
 interface NavigationProps {
-    currentPage: PageType;
-    onNavigate: (page: PageType) => void;
+  currentPage: PageType;
+  onNavigate: (page: PageType) => void;
 }
 
+const narrativeAnchors: { label: string; href: string }[] = [
+  { label: 'Values', href: '#h-values' },
+  { label: 'Services', href: '#ai-services' },
+  { label: 'Work', href: '#m8' },
+  { label: 'Contact', href: '#contact' },
+];
+
 export const Navigation: React.FC<NavigationProps> = ({ currentPage, onNavigate }) => {
-    const [isOpen, setIsOpen] = React.useState(false);
+  const [isOpen, setIsOpen] = React.useState(false);
+  const { scrollYProgress } = useScroll();
+  const progressWidth = useTransform(scrollYProgress, [0, 1], ['0%', '100%']);
 
-    const navItems: { label: string; id: PageType }[] = [
-        { label: 'Home', id: 'home' },
-        { label: 'How It Works', id: 'how-it-works' },
-        { label: 'Customers', id: 'customers' },
-        { label: 'Pricing', id: 'pricing' },
-        { label: 'About Us', id: 'about' },
-        { label: 'Contact', id: 'contact' },
-    ];
+  const handleAnchor = (href: string) => {
+    if (currentPage !== 'home') {
+      onNavigate('home');
+      setTimeout(() => {
+        document.querySelector(href)?.scrollIntoView({ behavior: 'smooth' });
+      }, 250);
+    } else {
+      document.querySelector(href)?.scrollIntoView({ behavior: 'smooth' });
+    }
+    setIsOpen(false);
+  };
 
-    return (
-        <nav className="fixed top-0 left-0 right-0 z-50 px-6 py-4">
-            <div className="max-w-7xl mx-auto flex items-center justify-between backdrop-blur-md bg-[#0A0E1A]/40 border border-white/5 rounded-full px-8 py-3">
-                {/* Logo */}
-                <div
-                    className="cursor-pointer flex items-center gap-2"
-                    onClick={() => onNavigate('home')}
-                >
-                    <span className="text-2xl font-bold tracking-tight text-white flex items-center">
-                        HA<span className="text-[#0080E4]">I</span>M8
-                    </span>
-                </div>
+  return (
+    <nav className="fixed top-0 left-0 right-0 z-50 px-4 md:px-6 pt-4">
+      <div
+        className="max-w-6xl mx-auto flex items-center justify-between px-5 md:px-7 py-3 relative overflow-hidden rounded-full"
+        style={{
+          background: 'rgba(7, 11, 20, 0.55)',
+          border: '1px solid rgba(255,255,255,0.06)',
+          backdropFilter: 'blur(20px)',
+        }}
+      >
+        <motion.div
+          className="absolute bottom-0 left-0 h-[1px]"
+          style={{
+            width: progressWidth,
+            background: 'linear-gradient(90deg, #3b82f6, #7D41B9)',
+          }}
+          aria-hidden="true"
+        />
 
-                {/* Desktop Nav */}
-                <div className="hidden md:flex items-center gap-8">
-                    {navItems.map((item) => (
-                        <button
-                            key={item.id}
-                            onClick={() => onNavigate(item.id)}
-                            className={`text-sm font-medium transition-colors hover:text-[#0080E4] ${currentPage === item.id ? 'text-[#0080E4]' : 'text-gray-400'
-                                }`}
-                        >
-                            {item.label}
-                        </button>
-                    ))}
-                    <button
-                        onClick={() => onNavigate('contact')}
-                        className="px-6 py-2 rounded-full bg-gradient-to-r from-[#0080E4] to-[#7D41B9] text-white text-sm font-semibold hover:shadow-[0_0_20px_rgba(0,128,228,0.3)] transition-all"
-                    >
-                        Get Started
-                    </button>
-                </div>
+        <button
+          className="flex items-center gap-2 cursor-pointer"
+          onClick={() => onNavigate('home')}
+          aria-label="HAIM8 home"
+        >
+          <span className="heading text-lg md:text-xl font-bold tracking-tight text-white">
+            HA<span className="text-[#60a5fa]">I</span>M<span className="text-[#9b5fd4]">8</span>
+          </span>
+        </button>
 
-                {/* Mobile Toggle */}
-                <button
-                    className="md:hidden text-white"
-                    onClick={() => setIsOpen(!isOpen)}
-                >
-                    {isOpen ? <X size={24} /> : <Menu size={24} />}
-                </button>
-            </div>
+        <div className="hidden md:flex items-center gap-7">
+          {narrativeAnchors.map((item) => (
+            <button
+              key={item.href}
+              onClick={() => handleAnchor(item.href)}
+              className="heading text-[13px] font-medium text-white/50 hover:text-white transition-colors cursor-pointer"
+            >
+              {item.label}
+            </button>
+          ))}
+          <button
+            onClick={() => handleAnchor('#contact')}
+            className="heading px-5 py-2 rounded-full text-[13px] font-semibold text-white transition-all cursor-pointer"
+            style={{
+              background: 'linear-gradient(120deg, #3b82f6 0%, #7D41B9 100%)',
+              boxShadow: '0 0 0 1px rgba(96,165,250,0.3), 0 8px 24px -8px rgba(59,130,246,0.4)',
+            }}
+          >
+            Get in touch
+          </button>
+        </div>
 
-            {/* Mobile Menu */}
-            {isOpen && (
-                <motion.div
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="md:hidden mt-4 backdrop-blur-xl bg-[#0A0E1A]/90 border border-white/5 rounded-3xl p-6 flex flex-col gap-4"
-                >
-                    {navItems.map((item) => (
-                        <button
-                            key={item.id}
-                            onClick={() => {
-                                onNavigate(item.id);
-                                setIsOpen(false);
-                            }}
-                            className={`text-lg font-medium ${currentPage === item.id ? 'text-[#0080E4]' : 'text-gray-300'
-                                }`}
-                        >
-                            {item.label}
-                        </button>
-                    ))}
-                </motion.div>
-            )}
-        </nav>
-    );
+        <button
+          className="md:hidden text-white cursor-pointer"
+          onClick={() => setIsOpen(!isOpen)}
+          aria-label={isOpen ? 'Close menu' : 'Open menu'}
+          aria-expanded={isOpen}
+        >
+          {isOpen ? <X size={22} /> : <Menu size={22} />}
+        </button>
+      </div>
+
+      {isOpen && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="md:hidden mt-3 mx-auto max-w-6xl p-5 flex flex-col gap-3 rounded-3xl"
+          style={{
+            background: 'rgba(7, 11, 20, 0.9)',
+            border: '1px solid rgba(255,255,255,0.06)',
+            backdropFilter: 'blur(20px)',
+          }}
+        >
+          {narrativeAnchors.map((item) => (
+            <button
+              key={item.href}
+              onClick={() => handleAnchor(item.href)}
+              className="heading text-left text-base font-medium text-white/70 hover:text-white transition-colors cursor-pointer"
+            >
+              {item.label}
+            </button>
+          ))}
+        </motion.div>
+      )}
+    </nav>
+  );
 };

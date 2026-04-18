@@ -4,8 +4,9 @@ import { ChevronUp } from 'lucide-react';
 import { Toaster } from './components/ui/sonner';
 import { Navigation } from './components/Navigation';
 import { Footer } from './components/Footer';
+import { GradientBackground } from './components/GradientBackground';
+import { StarScene } from './components/scene/StarScene';
 
-// Import page components
 import { HomePage } from './pages/HomePage';
 import { AIConciergeDetailPage } from './pages/AIConciergeDetailPage';
 import { GTMEngineDetailPage } from './pages/GTMEngineDetailPage';
@@ -16,15 +17,15 @@ import { PricingPage } from './pages/PricingPage';
 import { AboutUsPage } from './pages/AboutUsPage';
 import { ContactPage } from './pages/ContactPage';
 
-export type PageType = 
-  | 'home' 
-  | 'ai-concierge' 
-  | 'gtm-engine' 
-  | 'bpa' 
-  | 'how-it-works' 
-  | 'customers' 
-  | 'pricing' 
-  | 'about' 
+export type PageType =
+  | 'home'
+  | 'ai-concierge'
+  | 'gtm-engine'
+  | 'bpa'
+  | 'how-it-works'
+  | 'customers'
+  | 'pricing'
+  | 'about'
   | 'contact';
 
 export default function App() {
@@ -33,21 +34,19 @@ export default function App() {
 
   useEffect(() => {
     const handleScroll = () => {
-      setShowScrollTop(window.scrollY > 400);
+      setShowScrollTop(window.scrollY > 600);
     };
-
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Scroll to top when page changes
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (currentPage !== 'home') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   }, [currentPage]);
 
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
+  const scrollToTop = () => window.scrollTo({ top: 0, behavior: 'smooth' });
 
   const renderPage = () => {
     switch (currentPage) {
@@ -74,41 +73,48 @@ export default function App() {
     }
   };
 
+  const isHome = currentPage === 'home';
+
   return (
-    <div className="bg-[#0A0E1A]">
+    <div className="relative min-h-screen">
+      <GradientBackground />
+      {isHome && <StarScene />}
+
       <Toaster position="top-right" />
-      
-      {/* Navigation */}
       <Navigation currentPage={currentPage} onNavigate={setCurrentPage} />
 
-      {/* Page Content with Animation */}
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={currentPage}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -20 }}
-          transition={{ duration: 0.3 }}
-        >
-          {renderPage()}
-        </motion.div>
-      </AnimatePresence>
+      <div className="relative" style={{ zIndex: 10 }}>
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={currentPage}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.3 }}
+          >
+            {renderPage()}
+          </motion.div>
+        </AnimatePresence>
 
-      {/* Footer */}
-      <Footer onNavigate={setCurrentPage} />
+        {!isHome && <Footer onNavigate={setCurrentPage} />}
+      </div>
 
-      {/* Scroll to Top Button */}
       {showScrollTop && (
         <motion.button
           onClick={scrollToTop}
-          className="fixed bottom-8 right-8 z-40 p-4 bg-gradient-to-r from-[#0080E4] to-[#7D41B9] text-white rounded-full shadow-xl hover:shadow-2xl transition-all"
+          className="fixed bottom-8 right-8 z-40 p-4 rounded-full shadow-xl cursor-pointer"
+          style={{
+            background: 'linear-gradient(120deg, #3b82f6 0%, #7D41B9 100%)',
+            boxShadow: '0 0 30px rgba(59,130,246,0.3)',
+          }}
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.8 }}
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
+          whileHover={{ scale: 1.08 }}
+          whileTap={{ scale: 0.92 }}
+          aria-label="Scroll to top"
         >
-          <ChevronUp className="w-6 h-6" />
+          <ChevronUp className="w-5 h-5 text-white" />
         </motion.button>
       )}
     </div>
