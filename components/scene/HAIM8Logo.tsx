@@ -20,17 +20,40 @@ type LetterPlan = {
   frosted: boolean;
 };
 
+// Each letter is fully visible during the hero zone, then fades out so the
+// page content can breathe. It re-appears just before its own flyStart, sits
+// at its anchor through fadeStart, and fades again. Letters that aren't
+// flying right now are completely hidden — no more drift across body text.
+const HERO_VISIBILITY_END = 0.06;
+// Letter fades in over this slice of scroll progress, starting AT flyStart
+// (not before). This keeps the letter from appearing at hero-center while
+// another section is still showing its own letters at anchor.
+const APPEAR_RAMP = 0.04;
+
 const LETTERS: LetterPlan[] = [
-  { id: 'H',   anchorId: 'anchor-h',  flyStart: 0.05, flyEnd: 0.20, fadeStart: 0.32, tint: '#e5ecf4', frosted: true  },
-  { id: 'A',   anchorId: 'anchor-a',  flyStart: 0.22, flyEnd: 0.38, fadeStart: 0.62, tint: BRAND.signal, frosted: false },
-  { id: 'I',   anchorId: 'anchor-i',  flyStart: 0.22, flyEnd: 0.38, fadeStart: 0.62, tint: BRAND.signalLight, frosted: false },
-  { id: 'M',   anchorId: 'anchor-m',  flyStart: 0.52, flyEnd: 0.68, fadeStart: 0.88, tint: '#e5ecf4', frosted: true  },
-  { id: '_8',  anchorId: 'anchor-8',  flyStart: 0.52, flyEnd: 0.68, fadeStart: 0.88, tint: '#e5ecf4', frosted: true  },
+  { id: 'H',   anchorId: 'anchor-h',  flyStart: 0.08, flyEnd: 0.22, fadeStart: 0.30, tint: '#e5ecf4', frosted: true  },
+  { id: 'A',   anchorId: 'anchor-a',  flyStart: 0.30, flyEnd: 0.44, fadeStart: 0.58, tint: BRAND.signal, frosted: false },
+  { id: 'I',   anchorId: 'anchor-i',  flyStart: 0.30, flyEnd: 0.44, fadeStart: 0.58, tint: BRAND.signalLight, frosted: false },
+  { id: 'M',   anchorId: 'anchor-m',  flyStart: 0.58, flyEnd: 0.72, fadeStart: 0.88, tint: '#e5ecf4', frosted: true  },
+  { id: '_8',  anchorId: 'anchor-8',  flyStart: 0.58, flyEnd: 0.72, fadeStart: 0.88, tint: '#e5ecf4', frosted: true  },
   { id: 'Gem', anchorId: null,        flyStart: 0,    flyEnd: 0,    fadeStart: 0.90, tint: BRAND.signal, frosted: false },
 ];
 
 const HERO_SCALE = 1.4;
-const SECTION_SCALE = 1.0;
+const SECTION_SCALE = 0.85;
+
+// Compute the desired opacity for a letter at the current scroll progress.
+// Hero zone shows all; after that each letter is only visible during its own
+// fly + anchor window. Gem (no anchor) stays visible until its fadeStart.
+function letterOpacity(plan: LetterPlan, progress: number): number {
+  if (progress < HERO_VISIBILITY_END) return 1;
+  if (!plan.anchorId) {
+    return 1 - smoothstep(plan.fadeStart, plan.fadeStart + 0.08, progress);
+  }
+  const fadeIn = smoothstep(plan.flyStart, plan.flyStart + APPEAR_RAMP, progress);
+  const fadeOut = 1 - smoothstep(plan.fadeStart, plan.fadeStart + 0.08, progress);
+  return Math.min(fadeIn, fadeOut);
+}
 
 function smoothstep(edge0: number, edge1: number, x: number): number {
   const t = Math.max(0, Math.min(1, (x - edge0) / (edge1 - edge0)));
@@ -72,7 +95,6 @@ export function HAIM8Logo() {
   const meshRefs = useRef<Record<LetterId, THREE.Mesh | null>>({
     H: null, A: null, I: null, M: null, _8: null, Gem: null,
   });
-  const restPositions = useRef<Record<LetterId, THREE.Vector3>>({} as any);
   const { scrollYProgress } = useScroll();
   const dragState = useRef({
     dragging: false,
@@ -83,7 +105,7 @@ export function HAIM8Logo() {
   // Cached DOM anchors: looked up once on mount, rect refreshed on scroll/resize.
   const anchors = useRef<Map<string, { el: HTMLElement; rect: DOMRect }>>(new Map());
 
-  const { geometries, materials } = useMemo(() => {
+  const { geometries, materials, restPositions } = useMemo(() => {
     const geomMap: Partial<Record<LetterId, THREE.BufferGeometry>> = {};
     const matMap: Partial<Record<LetterId, THREE.Material>> = {};
     const pos: Partial<Record<LetterId, THREE.Vector3>> = {};
@@ -101,8 +123,7 @@ export function HAIM8Logo() {
       matMap[id] = cloned;
       pos[id] = new THREE.Vector3().copy(mesh.position);
     });
-    restPositions.current = pos as Record<LetterId, THREE.Vector3>;
-    return { geometries: geomMap, materials: matMap };
+    return { geometries: geomMap, materials: matMap, restPositions: pos };
   }, [gltf]);
 
   // Build the anchor cache + keep rects fresh on scroll/resize.
@@ -199,7 +220,7 @@ export function HAIM8Logo() {
     // Per-letter fly-to-section + fade.
     for (const plan of LETTERS) {
       const mesh = meshRefs.current[plan.id];
-      const rest = restPositions.current[plan.id];
+      const rest = restPositions[plan.id];
       if (!mesh || !rest) continue;
 
       const hero = tmpVec.current.copy(rest).multiplyScalar(HERO_SCALE);
@@ -223,22 +244,26 @@ export function HAIM8Logo() {
       mesh.position.lerp(target, dampPos);
       mesh.scale.setScalar(lerp(mesh.scale.x, targetScale, dampScale));
 
-      const fade = 1 - smoothstep(plan.fadeStart, plan.fadeStart + 0.08, progress);
+      const fade = letterOpacity(plan, progress);
       const mat = mesh.material as THREE.Material & { opacity?: number };
       if (mat && 'opacity' in mat && typeof mat.opacity === 'number') {
         mat.opacity = lerp(mat.opacity, fade, dampOpacity);
+        // Skip the depth/draw cost when fully transparent.
+        mesh.visible = mat.opacity > 0.01;
       }
     }
 
     // Gem: gentle face-camera sway. The 4-point star reads best when seen
-    // mostly head-on, so keep X/Z tilts small and let Y swing slowly.
+    // mostly head-on, so keep X/Z tilts small and let Y swing slowly. Only
+    // overwrite position.y while in the hero zone — once any future scroll
+    // target is wired up, the per-letter loop above owns position.
     const gem = meshRefs.current.Gem;
     if (gem) {
       gem.rotation.y = Math.sin(elapsed * 0.45) * 0.6;
       gem.rotation.x = Math.sin(elapsed * 0.32) * 0.12;
       gem.rotation.z = Math.cos(elapsed * 0.27) * 0.08;
-      const gemRest = restPositions.current.Gem;
-      if (gemRest) {
+      const gemRest = restPositions.Gem;
+      if (gemRest && progress < HERO_VISIBILITY_END) {
         gem.position.y = gemRest.y * HERO_SCALE + Math.sin(elapsed * 0.9) * 0.04;
       }
     }
@@ -258,7 +283,7 @@ export function HAIM8Logo() {
             }}
             geometry={geom}
             material={mat}
-            position={restPositions.current[plan.id]?.clone().multiplyScalar(HERO_SCALE) ?? [0, 0, 0]}
+            position={restPositions[plan.id]?.clone().multiplyScalar(HERO_SCALE) ?? [0, 0, 0]}
             scale={HERO_SCALE}
           />
         );

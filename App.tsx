@@ -1,11 +1,16 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, lazy, Suspense } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
 import { ChevronUp } from 'lucide-react';
 import { Toaster } from './components/ui/sonner';
 import { Navigation } from './components/Navigation';
 import { Footer } from './components/Footer';
 import { GradientBackground } from './components/GradientBackground';
-import { StarScene } from './components/scene/StarScene';
+
+// Three.js + R3F + drei + postprocessing total ~1 MB minified. Lazy-load so
+// non-home routes (and mobile / reduced-motion) don't pay for it.
+const StarScene = lazy(() =>
+  import('./components/scene/StarScene').then((m) => ({ default: m.StarScene }))
+);
 
 function useIsMobile(breakpoint = 768) {
   const [isMobile, setIsMobile] = useState(
@@ -94,7 +99,11 @@ export default function App() {
   return (
     <div className="relative min-h-screen">
       <GradientBackground />
-      {isHome && show3DStar && <StarScene />}
+      {isHome && show3DStar && (
+        <Suspense fallback={null}>
+          <StarScene />
+        </Suspense>
+      )}
 
       <Toaster position="top-right" />
       <Navigation currentPage={currentPage} onNavigate={setCurrentPage} />

@@ -4,3 +4,9 @@ dist
 .DS_Store
 *.log
 .vite
+
+# Source GLBs from Meshy / raw renders — only the final processed
+# `public/haim8.glb` is shipped. Re-generate locally via:
+#   blender -b -P scripts/split_haim8.py -- <src> public/haim8.glb 0.30 keep
+public/haim8-meshy*.glb
+public/haim8-raw*.glb

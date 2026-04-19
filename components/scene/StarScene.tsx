@@ -33,9 +33,9 @@ export function StarScene() {
         <HAIM8Logo />
         <EffectComposer multisampling={0}>
           <Bloom
-            intensity={0.35}
-            luminanceThreshold={0.78}
-            luminanceSmoothing={0.4}
+            intensity={0.22}
+            luminanceThreshold={0.86}
+            luminanceSmoothing={0.45}
             mipmapBlur
           />
         </EffectComposer>

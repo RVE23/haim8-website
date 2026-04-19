@@ -7,10 +7,10 @@ import { M8Mates } from '../components/sections/M8Mates';
 import { Contact } from '../components/sections/Contact';
 
 interface HomePageProps {
-  onNavigate: (page: PageType) => void;
+  onNavigate?: (page: PageType) => void;
 }
 
-export const HomePage: React.FC<HomePageProps> = ({ onNavigate: _onNavigate }) => {
+export const HomePage: React.FC<HomePageProps> = () => {
   return (
     <main className="relative">
       <section id="hero">

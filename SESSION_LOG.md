@@ -34,3 +34,27 @@
 **Issues Found:** Our fork working copy had been deleted locally — fully recoverable from GitHub, no work lost.
 **Learnings:** Always push every commit — local working trees can be wiped without notice.
 **Next Steps:** Sprint 5 — per-letter timing stagger, hover highlights, case-study copy expansion. Kick off in a fresh session with the prompt in the new-session handoff.
+
+## Session — 2026-04-19 22:50
+**Focus:** Branch `logo-movement-improvement` — swap to higher-fidelity Meshy GLB with baked PBR textures, per-letter timing stagger, perf + a11y polish.
+**Changes:**
+- Switched `public/haim8.glb` source from old low-poly Meshy export to new textured Meshy export (`Meshy_AI_Blue_HAM8_with_Star_0419210618_texture.glb`). Extended `scripts/split_haim8.py` with: `KEEP_MATERIALS` arg (preserve baked PBR maps through Blender), per-piece decimation ratio (gem keeps 2× the letter ratio), and an X-bucket fallback for high-poly meshes that shatter into hundreds of loose parts.
+- Applied WebP texture compression via `gltf-transform` → 8 MB GLB → 1.7 MB.
+- `HAIM8Logo.tsx`: cache anchor DOMRects on scroll/resize (kills 5 forced layouts/frame), delta-aware damping (`1 - exp(-k·dt)`), use baked materials directly (clone for per-letter opacity), introduce `letterOpacity()` so each letter is only visible during its own fly window — no more mid-flight letters covering body text. Gem position guard so the per-letter loop will own position once an anchor is wired.
+- `StarScene.tsx`: postprocessing Bloom + studio HDR + radial backdrop, all dialed to taste against the textured material. Lights softened (textures encode their own).
+- `scripts/render_hero_png.py`: new Cycles-headless render of the GLB to `public/haim8-noBG.png` so the mobile fallback stays in sync with the desktop look.
+- `App.tsx`: `React.lazy(StarScene)` — initial JS dropped 1.45 MB → 363 KB (411 KB → 114 KB gzip). Three.js + drei + postprocessing now in their own chunk loaded only on desktop home.
+- `index.css`: keyboard `:focus-visible` ring on all interactive elements.
+- `vite.config.ts`: `dedupe` react/three/fiber + `optimizeDeps` postprocessing — fixes "Invalid hook call" when EffectComposer mounts.
+- `.gitignore`: source GLBs (`haim8-meshy*`, `haim8-raw*`) — only the final `haim8.glb` ships.
+**Issues Found:**
+- Meshy textured GLB shatters into 391 loose parts (vs 7 in the old low-poly export); legacy "expect 7 pieces" heuristic broke completely. Solved with X-position bucketing.
+- `@react-three/postprocessing` v3 with R3F v9 + React 19 throws "Invalid hook call" if Vite serves the postpro ESM raw. Must add to `optimizeDeps.include` AND `resolve.dedupe`.
+- Decimating the gem at the letter rate killed the 4-point silhouette. Special-cased gem to keep 2× letter detail.
+- Continuous Y-tumble on gem made it side-on most of the time → unreadable. Replaced with bounded face-camera sway.
+**Learnings:**
+- Meshy renders are baked: you don't recreate "the Meshy look" in three.js — you pass the baked PBR maps through and stay out of their way (drop ambient lights, drop env intensity).
+- `gltf-transform webp` needs no native deps; trivially gives 70-80% size reduction on textured GLBs without quality loss at q80.
+- `gltf-transform uastc` requires the `ktx` CLI from KTX-Software, which isn't on macOS by default — WebP is the lower-effort win.
+- React refs cannot be mutated inside `useMemo` — eslint `react-hooks/refs` flags this. Move the data into the memo's return value and consume from there.
+**Next Steps:** Sprint 6 — wire a real Gem anchor for the M8Mates section, add hover highlights per letter, address the 1.09 MB StarScene chunk (further code-split or KTX2 if `ktx` CLI gets installed).
