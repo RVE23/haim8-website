@@ -22,9 +22,19 @@ export function AIServices() {
         <div className="w-full max-w-[1400px] mx-auto px-6 md:px-12 md:grid md:grid-cols-[auto_1fr] gap-8 md:gap-16 items-center">
           <motion.div
             style={{ opacity: aiOpacity, y: aiY }}
-            className="pointer-events-none absolute md:static inset-0 md:inset-auto flex items-center justify-center md:justify-start gap-1 opacity-15 md:opacity-100"
+            className="pointer-events-none absolute md:relative inset-0 md:inset-auto flex items-center justify-center md:justify-start gap-1 opacity-15 md:opacity-0"
             aria-hidden="true"
           >
+            <div
+              id="anchor-a"
+              className="hidden md:block"
+              style={{ width: 'clamp(8rem, 12vw, 12rem)', aspectRatio: '0.8' }}
+            />
+            <div
+              id="anchor-i"
+              className="hidden md:block"
+              style={{ width: 'clamp(2rem, 4vw, 4rem)', aspectRatio: '0.35' }}
+            />
             <div
               className="absolute inset-0"
               style={{

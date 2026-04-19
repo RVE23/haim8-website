@@ -29,13 +29,12 @@ for block in list(bpy.data.meshes):
 for block in list(bpy.data.materials):
     bpy.data.materials.remove(block)
 
-# 2. Build asymmetric 4-point sparkle geometry -----------------------------
-# Matches the HAIM8 reference gem: NS points long, EW points shorter,
-# narrow inner radius for that sharp sparkle silhouette.
-OUTER_NS = 1.0   # long vertical points (top, bottom)
-OUTER_EW = 0.58  # shorter horizontal points (left, right)
-INNER = 0.16     # narrow waist for sharp sparkle
-DEPTH = 0.28
+# 2. Build symmetric 4-point gem geometry ---------------------------------
+# Equal-length points, wider waist — this silhouette read better against the
+# reference than the NS-long / EW-short "sparkle" experiment in Sprint 2.
+OUTER = 1.0    # all four points same length
+INNER = 0.30   # wider waist for a classic 4-point gem
+DEPTH = 0.38   # a touch more depth for weight
 
 mesh = bpy.data.meshes.new("Star")
 obj = bpy.data.objects.new("Star", mesh)
@@ -44,19 +43,14 @@ bpy.context.collection.objects.link(obj)
 bm = bmesh.new()
 top_verts = []
 bot_verts = []
-# 8 vertices alternating outer/inner, starting at top (N point)
-for i in range(8):
-    angle = (i * math.tau / 8) - math.pi / 2
-    if i % 2 == 0:
-        # outer point: alternate between NS long and EW short
-        # i=0 → N (long), i=2 → E (short), i=4 → S (long), i=6 → W (short)
-        r = OUTER_NS if i % 4 == 0 else OUTER_EW
-    else:
-        r = INNER
+POINTS = 4
+steps = POINTS * 2
+for i in range(steps):
+    angle = (i * math.tau / steps) - math.pi / 2
+    r = OUTER if i % 2 == 0 else INNER
     x, y = r * math.cos(angle), r * math.sin(angle)
     top_verts.append(bm.verts.new((x, y, DEPTH / 2)))
     bot_verts.append(bm.verts.new((x, y, -DEPTH / 2)))
-steps = 8
 
 bm.verts.ensure_lookup_table()
 bm.faces.new(top_verts)
@@ -75,15 +69,15 @@ bpy.context.view_layer.objects.active = obj
 obj.select_set(True)
 
 bevel = obj.modifiers.new(name="Bevel", type="BEVEL")
-bevel.width = 0.055
-bevel.segments = 6
+bevel.width = 0.06
+bevel.segments = 8
 bevel.profile = 0.7
 bevel.limit_method = "ANGLE"
 bevel.angle_limit = math.radians(30)
 
 subsurf = obj.modifiers.new(name="Subsurf", type="SUBSURF")
-subsurf.levels = 2
-subsurf.render_levels = 3
+subsurf.levels = 3
+subsurf.render_levels = 4
 
 bpy.ops.object.modifier_apply(modifier="Bevel")
 bpy.ops.object.modifier_apply(modifier="Subsurf")

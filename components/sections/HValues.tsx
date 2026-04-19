@@ -22,11 +22,11 @@ export function HValues() {
         <div className="w-full max-w-[1400px] mx-auto px-6 md:px-12 md:grid md:grid-cols-[1fr_1.2fr] gap-12 items-center">
           <motion.div
             style={{ opacity: hOpacity, x: hX }}
-            className="pointer-events-none absolute md:static inset-0 md:inset-auto flex items-center justify-center md:justify-start opacity-20 md:opacity-100"
+            className="pointer-events-none absolute md:relative inset-0 md:inset-auto flex items-center justify-center md:justify-start opacity-20 md:opacity-0"
             aria-hidden="true"
           >
             <div
-              className="absolute inset-0 flex items-center justify-center"
+              className="absolute inset-0 flex items-center justify-center md:hidden"
               style={{
                 background:
                   'radial-gradient(circle at 50% 50%, rgba(59,130,246,0.25) 0%, transparent 60%)',
@@ -36,13 +36,18 @@ export function HValues() {
             <img
               src="/haim8-H.png"
               alt=""
-              className="relative select-none"
+              className="md:hidden relative select-none"
               style={{
                 height: 'clamp(18rem, 36vw, 34rem)',
                 width: 'auto',
                 filter: 'drop-shadow(0 0 80px rgba(59,130,246,0.45))',
               }}
               draggable={false}
+            />
+            <div
+              id="anchor-h"
+              className="hidden md:block"
+              style={{ width: 'clamp(14rem, 26vw, 22rem)', aspectRatio: '0.55' }}
             />
           </motion.div>
 

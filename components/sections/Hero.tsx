@@ -26,10 +26,16 @@ export function Hero() {
           <motion.img
             src="/haim8-noBG.png"
             alt="HAIM8"
-            className="w-[min(820px,92vw)] h-auto object-contain drop-shadow-[0_0_100px_rgba(59,130,246,0.35)]"
+            className="md:hidden w-[min(820px,92vw)] h-auto object-contain drop-shadow-[0_0_100px_rgba(59,130,246,0.35)]"
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1.4, ease: EASE.outExpo }}
+          />
+
+          {/* Desktop: invisible spacer — the 3D logo renders over this space from StarScene */}
+          <div
+            className="hidden md:block w-[min(820px,80vw)] aspect-[2.5/1]"
+            aria-hidden="true"
           />
 
           <motion.p

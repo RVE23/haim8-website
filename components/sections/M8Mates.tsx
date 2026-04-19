@@ -23,9 +23,9 @@ export function M8Mates() {
           style={{ opacity: m8Opacity, scale: m8Scale }}
           className="flex flex-col items-center gap-10 max-w-5xl mx-auto text-center"
         >
-          <div className="relative flex items-center justify-center">
+          <div className="relative flex items-center justify-center md:opacity-0">
             <div
-              className="absolute inset-0"
+              className="absolute inset-0 md:hidden"
               style={{
                 background:
                   'radial-gradient(circle at 50% 50%, rgba(125,65,185,0.28) 0%, transparent 65%)',
@@ -36,7 +36,7 @@ export function M8Mates() {
             <img
               src="/haim8-M.png"
               alt="M"
-              className="relative select-none"
+              className="md:hidden relative select-none"
               style={{
                 height: 'clamp(10rem, 28vw, 26rem)',
                 width: 'auto',
@@ -47,13 +47,23 @@ export function M8Mates() {
             <img
               src="/haim8-8.png"
               alt="8"
-              className="relative select-none -ml-4"
+              className="md:hidden relative select-none -ml-4"
               style={{
                 height: 'clamp(10rem, 28vw, 26rem)',
                 width: 'auto',
                 filter: 'drop-shadow(0 0 70px rgba(59,130,246,0.5))',
               }}
               draggable={false}
+            />
+            <div
+              id="anchor-m"
+              className="hidden md:block"
+              style={{ width: 'clamp(8rem, 13vw, 13rem)', aspectRatio: '0.9' }}
+            />
+            <div
+              id="anchor-8"
+              className="hidden md:block"
+              style={{ width: 'clamp(6rem, 10vw, 10rem)', aspectRatio: '0.9' }}
             />
           </div>
 
