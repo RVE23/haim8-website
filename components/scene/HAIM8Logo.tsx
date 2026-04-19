@@ -230,12 +230,13 @@ export function HAIM8Logo() {
       }
     }
 
-    // Gem: independent tumble plus a faint vertical float.
+    // Gem: gentle face-camera sway. The 4-point star reads best when seen
+    // mostly head-on, so keep X/Z tilts small and let Y swing slowly.
     const gem = meshRefs.current.Gem;
     if (gem) {
-      gem.rotation.y = elapsed * 0.6;
-      gem.rotation.x = Math.sin(elapsed * 0.4) * 0.3;
-      gem.rotation.z = Math.cos(elapsed * 0.3) * 0.15;
+      gem.rotation.y = Math.sin(elapsed * 0.45) * 0.6;
+      gem.rotation.x = Math.sin(elapsed * 0.32) * 0.12;
+      gem.rotation.z = Math.cos(elapsed * 0.27) * 0.08;
       const gemRest = restPositions.current.Gem;
       if (gemRest) {
         gem.position.y = gemRest.y * HERO_SCALE + Math.sin(elapsed * 0.9) * 0.04;

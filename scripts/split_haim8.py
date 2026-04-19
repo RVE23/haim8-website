@@ -99,7 +99,8 @@ parts_info = [(p, world_bbox_center(p), bbox_size(p)) for p in parts]
 USE_BUCKETS = len(parts_info) > 12
 
 LETTER_CENTERS_X = {"H": -0.76, "A": -0.33, "I": -0.02, "M": 0.32, "_8": 0.78}
-GEM_Z_THRESHOLD = 0.15  # anything with center_z > this is gem material
+GEM_Z_THRESHOLD = 0.22  # piece must be above this Z to be considered gem
+GEM_X_RADIUS = 0.20  # piece must also be within this X distance from origin
 
 def join_objects(objs):
     if not objs:
@@ -118,7 +119,7 @@ if USE_BUCKETS:
     buckets: dict[str, list] = {k: [] for k in LETTER_CENTERS_X}
     gem_pieces: list = []
     for p, c, _ in parts_info:
-        if c[2] > GEM_Z_THRESHOLD:
+        if c[2] > GEM_Z_THRESHOLD and abs(c[0]) < GEM_X_RADIUS:
             gem_pieces.append(p)
             continue
         nearest = min(LETTER_CENTERS_X, key=lambda k: abs(c[0] - LETTER_CENTERS_X[k]))
@@ -182,13 +183,15 @@ for obj in bpy.data.objects:
     obj.select_set(True)
     bpy.context.view_layer.objects.active = obj
 
+    # Gem keeps more detail — its 4-point silhouette suffers most from decimation.
+    ratio = DECIMATE_RATIO if obj.name != "Gem" else min(1.0, DECIMATE_RATIO * 2.0)
     pre_verts = len(obj.data.vertices)
-    if DECIMATE_RATIO > 0 and DECIMATE_RATIO < 1:
+    if ratio > 0 and ratio < 1:
         mod = obj.modifiers.new(name="Decimate", type="DECIMATE")
-        mod.ratio = DECIMATE_RATIO
+        mod.ratio = ratio
         bpy.ops.object.modifier_apply(modifier=mod.name)
         post_verts = len(obj.data.vertices)
-        print(f"[split] decimate {obj.name}: {pre_verts} -> {post_verts} verts", file=sys.stderr)
+        print(f"[split] decimate {obj.name} (ratio {ratio:.2f}): {pre_verts} -> {post_verts} verts", file=sys.stderr)
 
     bpy.ops.object.origin_set(type="ORIGIN_GEOMETRY", center="MEDIAN")
     for poly in obj.data.polygons:
