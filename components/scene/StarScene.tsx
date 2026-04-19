@@ -15,19 +15,19 @@ export function StarScene() {
         gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
         style={{ cursor: 'grab' }}
       >
-        <ambientLight intensity={0.35} />
+        <ambientLight intensity={0.45} />
         <directionalLight
           position={[5, 6, 6]}
-          intensity={2.2}
-          color="#60a5fa"
+          intensity={2.6}
+          color="#9bd0ff"
         />
         <directionalLight
           position={[-6, -3, 4]}
-          intensity={1.1}
-          color="#9b5fd4"
+          intensity={1.4}
+          color="#c98bff"
         />
-        <pointLight position={[0, 0, 3]} intensity={0.6} color="#ffffff" />
-        <Environment preset="city" />
+        <pointLight position={[0, 0, 3]} intensity={0.9} color="#ffffff" />
+        <Environment preset="studio" background={false} environmentIntensity={1.2} />
         <HAIM8Logo />
       </Canvas>
     </div>

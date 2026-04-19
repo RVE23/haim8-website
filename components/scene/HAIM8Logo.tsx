@@ -253,19 +253,19 @@ export function HAIM8Logo() {
           >
             <meshPhysicalMaterial
               color={plan.tint}
-              transmission={plan.frosted ? 0 : 0.85}
-              thickness={plan.frosted ? 0 : 1.1}
-              roughness={plan.frosted ? 0.32 : 0.06}
-              ior={1.52}
-              clearcoat={plan.frosted ? 0.4 : 1}
-              clearcoatRoughness={0.04}
-              iridescence={plan.frosted ? 0 : 0.5}
-              iridescenceIOR={1.3}
-              iridescenceThicknessRange={[100, 600]}
-              metalness={0.04}
-              attenuationColor={plan.frosted ? '#c8d7ef' : BRAND.vision}
-              attenuationDistance={plan.frosted ? 3.5 : 1.8}
-              envMapIntensity={plan.frosted ? 0.85 : 1.6}
+              transmission={plan.frosted ? 0.78 : 0.95}
+              thickness={plan.frosted ? 1.6 : 1.2}
+              roughness={plan.frosted ? 0.12 : 0.04}
+              ior={1.55}
+              clearcoat={1}
+              clearcoatRoughness={0.03}
+              iridescence={plan.frosted ? 0.45 : 0.85}
+              iridescenceIOR={1.35}
+              iridescenceThicknessRange={[180, 640]}
+              metalness={0.02}
+              attenuationColor={plan.frosted ? '#cfe0ff' : BRAND.vision}
+              attenuationDistance={plan.frosted ? 2.2 : 1.4}
+              envMapIntensity={plan.frosted ? 1.6 : 2.0}
               transparent
             />
           </mesh>
