@@ -2,11 +2,12 @@
 
 Meshy returns one merged mesh. Loose-parts separation yields 7 pieces because
 the 'i' has a separate dot. We merge those, sort the rest by X (left→right),
-identify the gem by its Z position (top), apply shade-smooth + small Decimate
-cleanup, then export.
+identify the gem by its Z position (top), apply Decimate to drop poly count,
+shade-smooth, then export.
 
-Run:
+Run (defaults read public/haim8-meshy.glb, write public/haim8.glb):
   blender -b -P scripts/split_haim8.py
+  blender -b -P scripts/split_haim8.py -- public/haim8-raw.glb public/haim8.glb 0.12
 """
 from __future__ import annotations
 import os
@@ -15,8 +16,26 @@ import sys
 import bpy
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-SRC = os.path.join(ROOT, "public", "haim8.glb")
-OUT = SRC  # overwrite
+
+_args = sys.argv
+try:
+    _idx = _args.index("--")
+    _extra = _args[_idx + 1:]
+except ValueError:
+    _extra = []
+
+SRC = _extra[0] if len(_extra) > 0 else os.path.join(ROOT, "public", "haim8-meshy.glb")
+OUT = _extra[1] if len(_extra) > 1 else os.path.join(ROOT, "public", "haim8.glb")
+DECIMATE_RATIO = float(_extra[2]) if len(_extra) > 2 else 0.12
+
+if not os.path.isabs(SRC):
+    SRC = os.path.join(ROOT, SRC)
+if not os.path.isabs(OUT):
+    OUT = os.path.join(ROOT, OUT)
+
+print(f"[split] SRC={SRC}", file=sys.stderr)
+print(f"[split] OUT={OUT}", file=sys.stderr)
+print(f"[split] DECIMATE_RATIO={DECIMATE_RATIO}", file=sys.stderr)
 
 # Clear scene ---------------------------------------------------------------
 bpy.ops.object.select_all(action="SELECT")
@@ -119,16 +138,23 @@ for (p, c, s), name in zip(merged, letter_names):
 gem_candidate[0].name = "Gem"
 gem_candidate[0].data.name = "Gem_mesh"
 
-# Clean up: shade smooth + add a modest bevel for crisper edges -------------
+# Clean up: decimate, shade smooth, center origin --------------------------
 for obj in bpy.data.objects:
     if obj.type != "MESH":
         continue
     bpy.ops.object.select_all(action="DESELECT")
     obj.select_set(True)
     bpy.context.view_layer.objects.active = obj
-    # Center origin on geometry so R3F can position each letter at its own origin
+
+    pre_verts = len(obj.data.vertices)
+    if DECIMATE_RATIO > 0 and DECIMATE_RATIO < 1:
+        mod = obj.modifiers.new(name="Decimate", type="DECIMATE")
+        mod.ratio = DECIMATE_RATIO
+        bpy.ops.object.modifier_apply(modifier=mod.name)
+        post_verts = len(obj.data.vertices)
+        print(f"[split] decimate {obj.name}: {pre_verts} -> {post_verts} verts", file=sys.stderr)
+
     bpy.ops.object.origin_set(type="ORIGIN_GEOMETRY", center="MEDIAN")
-    # Smooth shading
     for poly in obj.data.polygons:
         poly.use_smooth = True
 

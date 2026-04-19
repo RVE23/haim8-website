@@ -1,5 +1,5 @@
 import { Canvas } from '@react-three/fiber';
-import { Environment, Preload } from '@react-three/drei';
+import { Environment } from '@react-three/drei';
 import { HAIM8Logo } from './HAIM8Logo';
 
 export function StarScene() {
@@ -29,7 +29,6 @@ export function StarScene() {
         <pointLight position={[0, 0, 3]} intensity={0.6} color="#ffffff" />
         <Environment preset="city" />
         <HAIM8Logo />
-        <Preload all />
       </Canvas>
     </div>
   );

@@ -37,28 +37,25 @@ function smoothstep(edge0: number, edge1: number, x: number): number {
   return t * t * (3 - 2 * t);
 }
 
-function domCenterToWorld(
-  el: Element,
+// Project a screen-space rect center to a point on the z=0 world plane.
+function rectCenterToWorld(
+  rect: DOMRect,
   camera: THREE.Camera,
   out: THREE.Vector3
 ): THREE.Vector3 | null {
-  const rect = el.getBoundingClientRect();
   if (rect.width === 0 || rect.height === 0) return null;
   const cx = rect.left + rect.width / 2;
   const cy = rect.top + rect.height / 2;
   const ndcX = (cx / window.innerWidth) * 2 - 1;
   const ndcY = -(cy / window.innerHeight) * 2 + 1;
 
-  // Unproject the NDC point to a world-space point
   out.set(ndcX, ndcY, 0.5).unproject(camera);
 
-  // Ray direction from camera through that world point (read before writing out)
   const dirX = out.x - camera.position.x;
   const dirY = out.y - camera.position.y;
   const dirZ = out.z - camera.position.z;
   if (Math.abs(dirZ) < 1e-6) return null;
 
-  // Intersect with the z=0 plane
   const t = -camera.position.z / dirZ;
   out.set(
     camera.position.x + dirX * t,
@@ -70,7 +67,7 @@ function domCenterToWorld(
 
 export function HAIM8Logo() {
   const gltf = useGLTF('/haim8.glb');
-  const { camera } = useThree();
+  const { camera, invalidate } = useThree();
   const groupRef = useRef<THREE.Group>(null);
   const meshRefs = useRef<Record<LetterId, THREE.Mesh | null>>({
     H: null, A: null, I: null, M: null, _8: null, Gem: null,
@@ -81,8 +78,10 @@ export function HAIM8Logo() {
     dragging: false,
     targetX: 0,
     targetY: 0,
-    idleY: 0,
   });
+
+  // Cached DOM anchors: looked up once on mount, rect refreshed on scroll/resize.
+  const anchors = useRef<Map<string, { el: HTMLElement; rect: DOMRect }>>(new Map());
 
   const geometries = useMemo(() => {
     const map: Partial<Record<LetterId, THREE.BufferGeometry>> = {};
@@ -98,6 +97,41 @@ export function HAIM8Logo() {
     restPositions.current = pos as Record<LetterId, THREE.Vector3>;
     return map;
   }, [gltf]);
+
+  // Build the anchor cache + keep rects fresh on scroll/resize.
+  useEffect(() => {
+    const map = anchors.current;
+    map.clear();
+    for (const plan of LETTERS) {
+      if (!plan.anchorId) continue;
+      const el = document.getElementById(plan.anchorId) as HTMLElement | null;
+      if (el) map.set(plan.anchorId, { el, rect: el.getBoundingClientRect() });
+    }
+
+    let dirty = false;
+    const refresh = () => {
+      dirty = false;
+      for (const entry of map.values()) {
+        entry.rect = entry.el.getBoundingClientRect();
+      }
+      invalidate();
+    };
+    const schedule = () => {
+      if (dirty) return;
+      dirty = true;
+      requestAnimationFrame(refresh);
+    };
+
+    window.addEventListener('scroll', schedule, { passive: true });
+    window.addEventListener('resize', schedule);
+    const ro = new ResizeObserver(schedule);
+    ro.observe(document.body);
+    return () => {
+      window.removeEventListener('scroll', schedule);
+      window.removeEventListener('resize', schedule);
+      ro.disconnect();
+    };
+  }, [invalidate]);
 
   useEffect(() => {
     const onMove = (e: PointerEvent) => {
@@ -132,43 +166,46 @@ export function HAIM8Logo() {
   const tmpVec = useRef(new THREE.Vector3());
   const tmpVec2 = useRef(new THREE.Vector3());
 
-  useFrame((state) => {
+  useFrame((state, delta) => {
     const group = groupRef.current;
     if (!group) return;
 
-    const progress = scrollYProgress.get();
-    const inHero = progress < 0.06;
+    // Frame-rate-independent damping factors (k = "stiffness", higher = snappier).
+    // alpha = 1 - exp(-k * delta) → equivalent to lerp(_, _, alpha) per frame.
+    const dampRot = 1 - Math.exp(-9 * delta);
+    const dampPos = 1 - Math.exp(-12 * delta);
+    const dampScale = 1 - Math.exp(-10 * delta);
+    const dampOpacity = 1 - Math.exp(-15 * delta);
     const lerp = THREE.MathUtils.lerp;
 
-    // Idle: gentle sway, pauses during drag
+    const progress = scrollYProgress.get();
+    const inHero = progress < 0.06;
     const elapsed = state.clock.elapsedTime;
+
+    // Idle sway pauses during drag.
     const idleSway = inHero && !dragState.current.dragging
       ? Math.sin(elapsed * 0.35) * 0.14
       : 0;
+    group.rotation.y = lerp(group.rotation.y, dragState.current.targetY + idleSway, dampRot);
+    group.rotation.x = lerp(group.rotation.x, dragState.current.targetX + Math.sin(elapsed * 0.25) * 0.05, dampRot);
 
-    group.rotation.y = lerp(group.rotation.y, dragState.current.targetY + idleSway, 0.08);
-    group.rotation.x = lerp(group.rotation.x, dragState.current.targetX + Math.sin(elapsed * 0.25) * 0.05, 0.08);
-
-    // Per-letter fly-to-section + fade
+    // Per-letter fly-to-section + fade.
     for (const plan of LETTERS) {
       const mesh = meshRefs.current[plan.id];
       const rest = restPositions.current[plan.id];
       if (!mesh || !rest) continue;
 
-      // Hero-pose: scaled rest position
       const hero = tmpVec.current.copy(rest).multiplyScalar(HERO_SCALE);
 
-      // Section target in world space (if anchor exists in DOM)
       let target = hero;
       let targetScale = HERO_SCALE;
       if (plan.anchorId) {
         const t = smoothstep(plan.flyStart, plan.flyEnd, progress);
         if (t > 0) {
-          const el = document.getElementById(plan.anchorId);
-          if (el) {
-            const world = domCenterToWorld(el, camera, tmpVec2.current);
+          const cached = anchors.current.get(plan.anchorId);
+          if (cached) {
+            const world = rectCenterToWorld(cached.rect, camera, tmpVec2.current);
             if (world) {
-              // lerp between hero and section anchor
               target = tmpVec.current.lerpVectors(hero, world, t);
               targetScale = lerp(HERO_SCALE, SECTION_SCALE, t);
             }
@@ -176,46 +213,26 @@ export function HAIM8Logo() {
         }
       }
 
-      mesh.position.lerp(target, 0.12);
-      const s = mesh.scale.x;
-      const nextScale = lerp(s, targetScale, 0.1);
-      mesh.scale.setScalar(nextScale);
+      mesh.position.lerp(target, dampPos);
+      mesh.scale.setScalar(lerp(mesh.scale.x, targetScale, dampScale));
 
-      // Fade out as we approach the bottom
       const fade = 1 - smoothstep(plan.fadeStart, plan.fadeStart + 0.08, progress);
       const mat = mesh.material as THREE.MeshPhysicalMaterial;
       if (mat && 'opacity' in mat) {
-        mat.opacity = lerp(mat.opacity, fade, 0.15);
-        mat.transparent = true;
+        mat.opacity = lerp(mat.opacity, fade, dampOpacity);
       }
     }
 
-    // Debug: expose per-letter mesh state on window for dev inspection
-    if (typeof window !== 'undefined') {
-      const dbg: Record<string, unknown> = { progress, inHero };
-      for (const plan of LETTERS) {
-        const m = meshRefs.current[plan.id];
-        if (m) {
-          dbg[plan.id] = {
-            x: +m.position.x.toFixed(2),
-            y: +m.position.y.toFixed(2),
-            z: +m.position.z.toFixed(2),
-            s: +m.scale.x.toFixed(2),
-            opacity: +(m.material as THREE.MeshPhysicalMaterial).opacity.toFixed(2),
-            visible: m.visible,
-          };
-        }
-      }
-      (window as unknown as { __haim8: typeof dbg }).__haim8 = dbg;
-    }
-
-    // Gem gets a gentle independent tumble on top of group rotation
+    // Gem: independent tumble plus a faint vertical float.
     const gem = meshRefs.current.Gem;
     if (gem) {
-      const tumble = state.clock.elapsedTime;
-      gem.rotation.y = tumble * 0.6;
-      gem.rotation.x = Math.sin(tumble * 0.4) * 0.3;
-      gem.rotation.z = Math.cos(tumble * 0.3) * 0.15;
+      gem.rotation.y = elapsed * 0.6;
+      gem.rotation.x = Math.sin(elapsed * 0.4) * 0.3;
+      gem.rotation.z = Math.cos(elapsed * 0.3) * 0.15;
+      const gemRest = restPositions.current.Gem;
+      if (gemRest) {
+        gem.position.y = gemRest.y * HERO_SCALE + Math.sin(elapsed * 0.9) * 0.04;
+      }
     }
   });
 
@@ -233,24 +250,22 @@ export function HAIM8Logo() {
             geometry={geom}
             position={restPositions.current[plan.id]?.clone().multiplyScalar(HERO_SCALE) ?? [0, 0, 0]}
             scale={HERO_SCALE}
-            castShadow
-            receiveShadow
           >
             <meshPhysicalMaterial
               color={plan.tint}
-              transmission={plan.frosted ? 0.6 : 0.85}
-              thickness={plan.frosted ? 1.4 : 1.1}
-              roughness={plan.frosted ? 0.18 : 0.06}
+              transmission={plan.frosted ? 0 : 0.85}
+              thickness={plan.frosted ? 0 : 1.1}
+              roughness={plan.frosted ? 0.32 : 0.06}
               ior={1.52}
-              clearcoat={1}
+              clearcoat={plan.frosted ? 0.4 : 1}
               clearcoatRoughness={0.04}
-              iridescence={plan.frosted ? 0.2 : 0.5}
+              iridescence={plan.frosted ? 0 : 0.5}
               iridescenceIOR={1.3}
               iridescenceThicknessRange={[100, 600]}
               metalness={0.04}
               attenuationColor={plan.frosted ? '#c8d7ef' : BRAND.vision}
               attenuationDistance={plan.frosted ? 3.5 : 1.8}
-              envMapIntensity={plan.frosted ? 1.0 : 1.6}
+              envMapIntensity={plan.frosted ? 0.85 : 1.6}
               transparent
             />
           </mesh>
