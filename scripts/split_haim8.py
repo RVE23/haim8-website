@@ -27,6 +27,7 @@ except ValueError:
 SRC = _extra[0] if len(_extra) > 0 else os.path.join(ROOT, "public", "haim8-meshy.glb")
 OUT = _extra[1] if len(_extra) > 1 else os.path.join(ROOT, "public", "haim8.glb")
 DECIMATE_RATIO = float(_extra[2]) if len(_extra) > 2 else 0.12
+KEEP_MATERIALS = (_extra[3].lower() in ("1","true","keep")) if len(_extra) > 3 else False
 
 if not os.path.isabs(SRC):
     SRC = os.path.join(ROOT, SRC)
@@ -88,55 +89,90 @@ def bbox_size(obj):
     return (max(xs) - min(xs), max(ys) - min(ys), max(zs) - min(zs))
 
 
-# Classify: gem is the piece with highest Z center; letters are at lower Z ---
 parts_info = [(p, world_bbox_center(p), bbox_size(p)) for p in parts]
-# Sort by Z desc — first is the gem candidate
-parts_info.sort(key=lambda t: -t[1][2])
-gem_candidate = parts_info[0]
-letters_info = parts_info[1:]
-print(f"[split] gem candidate: {gem_candidate[0].name} center_z={gem_candidate[1][2]:.2f}", file=sys.stderr)
 
-# Merge i-dot into i-body: the two letter pieces closest in X that aren't wide
-# heuristic: if two pieces have centers within 0.08 units on X AND their widths
-# are both < 0.2, they're the i-body + i-dot
-letters_info.sort(key=lambda t: t[1][0])  # sort left-to-right by x
-merged: list[tuple] = []
-skip_next = False
-for i, (p, c, s) in enumerate(letters_info):
-    if skip_next:
-        skip_next = False
-        continue
-    if i + 1 < len(letters_info):
-        p2, c2, s2 = letters_info[i + 1]
-        if abs(c[0] - c2[0]) < 0.08 and s[0] < 0.20 and s2[0] < 0.20:
-            # merge p2 into p
-            print(f"[split] merging {p2.name} into {p.name} (i-dot + i-body)", file=sys.stderr)
-            bpy.ops.object.select_all(action="DESELECT")
-            p.select_set(True)
-            p2.select_set(True)
-            bpy.context.view_layer.objects.active = p
-            bpy.ops.object.join()
-            merged.append((p, world_bbox_center(p), bbox_size(p)))
-            skip_next = True
+# Two strategies:
+#   - few pieces (legacy low-poly): top-Z is gem, sort rest L→R, merge i-dot
+#   - many pieces (high-poly textured mesh shatters into hundreds of islands):
+#     bucket every piece by nearest letter-center on X; gem = anything above
+#     Z threshold; else assign to nearest letter bucket.
+USE_BUCKETS = len(parts_info) > 12
+
+LETTER_CENTERS_X = {"H": -0.76, "A": -0.33, "I": -0.02, "M": 0.32, "_8": 0.78}
+GEM_Z_THRESHOLD = 0.15  # anything with center_z > this is gem material
+
+def join_objects(objs):
+    if not objs:
+        return None
+    bpy.ops.object.select_all(action="DESELECT")
+    primary = objs[0]
+    for o in objs:
+        o.select_set(True)
+    bpy.context.view_layer.objects.active = primary
+    if len(objs) > 1:
+        bpy.ops.object.join()
+    return primary
+
+if USE_BUCKETS:
+    print(f"[split] >12 parts ({len(parts_info)}) — using X-bucket strategy", file=sys.stderr)
+    buckets: dict[str, list] = {k: [] for k in LETTER_CENTERS_X}
+    gem_pieces: list = []
+    for p, c, _ in parts_info:
+        if c[2] > GEM_Z_THRESHOLD:
+            gem_pieces.append(p)
             continue
-    merged.append((p, c, s))
-
-print(f"[split] after merge: {len(merged)} letter pieces (expect 5)", file=sys.stderr)
-
-letter_names = ["H", "A", "I", "M", "_8"]
-if len(merged) != 5:
-    print(f"[split] WARNING: got {len(merged)} pieces, not 5 — naming by index anyway", file=sys.stderr)
-    letter_names = letter_names[: len(merged)]
-
-# Rename letters
-for (p, c, s), name in zip(merged, letter_names):
-    print(f"[split] {p.name} → {name}  center_x={c[0]:.2f} w={s[0]:.2f}", file=sys.stderr)
-    p.name = name
-    p.data.name = name + "_mesh"
-
-# Rename gem
-gem_candidate[0].name = "Gem"
-gem_candidate[0].data.name = "Gem_mesh"
+        nearest = min(LETTER_CENTERS_X, key=lambda k: abs(c[0] - LETTER_CENTERS_X[k]))
+        buckets[nearest].append(p)
+    for k, lst in buckets.items():
+        print(f"[split] bucket {k}: {len(lst)} pieces", file=sys.stderr)
+    print(f"[split] gem pieces (z>{GEM_Z_THRESHOLD}): {len(gem_pieces)}", file=sys.stderr)
+    merged = []
+    for letter_name in ["H", "A", "I", "M", "_8"]:
+        joined = join_objects(buckets[letter_name])
+        if joined:
+            joined.name = letter_name
+            joined.data.name = letter_name + "_mesh"
+            merged.append((joined, world_bbox_center(joined), bbox_size(joined)))
+    gem_obj = join_objects(gem_pieces)
+    if gem_obj:
+        gem_obj.name = "Gem"
+        gem_obj.data.name = "Gem_mesh"
+    gem_candidate = (gem_obj, world_bbox_center(gem_obj) if gem_obj else (0, 0, 0), bbox_size(gem_obj) if gem_obj else (0, 0, 0))
+else:
+    parts_info.sort(key=lambda t: -t[1][2])
+    gem_candidate = parts_info[0]
+    letters_info = parts_info[1:]
+    print(f"[split] gem candidate: {gem_candidate[0].name} center_z={gem_candidate[1][2]:.2f}", file=sys.stderr)
+    letters_info.sort(key=lambda t: t[1][0])
+    merged = []
+    skip_next = False
+    for i, (p, c, s) in enumerate(letters_info):
+        if skip_next:
+            skip_next = False
+            continue
+        if i + 1 < len(letters_info):
+            p2, c2, s2 = letters_info[i + 1]
+            if abs(c[0] - c2[0]) < 0.08 and s[0] < 0.20 and s2[0] < 0.20:
+                print(f"[split] merging {p2.name} into {p.name} (i-dot + i-body)", file=sys.stderr)
+                bpy.ops.object.select_all(action="DESELECT")
+                p.select_set(True)
+                p2.select_set(True)
+                bpy.context.view_layer.objects.active = p
+                bpy.ops.object.join()
+                merged.append((p, world_bbox_center(p), bbox_size(p)))
+                skip_next = True
+                continue
+        merged.append((p, c, s))
+    letter_names = ["H", "A", "I", "M", "_8"]
+    if len(merged) != 5:
+        print(f"[split] WARNING: got {len(merged)} pieces, not 5 — naming by index anyway", file=sys.stderr)
+        letter_names = letter_names[: len(merged)]
+    for (p, c, s), name in zip(merged, letter_names):
+        print(f"[split] {p.name} → {name}  center_x={c[0]:.2f} w={s[0]:.2f}", file=sys.stderr)
+        p.name = name
+        p.data.name = name + "_mesh"
+    gem_candidate[0].name = "Gem"
+    gem_candidate[0].data.name = "Gem_mesh"
 
 # Clean up: decimate, shade smooth, center origin --------------------------
 for obj in bpy.data.objects:
@@ -158,17 +194,18 @@ for obj in bpy.data.objects:
     for poly in obj.data.polygons:
         poly.use_smooth = True
 
-# Strip materials — R3F applies glass at runtime
-for obj in bpy.data.objects:
-    if obj.type == "MESH":
-        obj.data.materials.clear()
+if not KEEP_MATERIALS:
+    for obj in bpy.data.objects:
+        if obj.type == "MESH":
+            obj.data.materials.clear()
 
 # Export --------------------------------------------------------------------
-print(f"[split] exporting {OUT}", file=sys.stderr)
+print(f"[split] exporting {OUT} (keep_materials={KEEP_MATERIALS})", file=sys.stderr)
 bpy.ops.export_scene.gltf(
     filepath=OUT,
     export_format="GLB",
-    export_materials="NONE",
+    export_materials="EXPORT" if KEEP_MATERIALS else "NONE",
+    export_image_format="AUTO" if KEEP_MATERIALS else "NONE",
     export_apply=True,
     export_yup=True,
     use_selection=False,

@@ -83,19 +83,26 @@ export function HAIM8Logo() {
   // Cached DOM anchors: looked up once on mount, rect refreshed on scroll/resize.
   const anchors = useRef<Map<string, { el: HTMLElement; rect: DOMRect }>>(new Map());
 
-  const geometries = useMemo(() => {
-    const map: Partial<Record<LetterId, THREE.BufferGeometry>> = {};
+  const { geometries, materials } = useMemo(() => {
+    const geomMap: Partial<Record<LetterId, THREE.BufferGeometry>> = {};
+    const matMap: Partial<Record<LetterId, THREE.Material>> = {};
     const pos: Partial<Record<LetterId, THREE.Vector3>> = {};
     gltf.scene.traverse((obj) => {
       const mesh = obj as THREE.Mesh;
       if (!mesh.isMesh) return;
       const id = mesh.name as LetterId;
       if (!LETTER_IDS.includes(id)) return;
-      map[id] = mesh.geometry;
+      geomMap[id] = mesh.geometry;
+      // Clone the baked material so we can mutate opacity per-letter without
+      // affecting other meshes that share it.
+      const src = mesh.material as THREE.Material;
+      const cloned = src.clone();
+      cloned.transparent = true;
+      matMap[id] = cloned;
       pos[id] = new THREE.Vector3().copy(mesh.position);
     });
     restPositions.current = pos as Record<LetterId, THREE.Vector3>;
-    return map;
+    return { geometries: geomMap, materials: matMap };
   }, [gltf]);
 
   // Build the anchor cache + keep rects fresh on scroll/resize.
@@ -217,8 +224,8 @@ export function HAIM8Logo() {
       mesh.scale.setScalar(lerp(mesh.scale.x, targetScale, dampScale));
 
       const fade = 1 - smoothstep(plan.fadeStart, plan.fadeStart + 0.08, progress);
-      const mat = mesh.material as THREE.MeshPhysicalMaterial;
-      if (mat && 'opacity' in mat) {
+      const mat = mesh.material as THREE.Material & { opacity?: number };
+      if (mat && 'opacity' in mat && typeof mat.opacity === 'number') {
         mat.opacity = lerp(mat.opacity, fade, dampOpacity);
       }
     }
@@ -240,7 +247,8 @@ export function HAIM8Logo() {
     <group ref={groupRef} position={[0, 0, 0]}>
       {LETTERS.map((plan) => {
         const geom = geometries[plan.id];
-        if (!geom) return null;
+        const mat = materials[plan.id];
+        if (!geom || !mat) return null;
         return (
           <mesh
             key={plan.id}
@@ -248,29 +256,10 @@ export function HAIM8Logo() {
               meshRefs.current[plan.id] = el;
             }}
             geometry={geom}
+            material={mat}
             position={restPositions.current[plan.id]?.clone().multiplyScalar(HERO_SCALE) ?? [0, 0, 0]}
             scale={HERO_SCALE}
-          >
-            <meshPhysicalMaterial
-              color={plan.tint}
-              transmission={plan.frosted ? 0.78 : 0.95}
-              thickness={plan.frosted ? 1.6 : 1.2}
-              roughness={plan.frosted ? 0.12 : 0.04}
-              ior={1.55}
-              clearcoat={1}
-              clearcoatRoughness={0.03}
-              iridescence={plan.frosted ? 0.45 : 0.85}
-              iridescenceIOR={1.35}
-              iridescenceThicknessRange={[180, 640]}
-              metalness={0.02}
-              attenuationColor={plan.frosted ? '#cfe0ff' : BRAND.vision}
-              attenuationDistance={plan.frosted ? 2.2 : 1.4}
-              envMapIntensity={plan.frosted ? 1.6 : 2.0}
-              emissive={plan.frosted ? '#000000' : plan.tint}
-              emissiveIntensity={plan.id === 'Gem' ? 0.65 : plan.frosted ? 0 : 0.35}
-              transparent
-            />
-          </mesh>
+          />
         );
       })}
     </group>

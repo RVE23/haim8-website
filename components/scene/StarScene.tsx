@@ -10,12 +10,12 @@ export function StarScene() {
       style={{ zIndex: 5 }}
       aria-hidden="true"
     >
-      {/* Soft radial backdrop gives the glass something brighter to refract */}
+      {/* Faint radial wash — barely there, just to lift the surroundings */}
       <div
         className="pointer-events-none absolute inset-0"
         style={{
           background:
-            'radial-gradient(60% 50% at 50% 42%, rgba(120,160,255,0.22) 0%, rgba(80,90,200,0.10) 35%, rgba(0,0,0,0) 70%)',
+            'radial-gradient(120% 90% at 50% 42%, rgba(120,160,255,0.10) 0%, rgba(80,90,200,0.04) 40%, rgba(0,0,0,0) 75%)',
         }}
       />
       <Canvas
@@ -24,25 +24,18 @@ export function StarScene() {
         gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
         style={{ cursor: 'grab' }}
       >
-        <ambientLight intensity={0.45} />
-        <directionalLight
-          position={[5, 6, 6]}
-          intensity={2.6}
-          color="#9bd0ff"
-        />
-        <directionalLight
-          position={[-6, -3, 4]}
-          intensity={1.4}
-          color="#c98bff"
-        />
-        <pointLight position={[0, 0, 3]} intensity={0.9} color="#ffffff" />
-        <Environment preset="studio" background={false} environmentIntensity={1.2} />
+        {/* Light setup is gentle — the GLB textures bake their own iridescence
+            and emissive, so we just lift shadows with a soft fill. */}
+        <ambientLight intensity={0.25} />
+        <directionalLight position={[5, 6, 6]} intensity={0.7} color="#bcd6ff" />
+        <directionalLight position={[-6, -3, 4]} intensity={0.4} color="#c98bff" />
+        <Environment preset="studio" background={false} environmentIntensity={0.5} />
         <HAIM8Logo />
         <EffectComposer multisampling={0}>
           <Bloom
-            intensity={0.85}
-            luminanceThreshold={0.55}
-            luminanceSmoothing={0.25}
+            intensity={0.35}
+            luminanceThreshold={0.78}
+            luminanceSmoothing={0.4}
             mipmapBlur
           />
         </EffectComposer>
