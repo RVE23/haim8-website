@@ -266,6 +266,8 @@ export function HAIM8Logo() {
               attenuationColor={plan.frosted ? '#cfe0ff' : BRAND.vision}
               attenuationDistance={plan.frosted ? 2.2 : 1.4}
               envMapIntensity={plan.frosted ? 1.6 : 2.0}
+              emissive={plan.frosted ? '#000000' : plan.tint}
+              emissiveIntensity={plan.id === 'Gem' ? 0.65 : plan.frosted ? 0 : 0.35}
               transparent
             />
           </mesh>

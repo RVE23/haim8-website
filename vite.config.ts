@@ -16,5 +16,15 @@ export default defineConfig({
       'figma:asset/1d9fc503bd80f5bcda39ece8d10000f122059fe7.png': path.resolve(__dirname, './src/assets/1d9fc503bd80f5bcda39ece8d10000f122059fe7.png'),
       'figma:asset/184fb38bf88a8706b48c3032fcd905cef28d0393.png': path.resolve(__dirname, './src/assets/184fb38bf88a8706b48c3032fcd905cef28d0393.png'),
     },
+    dedupe: ['react', 'react-dom', 'three', '@react-three/fiber'],
+  },
+  optimizeDeps: {
+    include: [
+      '@react-three/fiber',
+      '@react-three/drei',
+      '@react-three/postprocessing',
+      'postprocessing',
+      'three',
+    ],
   },
 });
