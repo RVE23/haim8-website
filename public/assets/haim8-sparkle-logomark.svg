@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="256" height="256" viewBox="0 0 256 256">
+  <title>HAIM8 sparkle logomark</title>
+  <defs>
+    <clipPath id="h8-sparkle-clip">
+      <rect x="24" y="24" width="208" height="208" rx="8"></rect>
+    </clipPath>
+  </defs>
+  <g clip-path="url(#h8-sparkle-clip)">
+    <image x="-422.59" y="24.00" width="1069.36" height="461.27"></image>
+  </g>
+</svg>

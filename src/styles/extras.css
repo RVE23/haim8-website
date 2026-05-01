@@ -1,0 +1,218 @@
+/* HAIM8 v2 — additions on top of site.css.
+   Owns: scroll indicator, cosmic-backdrop pacing overrides, motion helpers,
+   page-transition primitives. Imported AFTER site.css in App.jsx, so any
+   selectors here override the site.css defaults at equal specificity. */
+
+/* ─── Scroll indicator (bottom of hero) ─────────────────────────── */
+/* Outer wrapper owns absolute positioning + horizontal centering so motion's
+   animated transform on the inner button doesn't clobber translateX(-50%). */
+.hero__scroll-wrap {
+  position: absolute;
+  left: 50%;
+  bottom: clamp(28px, 6vh, 56px);
+  transform: translateX(-50%);
+  z-index: 2;
+  pointer-events: auto;
+}
+
+.hero__scroll {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  appearance: none;
+  border: 0;
+  background: transparent;
+  padding: 8px 12px;
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.55);
+  transition: color 200ms var(--h8-ease-out);
+}
+.hero__scroll:hover { color: rgba(255, 255, 255, 0.85); }
+.hero__scroll:focus-visible {
+  outline: 2px solid var(--h8-blue-50);
+  outline-offset: 4px;
+  border-radius: 6px;
+}
+
+.hero__scroll-label {
+  font-family: var(--h8-font-display);
+  font-size: 11px;
+  font-weight: var(--h8-weight-medium);
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: inherit;
+}
+
+.hero__scroll-line {
+  display: block;
+  width: 1px;
+  height: 56px;
+  background: var(--h8-text-gradient);
+  border-radius: 1px;
+  /* faint glow that picks up the brand gradient */
+  box-shadow: 0 0 12px rgba(0, 128, 228, 0.35);
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero__scroll-line { animation: none !important; }
+}
+
+/* ─── Hero — let the scroll indicator be absolutely positioned ─── */
+.hero { position: relative; }
+
+/* ─── Cosmic backdrop — sparser, more lifelike pacing ─────────── */
+/* The prototype's defaults sync up too quickly (a shooting star every 9s,
+   flares pulsing every 5–7s in lockstep). Below we stretch every cycle and
+   stagger them with prime-ish offsets so visible motion stays sporadic. */
+
+/* Shooting stars — primary every ~32s, alt every ~47s with a long lead.
+   Keyframes only spend ~5% of the cycle drawing the streak; the rest is dead
+   air, which is what reads as "occasional" rather than "looping". */
+.hero-cosmos__shoot {
+  animation: heroShootSporadic 32s linear infinite;
+}
+.hero-cosmos__shoot--alt {
+  animation: heroShootSporadicAlt 47s linear 12s infinite;
+}
+
+@keyframes heroShootSporadic {
+  0%   { transform: translate(0, 0) rotate(-18deg); opacity: 0; }
+  1%   { opacity: 1; }
+  5%   { transform: translate(120vw, 35vh) rotate(-18deg); opacity: 0; }
+  100% { transform: translate(120vw, 35vh) rotate(-18deg); opacity: 0; }
+}
+@keyframes heroShootSporadicAlt {
+  0%   { transform: translate(0, 0) rotate(-22deg); opacity: 0; }
+  1%   { opacity: 0.95; }
+  4%   { transform: translate(120vw, 30vh) rotate(-22deg); opacity: 0; }
+  100% { transform: translate(120vw, 30vh) rotate(-22deg); opacity: 0; }
+}
+
+/* Flares — slow them down significantly and de-sync. Prime-ish durations
+   (13/17/19/23/29s) avoid synchronization between neighbouring flares. */
+.hero-cosmos__flare--lg     { animation-duration: 17s; }
+.hero-cosmos__flare--lg2    { animation-duration: 23s; animation-delay: 3.5s; }
+.hero-cosmos__flare--md     { animation-duration: 19s; animation-delay: 1.7s; }
+.hero-cosmos__flare--sm     { animation-duration: 13s; }
+.hero-cosmos__flare--sm2    { animation-duration: 14s; animation-delay: 2.3s; }
+.hero-cosmos__flare--sm3    { animation-duration: 16s; animation-delay: 5.1s; }
+.hero-cosmos__flare--corner { animation-duration: 21s; animation-delay: 4.2s; }
+.hero-cosmos__flare--corner2 { animation-duration: 29s; animation-delay: 6.7s; }
+
+/* Stars twinkle — extend so the field doesn't look like a strobe. */
+.hero-cosmos__stars        { animation-duration: 14s; }
+.hero-cosmos__stars--mid   { animation-duration: 19s; animation-delay: 2.8s; }
+
+/* Nebula — give it a very slow drift so the gradient backdrop isn't static. */
+.hero-cosmos__nebula {
+  animation: heroNebulaDrift 60s ease-in-out infinite alternate;
+  will-change: transform, opacity;
+}
+@keyframes heroNebulaDrift {
+  0%   { transform: translate(0, 0) scale(1);     opacity: 0.85; }
+  50%  { transform: translate(-1.5%, 1%) scale(1.04); opacity: 1; }
+  100% { transform: translate(1%, -1%) scale(1.02);   opacity: 0.9; }
+}
+
+/* Glow blobs in the hero — give them a long-period drift so they don't sit
+   stone-still while everything else moves. */
+.hero .glow-blob {
+  animation: heroBlobDrift 38s ease-in-out infinite alternate;
+}
+.hero .glow-blob.b2 { animation-duration: 53s; animation-delay: 4s; }
+.hero .glow-blob.b3 { animation-duration: 47s; animation-delay: 9s; }
+@keyframes heroBlobDrift {
+  0%   { transform: translate(0, 0) scale(1); }
+  50%  { transform: translate(2%, -1.5%) scale(1.05); }
+  100% { transform: translate(-1.5%, 1%) scale(0.97); }
+}
+
+/* ─── Reveal helpers — used as a fallback/utility outside motion ─ */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition:
+    opacity var(--h8-duration-slow) var(--h8-ease-out),
+    transform var(--h8-duration-slow) var(--h8-ease-out);
+}
+.reveal--in {
+  opacity: 1;
+  transform: none;
+}
+
+/* ─── Theme color transition (covers light/dark toggle) ────────── */
+:root, body {
+  transition: background-color 240ms var(--h8-ease-out), color 240ms var(--h8-ease-out);
+}
+
+/* ─── Values section — clean v2-aligned styling ─────────────────── */
+.values-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(16px, 2vw, 24px);
+  margin-top: 48px;
+}
+@media (max-width: 900px) {
+  .values-grid { grid-template-columns: 1fr; }
+}
+.values-card {
+  position: relative;
+  padding: 32px 28px;
+  border-radius: var(--h8-radius-md);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+}
+.values-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(60% 80% at 0% 0%, rgba(0,128,228,0.10), transparent 70%);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 240ms var(--h8-ease-out);
+}
+.values-card:hover::before { opacity: 1; }
+.values-card__num {
+  font-family: var(--h8-font-mono);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.45);
+  margin-bottom: 14px;
+  display: block;
+}
+.values-card__title {
+  font-family: var(--h8-font-display);
+  font-size: 32px;
+  font-weight: var(--h8-weight-medium);
+  letter-spacing: -0.02em;
+  color: var(--h8-white);
+  margin: 0 0 12px;
+  line-height: 1.05;
+}
+.values-card__title em {
+  font-style: normal;
+  background: var(--h8-text-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.values-card__copy {
+  font-family: var(--h8-font-body);
+  font-size: 15px;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.72);
+  margin: 0;
+}
+
+/* ─── Honor reduced-motion globally for safety ─────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
