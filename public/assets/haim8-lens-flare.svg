@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" width="600" height="600" role="img" aria-label="HAIM8 lens flare">
+  <defs>
+    <radialGradient id="flare-core" cx="50%" cy="50%" r="20%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="1"></stop>
+      <stop offset="35%" stop-color="#66B0EE" stop-opacity="0.7"></stop>
+      <stop offset="100%" stop-color="#0080E4" stop-opacity="0"></stop>
+    </radialGradient>
+    <radialGradient id="flare-halo" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#0080E4" stop-opacity="0.35"></stop>
+      <stop offset="40%" stop-color="#7D41B9" stop-opacity="0.18"></stop>
+      <stop offset="100%" stop-color="#0A1628" stop-opacity="0"></stop>
+    </radialGradient>
+    <linearGradient id="flare-streak-h" x1="0%" y1="50%" x2="100%" y2="50%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0"></stop>
+      <stop offset="48%" stop-color="#ffffff" stop-opacity="0.9"></stop>
+      <stop offset="52%" stop-color="#ffffff" stop-opacity="0.9"></stop>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"></stop>
+    </linearGradient>
+    <linearGradient id="flare-streak-v" x1="50%" y1="0%" x2="50%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0"></stop>
+      <stop offset="48%" stop-color="#ffffff" stop-opacity="0.7"></stop>
+      <stop offset="52%" stop-color="#ffffff" stop-opacity="0.7"></stop>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"></stop>
+    </linearGradient>
+    <filter id="flare-blur" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="2"></feGaussianBlur>
+    </filter>
+  </defs>
+  
+  <circle cx="300" cy="300" r="290" fill="url(#flare-halo)"></circle>
+  
+  <g filter="url(#flare-blur)" opacity="0.85">
+    <rect x="20" y="297" width="560" height="6" fill="url(#flare-streak-h)"></rect>
+    <rect x="297" y="60" width="6" height="480" fill="url(#flare-streak-v)"></rect>
+  </g>
+  
+  <circle cx="420" cy="220" r="10" fill="#7D41B9" opacity="0.35"></circle>
+  <circle cx="180" cy="400" r="7" fill="#0080E4" opacity="0.45"></circle>
+  <circle cx="460" cy="380" r="5" fill="#66B0EE" opacity="0.55"></circle>
+  
+  <circle cx="300" cy="300" r="120" fill="url(#flare-core)"></circle>
+  <circle cx="300" cy="300" r="8" fill="#ffffff"></circle>
+</svg>

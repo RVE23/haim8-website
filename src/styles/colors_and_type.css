@@ -1,0 +1,325 @@
+/*
+ * HAIM8 Brand Pack
+ * colors_and_type.css — Design Tokens
+ *
+ * Palette, tints, gradient/glow/mesh system, type scale, spacing,
+ * radius, shadow, and motion tokens.
+ *
+ * Typography: Sora (display) + Inter (body) + JetBrains Mono (code),
+ * all via Google Fonts. No proprietary typeface required.
+ */
+
+/* ─── FONT IMPORT ──────────────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@300;500;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+
+/* ─── COLOR TOKENS ─────────────────────────────────────────────── */
+:root {
+  /* ── Core HAIM8 palette (canonical — the only hues allowed) ── */
+  --h8-white:           #FEFEFE;   /* Pure White — canvas, ≥60% of compositions */
+  --h8-light-grey:      #E8E8E9;   /* Light Grey — neutral base, dividers */
+  --h8-electric-blue:   #0080E4;   /* Electric Blue — primary accent, CTAs, brand signature */
+  --h8-steel-grey:      #969AA2;   /* Steel Grey — body text, secondary neutral */
+  --h8-graphite-grey:   #6B6F7B;   /* Graphite Grey — emphasis, authoritative neutral */
+  --h8-vision-purple:   #7D41B9;   /* Vision Purple — emotional accent, max 10% */
+  --h8-navy:            #0A1628;   /* Deep Navy — dark-theme background */
+
+  /* ── Electric Blue tints ── */
+  --h8-blue-10:         #E5F2FD;
+  --h8-blue-20:         #B8DCF8;
+  --h8-blue-50:         #66B0EE;
+  --h8-blue-70:         #338FE8;
+  --h8-blue-90:         #0673CD;
+
+  /* ── Vision Purple tints ── */
+  --h8-purple-10:       #F0E8F8;
+  --h8-purple-20:       #D6C0EA;
+  --h8-purple-50:       #AE80D0;
+  --h8-purple-70:       #9560C2;
+  --h8-purple-90:       #6A37A0;
+
+  /* ── Navy tints ── */
+  --h8-navy-10:         #1A2A44;
+  --h8-navy-30:         #273856;
+  --h8-navy-60:         #4F5E78;
+  --h8-navy-80:         #8693A8;
+
+  /* ── Semantic layer ── */
+  --h8-risk:            #D64545;   /* Warm, muted red — NOT poppy */
+  --h8-risk-soft:       rgba(214, 69, 69, 0.10);
+  --h8-success:         #1F9D6B;   /* Modern green */
+  --h8-success-soft:    rgba(31, 157, 107, 0.10);
+  --h8-warning:         #E8A33D;   /* Amber */
+  --h8-warning-soft:    rgba(232, 163, 61, 0.12);
+  --h8-info:            var(--h8-electric-blue);
+
+  /* ── Semantic surface/text ── */
+  --h8-bg-light:        var(--h8-white);
+  --h8-bg-dark:         var(--h8-navy);
+  --h8-surface:         var(--h8-white);
+  --h8-surface-soft:    var(--h8-light-grey);
+  --h8-text-primary:    var(--h8-navy);
+  --h8-text-secondary:  var(--h8-graphite-grey);
+  --h8-text-muted:      var(--h8-steel-grey);
+  --h8-text-on-dark:    var(--h8-white);
+  --h8-text-accent:     var(--h8-electric-blue);
+  --h8-border:          rgba(10, 22, 40, 0.10);
+  --h8-border-strong:   var(--h8-electric-blue);
+  --h8-border-dark:     rgba(255, 255, 255, 0.14);
+
+  /* ─── GRADIENT / GLOW / MESH / AURORA SYSTEM ──────────────────
+   * HAIM8's signature — gradients are AMBIENT, not structural.
+   * They live behind glass, always softly. Every hero, section
+   * break and premium surface has aurora behind it; body content
+   * uses a subtle version.
+   * ─────────────────────────────────────────────────────────── */
+
+  /* Ambient auroras — hero / title / section-break backgrounds */
+  --h8-aurora-primary:
+    radial-gradient(60% 50% at 20% 10%, rgba(0,128,228,0.35) 0%, transparent 60%),
+    radial-gradient(55% 45% at 85% 30%, rgba(125,65,185,0.30) 0%, transparent 65%),
+    radial-gradient(70% 60% at 50% 110%, rgba(0,128,228,0.20) 0%, transparent 60%),
+    #0A1628;
+
+  --h8-aurora-light:
+    radial-gradient(65% 55% at 15% 15%, rgba(0,128,228,0.18) 0%, transparent 60%),
+    radial-gradient(55% 50% at 85% 25%, rgba(125,65,185,0.15) 0%, transparent 60%),
+    #FEFEFE;
+
+  --h8-aurora-subtle:
+    radial-gradient(70% 60% at 20% 10%, rgba(0,128,228,0.08) 0%, transparent 60%),
+    radial-gradient(60% 50% at 85% 30%, rgba(125,65,185,0.06) 0%, transparent 60%),
+    #FEFEFE;
+
+  /* Glass sheets — default surface for cards/tiles */
+  --h8-glass-light: linear-gradient(180deg, rgba(255,255,255,0.75) 0%, rgba(255,255,255,0.45) 100%);
+  --h8-glass-dark:  linear-gradient(180deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 100%);
+
+  /* Iridescent edge — gradient borders for premium surfaces */
+  --h8-edge-iridescent: linear-gradient(135deg, #0080E4 0%, #7D41B9 50%, #0080E4 100%);
+
+  /* Inner glows — behind KPI numbers, key figures, logomark */
+  --h8-glow-blue:    radial-gradient(ellipse 60% 60% at 50% 50%, rgba(0,128,228,0.35) 0%, transparent 70%);
+  --h8-glow-purple:  radial-gradient(ellipse 60% 60% at 50% 50%, rgba(125,65,185,0.30) 0%, transparent 70%);
+  --h8-glow-sparkle: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.95) 0%, rgba(0,128,228,0.55) 35%, transparent 70%);
+
+  /* Premium mesh — title slides */
+  --h8-mesh-premium:
+    conic-gradient(from 210deg at 30% 20%,
+      rgba(0,128,228,0.45),
+      rgba(125,65,185,0.30),
+      rgba(0,128,228,0.15),
+      rgba(10,22,40,0) 70%),
+    #0A1628;
+
+  /* Text gradient — HAIM8's emphasis fingerprint */
+  --h8-text-gradient: linear-gradient(180deg, #0080E4 0%, #7D41B9 100%);
+
+/* ─── TYPOGRAPHY TOKENS ────────────────────────────────────────── */
+  /* Families */
+  --h8-font-display: 'Sora', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --h8-font-body:    'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --h8-font-mono:    'JetBrains Mono', 'Fira Code', ui-monospace, monospace;
+
+  /* Modular scale — 1.333 ratio, base 16px */
+  --h8-text-caption:     12px;
+  --h8-text-body:        14px;
+  --h8-text-sm:          14px;
+  --h8-text-base:        16px;
+  --h8-text-h3:          18px;
+  --h8-text-h2:          24px;
+  --h8-text-h1:          32px;
+  --h8-text-display-sm:  42px;
+  --h8-text-display:     56px;
+  --h8-text-display-lg:  75px;
+
+  /* Promoted deck scale for 1920×1080 */
+  --h8-slide-display:    108px;
+  --h8-slide-title:      80px;
+  --h8-slide-h2:         56px;
+  --h8-slide-h3:         32px;
+  --h8-slide-body:       26px;
+  --h8-slide-small:      20px;
+  --h8-slide-eyebrow:    18px;
+  --h8-slide-metric:     120px;
+
+  /* Weights */
+  --h8-weight-light:      300;
+  --h8-weight-regular:    400;
+  --h8-weight-medium:     500;
+  --h8-weight-semibold:   600;
+  --h8-weight-bold:       700;
+
+  /* Line heights */
+  --h8-leading-tight:    1.05;
+  --h8-leading-snug:     1.2;
+  --h8-leading-normal:   1.45;
+  --h8-leading-relaxed:  1.65;
+
+  /* Letter spacing */
+  --h8-tracking-tight:   -0.03em;
+  --h8-tracking-normal:  -0.01em;
+  --h8-tracking-wide:     0.04em;
+  --h8-tracking-caps:     0.12em;
+
+/* ─── SPACING TOKENS ───────────────────────────────────────────── */
+  --h8-space-1:   4px;
+  --h8-space-2:   8px;
+  --h8-space-3:   12px;
+  --h8-space-4:   16px;
+  --h8-space-5:   20px;
+  --h8-space-6:   24px;
+  --h8-space-8:   32px;
+  --h8-space-10:  40px;
+  --h8-space-12:  48px;
+  --h8-space-16:  64px;
+  --h8-space-20:  80px;
+  --h8-space-24:  96px;
+
+/* ─── RADIUS — noticeably more generous than Docusign ──────────── */
+  --h8-radius-xs:    4px;    /* chips, tags */
+  --h8-radius-sm:    10px;   /* buttons */
+  --h8-radius-md:    16px;   /* cards */
+  --h8-radius-lg:    24px;   /* hero panels, featured surfaces */
+  --h8-radius-pill:  999px;
+
+/* ─── SHADOWS / ELEVATION (glass-aware, layered, with bloom) ───── */
+  /* Layered shadow — base, lift, coloured bloom */
+  --h8-shadow-1:
+    0 1px 2px rgba(10,22,40,0.04),
+    0 4px 12px rgba(10,22,40,0.06),
+    0 12px 32px rgba(0,128,228,0.06);
+
+  --h8-shadow-2:
+    0 1px 2px rgba(10,22,40,0.04),
+    0 8px 24px rgba(10,22,40,0.08),
+    0 24px 64px rgba(0,128,228,0.08);
+
+  --h8-shadow-3:
+    0 2px 4px rgba(10,22,40,0.06),
+    0 16px 40px rgba(10,22,40,0.12),
+    0 40px 96px rgba(0,128,228,0.14);
+
+  --h8-shadow-purple:
+    0 1px 2px rgba(10,22,40,0.04),
+    0 8px 24px rgba(10,22,40,0.08),
+    0 24px 64px rgba(125,65,185,0.12);
+
+  --h8-shadow-image: 0 20px 60px rgba(10,22,40,0.18), 0 8px 20px rgba(0,128,228,0.14);
+
+/* ─── MOTION ───────────────────────────────────────────────────── */
+  --h8-ease-out:    cubic-bezier(0.16, 1, 0.3, 1);       /* expo-out — entrances */
+  --h8-ease-inout:  cubic-bezier(0.4, 0.0, 0.2, 1);
+  --h8-duration-fast:   180ms;
+  --h8-duration-base:   320ms;
+  --h8-duration-slow:   520ms;
+}
+
+/* ─── SEMANTIC ELEMENT STYLES ──────────────────────────────────── */
+
+body {
+  font-family: var(--h8-font-body);
+  font-size: var(--h8-text-base);
+  font-weight: var(--h8-weight-regular);
+  line-height: var(--h8-leading-normal);
+  color: var(--h8-text-primary);
+  background: var(--h8-bg-light);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Display */
+.h8-display-lg {
+  font-family: var(--h8-font-display);
+  font-size: var(--h8-text-display-lg);
+  font-weight: var(--h8-weight-light);
+  line-height: var(--h8-leading-tight);
+  letter-spacing: var(--h8-tracking-tight);
+  color: var(--h8-text-primary);
+}
+.h8-display {
+  font-family: var(--h8-font-display);
+  font-size: var(--h8-text-display);
+  font-weight: var(--h8-weight-light);
+  line-height: var(--h8-leading-tight);
+  letter-spacing: var(--h8-tracking-tight);
+  color: var(--h8-text-primary);
+}
+.h8-display-sm {
+  font-family: var(--h8-font-display);
+  font-size: var(--h8-text-display-sm);
+  font-weight: var(--h8-weight-light);
+  line-height: var(--h8-leading-tight);
+  letter-spacing: var(--h8-tracking-tight);
+  color: var(--h8-text-primary);
+}
+
+/* Headings */
+h1, .h8-h1 {
+  font-family: var(--h8-font-display);
+  font-size: var(--h8-text-h1);
+  font-weight: var(--h8-weight-medium);
+  line-height: var(--h8-leading-snug);
+  letter-spacing: var(--h8-tracking-normal);
+  color: var(--h8-text-primary);
+}
+h2, .h8-h2 {
+  font-family: var(--h8-font-display);
+  font-size: var(--h8-text-h2);
+  font-weight: var(--h8-weight-medium);
+  line-height: var(--h8-leading-snug);
+  color: var(--h8-text-primary);
+}
+h3, .h8-h3 {
+  font-family: var(--h8-font-display);
+  font-size: var(--h8-text-h3);
+  font-weight: var(--h8-weight-medium);
+  line-height: var(--h8-leading-normal);
+  color: var(--h8-text-primary);
+}
+
+/* Body */
+p, .h8-body {
+  font-family: var(--h8-font-body);
+  font-size: var(--h8-text-base);
+  font-weight: var(--h8-weight-regular);
+  line-height: var(--h8-leading-relaxed);
+  color: var(--h8-text-secondary);
+}
+.h8-body-sm {
+  font-family: var(--h8-font-body);
+  font-size: var(--h8-text-sm);
+  line-height: var(--h8-leading-normal);
+  color: var(--h8-text-secondary);
+}
+
+/* Labels / captions */
+.h8-label {
+  font-family: var(--h8-font-body);
+  font-size: var(--h8-text-caption);
+  font-weight: var(--h8-weight-semibold);
+  letter-spacing: var(--h8-tracking-caps);
+  text-transform: uppercase;
+  color: var(--h8-text-muted);
+}
+.h8-caption {
+  font-family: var(--h8-font-body);
+  font-size: var(--h8-text-caption);
+  color: var(--h8-text-muted);
+}
+
+/* HAIM8's signature emphasis — highlight one word in a display headline */
+.h8-emph, h1 em, h2 em, .h8-display em, .h8-display-lg em, .h8-display-sm em {
+  font-style: normal;
+  font-weight: var(--h8-weight-bold);
+  background: var(--h8-text-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  position: relative;
+}
+
+/* Mono */
+code, .h8-mono {
+  font-family: var(--h8-font-mono);
+  font-size: 0.92em;
+}

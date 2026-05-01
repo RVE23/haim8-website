@@ -1,0 +1,362 @@
+/*
+ * HAIM8 Brand Pack
+ * glass.css — The HAIM8 Glass Material Specification
+ *
+ * The signature "glossy transparent" aesthetic. Every card, tile,
+ * pill, button, slide panel and badge defaults to glass.
+ *
+ * Requires colors_and_type.css.
+ */
+
+/* ─── BASE GLASS SURFACE ───────────────────────────────────────── */
+/* Default light-theme glass — the default card background.         */
+.h8-glass {
+  position: relative;
+  background: var(--h8-glass-light), rgba(254, 254, 254, 0.55);
+  background-blend-mode: normal;
+  -webkit-backdrop-filter: blur(24px) saturate(160%);
+  backdrop-filter: blur(24px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.60);
+  border-radius: var(--h8-radius-md);
+  box-shadow:
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.90),
+    0 1px 2px rgba(10, 22, 40, 0.04),
+    0 8px 24px rgba(10, 22, 40, 0.08),
+    0 24px 64px rgba(0, 128, 228, 0.08);
+  color: var(--h8-text-primary);
+  transition:
+    transform var(--h8-duration-base) var(--h8-ease-out),
+    box-shadow var(--h8-duration-base) var(--h8-ease-out);
+}
+
+/* Dark-theme glass */
+.h8-glass.h8-on-dark,
+.on-dark .h8-glass {
+  background: var(--h8-glass-dark), rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow:
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.35),
+    0 1px 2px rgba(0, 0, 0, 0.20),
+    0 8px 24px rgba(0, 0, 0, 0.30),
+    0 24px 64px rgba(0, 128, 228, 0.14);
+  color: var(--h8-text-on-dark);
+}
+
+/* ─── PREMIUM GLASS — iridescent gradient edge ─────────────────── */
+.h8-glass-premium {
+  position: relative;
+  background: var(--h8-glass-light), rgba(254, 254, 254, 0.60);
+  -webkit-backdrop-filter: blur(28px) saturate(170%);
+  backdrop-filter: blur(28px) saturate(170%);
+  border-radius: var(--h8-radius-md);
+  box-shadow:
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.95),
+    0 1px 2px rgba(10, 22, 40, 0.04),
+    0 8px 24px rgba(10, 22, 40, 0.10),
+    0 24px 64px rgba(0, 128, 228, 0.12);
+  color: var(--h8-text-primary);
+  /* Iridescent gradient edge via layered background-clip */
+  border: 1px solid transparent;
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+  background-image:
+    linear-gradient(180deg, rgba(255,255,255,0.80) 0%, rgba(255,255,255,0.50) 100%),
+    linear-gradient(135deg, rgba(0,128,228,0.6) 0%, rgba(125,65,185,0.6) 50%, rgba(0,128,228,0.6) 100%);
+}
+
+.h8-glass-premium.h8-on-dark,
+.on-dark .h8-glass-premium {
+  background-image:
+    linear-gradient(180deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 100%),
+    linear-gradient(135deg, rgba(0,128,228,0.7) 0%, rgba(125,65,185,0.7) 50%, rgba(0,128,228,0.7) 100%);
+  box-shadow:
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.35),
+    0 1px 2px rgba(0, 0, 0, 0.20),
+    0 16px 40px rgba(0, 0, 0, 0.35),
+    0 32px 80px rgba(0, 128, 228, 0.22);
+  color: var(--h8-text-on-dark);
+}
+
+/* ─── GLASS HOVER — specular lift ──────────────────────────────── */
+.h8-glass:hover,
+.h8-glass-premium:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    inset 0 1px 0 0 rgba(255, 255, 255, 1),
+    0 2px 4px rgba(10, 22, 40, 0.06),
+    0 16px 40px rgba(10, 22, 40, 0.12),
+    0 40px 96px rgba(0, 128, 228, 0.16);
+}
+.h8-glass.h8-on-dark:hover,
+.on-dark .h8-glass:hover {
+  box-shadow:
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.50),
+    0 2px 4px rgba(0, 0, 0, 0.25),
+    0 16px 40px rgba(0, 0, 0, 0.40),
+    0 40px 96px rgba(0, 128, 228, 0.22);
+}
+
+/* ─── PILL / BADGE / CHIP ──────────────────────────────────────── */
+.h8-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--h8-space-2);
+  padding: 6px 14px;
+  border-radius: var(--h8-radius-pill);
+  font-family: var(--h8-font-body);
+  font-size: var(--h8-text-sm);
+  font-weight: var(--h8-weight-medium);
+  background: rgba(254, 254, 254, 0.60);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  backdrop-filter: blur(20px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.60);
+  box-shadow: inset 0 1px 0 0 rgba(255,255,255,0.9), 0 4px 12px rgba(10,22,40,0.06);
+  color: var(--h8-text-primary);
+}
+.h8-pill.h8-on-dark,
+.on-dark .h8-pill {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.16);
+  box-shadow: inset 0 1px 0 0 rgba(255,255,255,0.28), 0 4px 12px rgba(0,0,0,0.20);
+  color: var(--h8-white);
+}
+
+.h8-pill--blue    { color: var(--h8-electric-blue); background: rgba(0,128,228,0.10); border-color: rgba(0,128,228,0.25); }
+.h8-pill--purple  { color: var(--h8-vision-purple); background: rgba(125,65,185,0.10); border-color: rgba(125,65,185,0.25); }
+.h8-pill--risk    { color: var(--h8-risk); background: var(--h8-risk-soft); border-color: rgba(214,69,69,0.22); }
+.h8-pill--success { color: var(--h8-success); background: var(--h8-success-soft); border-color: rgba(31,157,107,0.22); }
+.h8-pill--warning { color: #A5741E; background: var(--h8-warning-soft); border-color: rgba(232,163,61,0.30); }
+
+/* ─── BUTTON ───────────────────────────────────────────────────── */
+.h8-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--h8-space-2);
+  padding: 12px 22px;
+  border-radius: var(--h8-radius-sm);
+  font-family: var(--h8-font-body);
+  font-size: var(--h8-text-sm);
+  font-weight: var(--h8-weight-semibold);
+  letter-spacing: -0.005em;
+  cursor: pointer;
+  text-decoration: none;
+  border: 1px solid transparent;
+  transition:
+    transform var(--h8-duration-fast) var(--h8-ease-out),
+    box-shadow var(--h8-duration-base) var(--h8-ease-out),
+    background var(--h8-duration-base) var(--h8-ease-out);
+}
+.h8-btn:active { transform: translateY(1px) scale(0.98); }
+
+/* Primary — solid electric blue with inner sheen */
+.h8-btn--primary {
+  background: linear-gradient(180deg, #1A94F0 0%, #0080E4 100%);
+  color: var(--h8-white);
+  box-shadow:
+    inset 0 1px 0 0 rgba(255,255,255,0.35),
+    0 1px 2px rgba(10,22,40,0.10),
+    0 8px 20px rgba(0,128,228,0.35);
+}
+.h8-btn--primary:hover {
+  transform: translateY(-1px);
+  box-shadow:
+    inset 0 1px 0 0 rgba(255,255,255,0.45),
+    0 2px 4px rgba(10,22,40,0.12),
+    0 12px 28px rgba(0,128,228,0.45);
+}
+
+/* Glass — the HAIM8 default */
+.h8-btn--glass {
+  background: rgba(254,254,254,0.60);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  backdrop-filter: blur(20px) saturate(160%);
+  border: 1px solid rgba(255,255,255,0.70);
+  color: var(--h8-text-primary);
+  box-shadow:
+    inset 0 1px 0 0 rgba(255,255,255,0.95),
+    0 4px 12px rgba(10,22,40,0.06),
+    0 12px 28px rgba(0,128,228,0.08);
+}
+.h8-btn--glass:hover {
+  transform: translateY(-1px);
+  background: rgba(254,254,254,0.75);
+  box-shadow:
+    inset 0 1px 0 0 rgba(255,255,255,1),
+    0 6px 16px rgba(10,22,40,0.10),
+    0 18px 40px rgba(0,128,228,0.14);
+}
+.h8-btn--glass.h8-on-dark,
+.on-dark .h8-btn--glass {
+  background: rgba(255,255,255,0.08);
+  border-color: rgba(255,255,255,0.18);
+  color: var(--h8-white);
+  box-shadow:
+    inset 0 1px 0 0 rgba(255,255,255,0.28),
+    0 4px 12px rgba(0,0,0,0.25),
+    0 12px 28px rgba(0,128,228,0.18);
+}
+
+/* Secondary — hairline blue, transparent */
+.h8-btn--secondary {
+  background: transparent;
+  color: var(--h8-electric-blue);
+  border: 1.5px solid rgba(0,128,228,0.45);
+}
+.h8-btn--secondary:hover {
+  background: rgba(0,128,228,0.08);
+  border-color: var(--h8-electric-blue);
+}
+
+/* Ghost — for embedded nav */
+.h8-btn--ghost {
+  background: transparent;
+  color: var(--h8-text-primary);
+  border: 1px solid transparent;
+}
+.h8-btn--ghost:hover {
+  background: rgba(10,22,40,0.04);
+}
+
+/* ─── ICON TILE — 48×48 frosted square with inner glow ────────── */
+.h8-icon-tile {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: var(--h8-radius-sm);
+  background:
+    var(--h8-glow-blue),
+    linear-gradient(180deg, rgba(255,255,255,0.75) 0%, rgba(255,255,255,0.35) 100%),
+    rgba(254,254,254,0.55);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  backdrop-filter: blur(20px) saturate(160%);
+  border: 1px solid rgba(255,255,255,0.65);
+  box-shadow:
+    inset 0 1px 0 0 rgba(255,255,255,0.95),
+    0 4px 12px rgba(0,128,228,0.14);
+  color: var(--h8-electric-blue);
+}
+.h8-icon-tile.h8-on-dark,
+.on-dark .h8-icon-tile {
+  background:
+    var(--h8-glow-blue),
+    linear-gradient(180deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 100%),
+    rgba(255,255,255,0.06);
+  border-color: rgba(255,255,255,0.18);
+  box-shadow:
+    inset 0 1px 0 0 rgba(255,255,255,0.35),
+    0 4px 12px rgba(0,128,228,0.25);
+  color: var(--h8-white);
+}
+
+/* ─── THE LENS — signature HAIM8 motif ─────────────────────────── */
+/* Three overlapping glass circles; use as a decorative background  */
+/* on title / section-break slides only. Represents clarity.        */
+.h8-lens {
+  position: relative;
+  width: 520px;
+  height: 360px;
+  pointer-events: none;
+}
+.h8-lens::before,
+.h8-lens::after,
+.h8-lens > .h8-lens-core {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  -webkit-backdrop-filter: blur(22px) saturate(160%);
+  backdrop-filter: blur(22px) saturate(160%);
+  border: 1px solid rgba(255,255,255,0.22);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.35), 0 20px 60px rgba(0,128,228,0.20);
+}
+.h8-lens::before {
+  left: 0; top: 40px;
+  width: 280px; height: 280px;
+  background:
+    radial-gradient(circle at 30% 25%, rgba(0,128,228,0.40), rgba(0,128,228,0.08) 55%, transparent 75%),
+    rgba(255,255,255,0.06);
+}
+.h8-lens > .h8-lens-core {
+  left: 140px; top: 0;
+  width: 300px; height: 300px;
+  background:
+    radial-gradient(circle at 40% 30%, rgba(255,255,255,0.45), rgba(255,255,255,0.10) 55%, transparent 75%),
+    rgba(255,255,255,0.08);
+}
+.h8-lens::after {
+  left: 260px; top: 60px;
+  width: 260px; height: 260px;
+  background:
+    radial-gradient(circle at 30% 30%, rgba(125,65,185,0.40), rgba(125,65,185,0.08) 55%, transparent 75%),
+    rgba(255,255,255,0.06);
+}
+
+/* ─── AURORA CANVAS HELPERS ────────────────────────────────────── */
+.h8-canvas-aurora-dark  { background: var(--h8-aurora-primary); color: var(--h8-white); }
+.h8-canvas-aurora-light { background: var(--h8-aurora-light); }
+.h8-canvas-aurora-subtle{ background: var(--h8-aurora-subtle); }
+.h8-canvas-mesh         { background: var(--h8-mesh-premium); color: var(--h8-white); }
+
+/* ─── IMAGE FRAME — radius + iridescent edge + bloom ───────────── */
+.h8-image-frame {
+  position: relative;
+  border-radius: 20px;
+  padding: 2px;
+  background: var(--h8-edge-iridescent);
+  box-shadow: var(--h8-shadow-image);
+}
+.h8-image-frame > * {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 18px;
+  overflow: hidden;
+}
+
+/* ─── KPI SURFACE — glass with glow behind the number ──────────── */
+.h8-kpi {
+  position: relative;
+  padding: 28px 32px;
+  border-radius: var(--h8-radius-md);
+  background: var(--h8-glass-light), rgba(254,254,254,0.55);
+  -webkit-backdrop-filter: blur(24px) saturate(160%);
+  backdrop-filter: blur(24px) saturate(160%);
+  border: 1px solid rgba(255,255,255,0.60);
+  box-shadow:
+    inset 0 1px 0 0 rgba(255,255,255,0.95),
+    0 8px 24px rgba(10,22,40,0.08),
+    0 24px 64px rgba(0,128,228,0.10);
+  overflow: hidden;
+}
+.h8-kpi::before {
+  content: '';
+  position: absolute;
+  inset: -20%;
+  background: var(--h8-glow-blue);
+  opacity: 0.75;
+  pointer-events: none;
+  z-index: 0;
+}
+.h8-kpi > * { position: relative; z-index: 1; }
+.h8-kpi__value {
+  font-family: var(--h8-font-display);
+  font-weight: var(--h8-weight-light);
+  font-size: 64px;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  background: var(--h8-text-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.h8-kpi__label {
+  font-family: var(--h8-font-body);
+  font-size: var(--h8-text-caption);
+  font-weight: var(--h8-weight-semibold);
+  letter-spacing: var(--h8-tracking-caps);
+  text-transform: uppercase;
+  color: var(--h8-text-muted);
+  margin-top: 8px;
+}
