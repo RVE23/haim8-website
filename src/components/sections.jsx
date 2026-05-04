@@ -196,7 +196,6 @@ export function Hero() {
         <div className="hero-cosmos__shoot hero-cosmos__shoot--alt"/>
         <div className="hero-cosmos__shoot hero-cosmos__shoot--v3"/>
         <div className="hero-cosmos__shoot hero-cosmos__shoot--v4"/>
-        <div className="hero-cosmos__shoot hero-cosmos__shoot--v5"/>
       </div>
       <div className="glow-blob b1"/><div className="glow-blob b2"/><div className="glow-blob b3"/>
 

@@ -327,7 +327,10 @@ a { color: inherit; text-decoration: none; }
   background-size: 100% 100%;
   background-repeat: no-repeat;
   opacity: 0.85;
-  animation: heroStarsTwinkle 6s ease-in-out infinite alternate;
+  /* fill-mode: backwards → during animation-delay (and at t=0 before paint),
+     element takes the keyframe-0 opacity (0.75) instead of the static 0.85.
+     Eliminates the visible snap on page load when the delay expires. */
+  animation: heroStarsTwinkle 6s linear infinite backwards;
 }
 
 /* Mid layer — smaller, dimmer, blue-white tint. Parallax: medium. Pulled back. */
@@ -349,7 +352,7 @@ a { color: inherit; text-decoration: none; }
     radial-gradient(1px 1px at 26% 4%, rgba(180,210,255,0.50), transparent 65%),
     radial-gradient(1px 1px at 60% 96%, rgba(200,220,255,0.55), transparent 65%);
   opacity: 0.60;
-  animation: heroStarsTwinkle 4.5s ease-in-out 0.5s infinite alternate;
+  animation: heroStarsTwinkle 4.5s linear 0.5s infinite backwards;
 }
 
 /* Far layer — sub-pixel, dim, dense. Parallax: least. Reads as deep field.
@@ -392,7 +395,7 @@ a { color: inherit; text-decoration: none; }
     radial-gradient(0.5px 0.5px at 65% 7%,  rgba(220,235,255,0.45), transparent 70%),
     radial-gradient(0.5px 0.5px at 77% 57%, rgba(255,255,255,0.50), transparent 70%);
   opacity: 0.28;
-  animation: heroStarsTwinkle 22s ease-in-out 1.4s infinite alternate;
+  animation: heroStarsTwinkle 22s linear 1.4s infinite backwards;
 }
 
 /* Milky Way — extremely subtle diagonal dust band. Pulled WAY back so it
@@ -416,9 +419,22 @@ a { color: inherit; text-decoration: none; }
   pointer-events: none;
 }
 
+/* Stars twinkle — true "breathing" curve. Approximates a cosine wave by
+   sampling 8 keyframe stops along it. With linear interpolation between
+   each pair, the result is a piecewise-linear sine: slope is gentle near
+   the peak (50%) and the trough (0/100%) so there's no v-shaped corner,
+   and steeper in the middle where the eye expects continuous change.
+   Range: 0.75 → 0.95 (subtle, 1.27× visual contrast).
+   Math: opacity = 0.85 + 0.10 × (−cos(2π × t)) for t ∈ [0, 1]. */
 @keyframes heroStarsTwinkle {
-  from { opacity: 0.55; }
-  to   { opacity: 1; }
+  0%, 100% { opacity: 0.750; }
+  12.5%    { opacity: 0.779; }
+  25%      { opacity: 0.850; }
+  37.5%    { opacity: 0.921; }
+  50%      { opacity: 0.950; }
+  62.5%    { opacity: 0.921; }
+  75%      { opacity: 0.850; }
+  87.5%    { opacity: 0.779; }
 }
 
 /* Nebula — restored to original brand-deep alphas (0.28/0.30) so the dark
