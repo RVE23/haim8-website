@@ -67,27 +67,101 @@
    flares pulsing every 5–7s in lockstep). Below we stretch every cycle and
    stagger them with prime-ish offsets so visible motion stays sporadic. */
 
-/* Shooting stars — primary every ~32s, alt every ~47s with a long lead.
-   Keyframes only spend ~5% of the cycle drawing the streak; the rest is dead
-   air, which is what reads as "occasional" rather than "looping". */
+/* Shooting stars — five variants on prime-period cycles (53/71/89/107/131s),
+   each with a different angle, entry point, length, and active window.
+   Active streak occupies only 1.5–3% of each cycle, so the field is silent
+   the rest of the time. The eye can't pattern-match across five out-of-phase
+   streaks moving at five different angles.
+
+   PROTECTED ZONE: the centre of the logo. Defined as x: 40–60%, y: 30–50vh
+   (the inner two letters of HAIM8 plus a small vertical margin). No streak's
+   straight-line path passes through this box. Streaks ARE allowed to graze
+   the logo's edges (left flank x<40%, right flank x>60%, top y<30vh, bottom
+   y>50vh). Five distinct lanes:
+     S1 — upper sweep L→R     (entire width, y stays 12–22vh)
+     S2 — lower sweep L→R     (entire width, y stays 78–86vh)
+     S3 — upper sweep R→L     (entire width, y stays 14–26vh)
+     S4 — left-flank dive     (x≤28% throughout, full vertical 5→78vh)
+     S5 — right-flank dive    (x≥72% throughout, full vertical 8→86vh)
+   Real meteors travel in straight lines, so each path is linear — variety
+   comes from varied lanes, angles, lengths, and out-of-phase periods.
+
+   The base `.hero-cosmos__shoot` style in site.css sets a default
+   `top: 30%; left: -10%` which we override per-streak below. */
 .hero-cosmos__shoot {
-  animation: heroShootSporadic 32s linear infinite;
+  top: 12%; left: -8%;
+  animation: heroShoot1 109s linear 7s infinite;
 }
 .hero-cosmos__shoot--alt {
-  animation: heroShootSporadicAlt 47s linear 12s infinite;
+  top: 78%; left: -10%;
+  animation: heroShoot2 149s linear 31s infinite;
+}
+.hero-cosmos__shoot--v3 {
+  top: 14%; left: 108%;
+  width: 130px;
+  animation: heroShoot3 181s linear 19s infinite;
+}
+.hero-cosmos__shoot--v4 {
+  top: 5%; left: -15%;
+  width: 90px;
+  animation: heroShoot4 211s linear 53s infinite;
+}
+.hero-cosmos__shoot--v5 {
+  top: 8%; left: 108%;
+  width: 70px;
+  animation: heroShoot5 263s linear 11s infinite;
 }
 
-@keyframes heroShootSporadic {
-  0%   { transform: translate(0, 0) rotate(-18deg); opacity: 0; }
-  1%   { opacity: 1; }
-  5%   { transform: translate(120vw, 35vh) rotate(-18deg); opacity: 0; }
-  100% { transform: translate(120vw, 35vh) rotate(-18deg); opacity: 0; }
+/* Active-window timings tuned so every streak completes its path in
+   ≈0.95–1.35 seconds — comfortably realistic meteor visibility. The
+   diagonal flank streaks (S4/S5) cover a shorter path but get a roughly
+   matched on-screen duration, so they read as quick flashes rather than
+   long drifts. Opacity profile per streak: snap to peak (~12% of active
+   window), hold bright (~60%), fade out (~28%). */
+
+/* S1 — upper sweep L→R. Path: (-8%, 12vh) → (135%, 22vh). 1.07% × 109s ≈ 1.17s. */
+@keyframes heroShoot1 {
+  0%    { transform: translate(0, 0) rotate(-6deg); opacity: 0; }
+  0.13% { opacity: 1; }
+  0.77% { opacity: 1; }
+  1.07% { transform: translate(143vw, 10vh) rotate(-6deg); opacity: 0; }
+  100%  { transform: translate(143vw, 10vh) rotate(-6deg); opacity: 0; }
 }
-@keyframes heroShootSporadicAlt {
-  0%   { transform: translate(0, 0) rotate(-22deg); opacity: 0; }
-  1%   { opacity: 0.95; }
-  4%   { transform: translate(120vw, 30vh) rotate(-22deg); opacity: 0; }
-  100% { transform: translate(120vw, 30vh) rotate(-22deg); opacity: 0; }
+/* S2 — lower sweep L→R. Path: (-10%, 78vh) → (135%, 86vh). 0.86% × 149s ≈ 1.28s. */
+@keyframes heroShoot2 {
+  0%    { transform: translate(0, 0) rotate(-4deg); opacity: 0; }
+  0.10% { opacity: 0.9; }
+  0.62% { opacity: 0.9; }
+  0.86% { transform: translate(145vw, 8vh) rotate(-4deg); opacity: 0; }
+  100%  { transform: translate(145vw, 8vh) rotate(-4deg); opacity: 0; }
+}
+/* S3 — upper sweep R→L. Path: (108%, 14vh) → (-25%, 26vh). 0.74% × 181s ≈ 1.34s. */
+@keyframes heroShoot3 {
+  0%    { transform: translate(0, 0) rotate(184deg); opacity: 0; }
+  0.09% { opacity: 0.9; }
+  0.53% { opacity: 0.9; }
+  0.74% { transform: translate(-133vw, 12vh) rotate(184deg); opacity: 0; }
+  100%  { transform: translate(-133vw, 12vh) rotate(184deg); opacity: 0; }
+}
+/* S4 — left-flank dive. Path: (-15%, 5vh) → (28%, 78vh). x stays ≤28%, well
+   left of the centre band. Steep diagonal, brushes the logo's far-left edge
+   only at small widths. 0.45% × 211s ≈ 0.95s. */
+@keyframes heroShoot4 {
+  0%    { transform: translate(0, 0) rotate(-58deg); opacity: 0; }
+  0.05% { opacity: 0.9; }
+  0.33% { opacity: 0.9; }
+  0.45% { transform: translate(43vw, 73vh) rotate(-58deg); opacity: 0; }
+  100%  { transform: translate(43vw, 73vh) rotate(-58deg); opacity: 0; }
+}
+/* S5 — right-flank dive. Path: (108%, 8vh) → (72%, 86vh). x stays ≥72%, well
+   right of the centre band. Steep diagonal, brushes the logo's far-right
+   edge only at small widths. 0.37% × 263s ≈ 0.97s. */
+@keyframes heroShoot5 {
+  0%    { transform: translate(0, 0) rotate(244deg); opacity: 0; }
+  0.04% { opacity: 0.85; }
+  0.27% { opacity: 0.85; }
+  0.37% { transform: translate(-36vw, 78vh) rotate(244deg); opacity: 0; }
+  100%  { transform: translate(-36vw, 78vh) rotate(244deg); opacity: 0; }
 }
 
 /* Flares — slow them down significantly and de-sync. Prime-ish durations
@@ -104,6 +178,17 @@
 /* Stars twinkle — extend so the field doesn't look like a strobe. */
 .hero-cosmos__stars        { animation-duration: 14s; }
 .hero-cosmos__stars--mid   { animation-duration: 19s; animation-delay: 2.8s; }
+.hero-cosmos__stars--far   { animation-duration: 26s; animation-delay: 1.4s; }
+
+/* Milky Way — very slow shimmer, never enough to draw the eye. */
+.hero-cosmos__milkyway {
+  animation: heroMilkyShimmer 90s ease-in-out infinite alternate;
+  will-change: opacity, transform;
+}
+@keyframes heroMilkyShimmer {
+  0%   { opacity: 0.55; transform: translate(0, 0); }
+  100% { opacity: 0.78; transform: translate(0.6%, -0.4%); }
+}
 
 /* Nebula — give it a very slow drift so the gradient backdrop isn't static. */
 .hero-cosmos__nebula {

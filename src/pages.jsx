@@ -36,7 +36,7 @@ const STAGE_PAGES = [
       headline: <>A site that <em>signals premium</em>, set up properly.</>,
       lede: 'Brand-grade marketing site, technical SEO foundation, AI-search visibility configured, Google Business owned. Production-grade build, not a template.',
       steps: [
-        { n: '01', name: 'Brand-grade site', icon: 'magnifier', detail: 'Bespoke build that looks made-for-you, because it is. Performance, accessibility, and trust signals baked in.' },
+        { n: '01', name: 'Brand-grade site', icon: 'magnifier', detail: 'A site built for you — made-to-measure, not a template. Performance, accessibility and trust signals baked in.' },
         { n: '02', name: 'Schema & SEO', icon: 'gear', detail: 'Structured data for services, locations, FAQs, reviews. Technical SEO foundation that takes the guesswork out of indexing.' },
         { n: '03', name: 'AI-search visibility', icon: 'bolt', detail: 'Configured to be cited by ChatGPT, Perplexity and Google AI overviews. Not gamed — set up properly, with the right signals.' },
       ],
@@ -53,7 +53,7 @@ const STAGE_PAGES = [
       tiles: [
         { num: '47%', lbl: 'AI-citation lift', ctx: 'Average increase in AI-search visibility within 8 weeks of a structured-data + content-pass build.' },
         { num: '2.4×', lbl: 'Organic to-form rate', ctx: 'When the site signals "premium" rather than "templated," conversion on the same traffic roughly doubles.' },
-        { num: '0', lbl: 'Templates we ship', ctx: 'No off-the-shelf themes. Every site is bespoke build, brand-grade, production-grade.' },
+        { num: '0', lbl: 'Templates we ship', ctx: 'No off-the-shelf themes. Every site is built from scratch, brand-grade, production-ready.' },
       ],
       ref: 'Indicative figures from Lighthouse engagements; final numbers depend on sector, baseline and scope.',
     },
@@ -116,18 +116,18 @@ const STAGE_PAGES = [
     solution: {
       eyebrow: 'What we ship',
       headline: <>A pipeline that <em>refreshes daily</em>, on signals you actually care about.</>,
-      lede: 'Sector-targeted scrape, enrich, score, drop into the CRM — refreshed daily. We write the signals. You work the list.',
+      lede: 'We watch the right signs in your sector, find the matching businesses, and drop them in your CRM every morning. We pick the signals. You work the list.',
       steps: [
-        { n: '01', name: 'Signal definition', icon: 'magnifier', detail: 'We sit with you and write the signals — funding rounds, planning permission, hiring patterns, content cadence — that map to your real ICP.' },
-        { n: '02', name: 'Daily scrape + enrich', icon: 'gear', detail: 'Sector-targeted scrape, deduped against your CRM, enriched with firmographics and intent data. Refreshed every morning.' },
-        { n: '03', name: 'Scored CRM hand-off', icon: 'check', detail: 'Each lead lands in your CRM with a score, the source signal, and a one-line "why now." Your team works the list — they don\'t hunt for it.' },
+        { n: '01', name: 'Signal definition', icon: 'magnifier', detail: 'We sit down and figure out which signs matter — funding rounds, planning permission, hiring, content cadence — for the kind of customer you actually want.' },
+        { n: '02', name: 'Daily scrape + enrich', icon: 'gear', detail: 'Sector-targeted scrape, checked against your CRM so nothing duplicates, filled out with company info and intent data. Refreshed every morning.' },
+        { n: '03', name: 'Scored CRM hand-off', icon: 'check', detail: 'Each lead lands in your CRM with a fit score, the source signal, and a one-line "why now." Your team works the list — they don\'t hunt for it.' },
       ],
     },
     outcome: {
       eyebrow: 'The outcome',
       number: '50',
-      label: 'fit-scored leads in your CRM every morning, with the signal showing.',
-      pills: ['Daily refresh', 'Signal-led', 'Enriched + scored', 'Source on every record'],
+      label: 'leads in your CRM every morning — the ones worth a call, with the reason showing.',
+      pills: ['Daily refresh', 'Signal-led', 'Ranked by fit', 'Source on every record'],
       pull: <>Your team stops <em>looking</em> for prospects and starts working them.</>,
     },
     impact: {
@@ -157,7 +157,7 @@ const STAGE_PAGES = [
     solution: {
       eyebrow: 'What we ship',
       headline: <>Auto follow-up that <em>treats every lead like the first one</em>.</>,
-      lede: 'Callback scheduler. Sequence sender. Nurture flows that pause when humans take over. SLA timer per lead. No spreadsheet, no rot.',
+      lede: 'Callback scheduler. Sequence sender. Nurture flows that pause when humans take over. A timer on every lead. No spreadsheet, no rot.',
       steps: [
         { n: '01', name: 'SLA timer + scheduler', icon: 'bolt', detail: 'Every inbound lead gets an SLA timer and a callback slot. Owners see breaches before they happen, not after the deal\'s cold.' },
         { n: '02', name: 'Brand-grade sequences', icon: 'doc', detail: 'Sequence sender with templates that read like a human wrote them — because we wrote them, in your voice. Not a Mailchimp wizard.' },
@@ -197,19 +197,19 @@ const STAGE_PAGES = [
     },
     solution: {
       eyebrow: 'What we ship',
-      headline: <>Managed Close & <em>Sign</em>, done for you.</>,
-      lede: 'We build the templates, wire the send-sequence, track sent → viewed → signed, and trigger onboarding the moment a contract is countersigned. No more "where\'s that proposal?"',
+      headline: <>Close & <em>Sign</em>, done for you.</>,
+      lede: 'We build the templates, send them, track sent → viewed → signed, and kick off onboarding the moment your customer signs. No more "where\'s that proposal?"',
       steps: [
-        { n: '01', name: 'Template build', icon: 'doc', detail: 'Proposal, MSA, NDA and schedule templates — drafted by us, reviewed by your counsel, brand-grade typeset.' },
-        { n: '02', name: 'Send-sequence', icon: 'bolt', detail: 'Draft → revise → final → sign, with status tracking sent / viewed / signed in one view. The owner sees the funnel.' },
-        { n: '03', name: 'Auto-onboarding trigger', icon: 'gear', detail: 'The moment the contract countersigns, onboarding kicks off — invoice, welcome email, portal account, kickoff call invite.' },
+        { n: '01', name: 'Template build', icon: 'doc', detail: 'Proposal, contract and schedule templates — drafted by us, reviewed by your counsel, typeset to look like your brand wrote them.' },
+        { n: '02', name: 'Send-sequence', icon: 'bolt', detail: 'Draft → revise → final → sign, with status tracking sent / viewed / signed in one view. You see the funnel.' },
+        { n: '03', name: 'Auto-onboarding trigger', icon: 'gear', detail: 'The moment the contract signs, onboarding kicks off — invoice, welcome email, portal account, kickoff call invite.' },
       ],
     },
     outcome: {
       eyebrow: 'The outcome',
       number: '0',
-      label: 'days between countersign and onboarding starting. Same minute, every time.',
-      pills: ['Bespoke templates', 'Status tracking', 'Auto-trigger onboarding', 'Predictability dashboard'],
+      label: 'days between signed contract and onboarding starting. Same minute, every time.',
+      pills: ['Custom templates', 'Status tracking', 'Auto-trigger onboarding', 'One screen for every deal'],
       pull: <>Stage 4 is the difference between "we won the deal" and "the deal <em>actually closed</em>."</>,
     },
     impact: {
@@ -573,7 +573,7 @@ export function StackHubPage({ onNav }) {
               <span className="crumb__sep">/</span>
               <span className="crumb__here">The Stack</span>
             </div>
-            <div className="h-eyebrow" style={{ display:'inline-block', marginBottom: 14, color: 'var(--h8-electric-blue)' }}>The Stack · 6 stages of revenue software</div>
+            <div className="h-eyebrow" style={{ display:'inline-block', marginBottom: 14, color: 'var(--h8-electric-blue)' }}>The Stack · six stages that move the needle</div>
             <h1 className="h-display h-display-lg page-hero__title">
               From the first <em>search</em> to the signed contract.
             </h1>
@@ -593,7 +593,7 @@ export function StackHubPage({ onNav }) {
       <motion.section className="psec psec--challenge" style={{ paddingTop: 64 }} {...REVEAL}>
         <div className="psec__inner">
           <div className="psec__eyebrow">The journey</div>
-          <h2 className="psec__title">Revenue happens in <em>stages</em>. We ship across all of them.</h2>
+          <h2 className="psec__title">Growth happens in <em>stages</em>. We ship across all of them.</h2>
 
           <div className="journey">
             <div className="journey__line"><div className="journey__line-fill" style={{ width: '100%' }}/></div>

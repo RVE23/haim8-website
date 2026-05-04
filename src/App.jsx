@@ -10,7 +10,7 @@
      - The TweaksPanel (design-tool tooling) is dropped from the production app
 */
 import React from 'react';
-import { AnimatePresence, motion } from 'motion/react';
+import { AnimatePresence, motion, useScroll, useTransform, useReducedMotion } from 'motion/react';
 
 import './styles/colors_and_type.css';
 import './styles/glass.css';
@@ -24,6 +24,7 @@ import {
   ValuesSection,
   StackSection,
   DeliverSection,
+  WhyNowSection,
   CustomersSection,
   ClosingCTA,
   Footer,
@@ -110,8 +111,8 @@ export default function App() {
       values:     'sec-values',
       customers:  'sec-customers',
       deliver:    'sec-deliver',
+      whynow:     'sec-whynow',
       contact:    'sec-cta',
-      about:      'sec-customers',
       audit:      'sec-cta',
       reliability:'sec-deliver',
       security:   'sec-deliver',
@@ -122,6 +123,30 @@ export default function App() {
   }, [route.kind, scrollToAnchor]);
 
   const routeKey = route.kind === 'stage' ? `stage:${route.stageKey}` : route.kind;
+
+  /* Hero cosmic parallax — three depth layers drift at different rates as you
+     scroll the hero offscreen. `useReducedMotion` disables the offset entirely
+     for users with the OS-level preference. */
+  const reduceMotion = useReducedMotion();
+  const { scrollY } = useScroll();
+  const farY  = useTransform(scrollY, [0, 800], [0,  20]);
+  const midY  = useTransform(scrollY, [0, 800], [0,  60]);
+  const nearY = useTransform(scrollY, [0, 800], [0, 120]);
+
+  React.useEffect(() => {
+    if (reduceMotion || route.kind !== 'home') return;
+    const apply = (sel, mv) => {
+      const els = document.querySelectorAll(sel);
+      if (!els.length) return null;
+      return mv.on('change', (v) => {
+        for (const el of els) el.style.transform = `translate3d(0, ${v}px, 0)`;
+      });
+    };
+    const u1 = apply('[data-parallax="far"]',  farY);
+    const u2 = apply('[data-parallax="mid"]',  midY);
+    const u3 = apply('[data-parallax="near"]', nearY);
+    return () => { u1?.(); u2?.(); u3?.(); };
+  }, [reduceMotion, route.kind, farY, midY, nearY]);
 
   return (
     <AnimatePresence mode="wait">
@@ -136,8 +161,9 @@ export default function App() {
             <Hero/>
             <ValuesSection/>
             <StackSection onNav={onNav}/>
-            <DeliverSection onNav={onNav}/>
             <CustomersSection onNav={onNav}/>
+            <DeliverSection onNav={onNav}/>
+            <WhyNowSection/>
             <div id="sec-cta"><ClosingCTA onNav={onNav}/></div>
             <Footer onNav={onNav}/>
           </>
