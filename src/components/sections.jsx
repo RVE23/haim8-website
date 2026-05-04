@@ -191,6 +191,7 @@ export function Hero() {
         <div className="hero-cosmos__flare hero-cosmos__flare--sm3"/>
         <div className="hero-cosmos__flare hero-cosmos__flare--corner"/>
         <div className="hero-cosmos__flare hero-cosmos__flare--corner2"/>
+        <div className="hero-cosmos__shoot hero-cosmos__shoot--intro"/>
         <div className="hero-cosmos__shoot"/>
         <div className="hero-cosmos__shoot hero-cosmos__shoot--alt"/>
         <div className="hero-cosmos__shoot hero-cosmos__shoot--v3"/>

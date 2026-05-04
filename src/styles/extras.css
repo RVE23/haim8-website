@@ -88,6 +88,25 @@
 
    The base `.hero-cosmos__shoot` style in site.css sets a default
    `top: 30%; left: -10%` which we override per-streak below. */
+/* INTRO streak — fires once, ~4s after page load (a couple of seconds after
+   the slogan finishes its fade-in at ~1.5s). Travels bottom-left → top-right
+   straight through the logo's centre, then never repeats. Sets the cosmic
+   field "alive" before the regular looping streaks (S1 first at t=7s) start
+   cycling on their own prime-period schedules.
+   Path: top-left of element at (-27%, 95vh) → (113%, -15vh). At x=50%, y≈40vh
+   — dead-centre of the logo. ~1.8s visible. */
+.hero-cosmos__shoot--intro {
+  top: 95%; left: -27%;
+  width: 180px;
+  animation: heroShootIntro 1.8s linear 4s 1;
+}
+@keyframes heroShootIntro {
+  0%   { transform: translate(0, 0) rotate(-38deg); opacity: 0; }
+  6%   { opacity: 1; }
+  88%  { opacity: 1; }
+  100% { transform: translate(140vw, -110vh) rotate(-38deg); opacity: 0; }
+}
+
 .hero-cosmos__shoot {
   top: 12%; left: -8%;
   animation: heroShoot1 109s linear 7s infinite;
