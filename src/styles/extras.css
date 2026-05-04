@@ -90,26 +90,26 @@
    `top: 30%; left: -10%` which we override per-streak below. */
 .hero-cosmos__shoot {
   top: 12%; left: -8%;
-  animation: heroShoot1 109s linear 7s infinite;
+  animation: heroShoot1 163s linear 7s infinite;
 }
 .hero-cosmos__shoot--alt {
   top: 78%; left: -10%;
-  animation: heroShoot2 149s linear 31s infinite;
+  animation: heroShoot2 223s linear 31s infinite;
 }
 .hero-cosmos__shoot--v3 {
   top: 14%; left: 108%;
   width: 130px;
-  animation: heroShoot3 181s linear 19s infinite;
+  animation: heroShoot3 271s linear 19s infinite;
 }
 .hero-cosmos__shoot--v4 {
   top: 5%; left: -15%;
   width: 90px;
-  animation: heroShoot4 211s linear 53s infinite;
+  animation: heroShoot4 317s linear 53s infinite;
 }
 .hero-cosmos__shoot--v5 {
   top: 8%; left: 108%;
   width: 70px;
-  animation: heroShoot5 263s linear 11s infinite;
+  animation: heroShoot5 397s linear 11s infinite;
 }
 
 /* Active-window timings tuned so every streak completes its path in
@@ -141,48 +141,48 @@
   100% { transform: translate(140vw, -110vh) rotate(-38deg); opacity: 0; }
 }
 
-/* S1 — upper sweep L→R. Path: (-8%, 12vh) → (135%, 22vh). 1.07% × 109s ≈ 1.17s. */
+/* S1 — upper sweep L→R. Path: (-8%, 12vh) → (135%, 22vh). 0.72% × 163s ≈ 1.17s. */
 @keyframes heroShoot1 {
   0%    { transform: translate(0, 0) rotate(-6deg); opacity: 0; }
-  0.13% { opacity: 1; }
-  0.77% { opacity: 1; }
-  1.07% { transform: translate(143vw, 10vh) rotate(-6deg); opacity: 0; }
+  0.09% { opacity: 1; }
+  0.52% { opacity: 1; }
+  0.72% { transform: translate(143vw, 10vh) rotate(-6deg); opacity: 0; }
   100%  { transform: translate(143vw, 10vh) rotate(-6deg); opacity: 0; }
 }
-/* S2 — lower sweep L→R. Path: (-10%, 78vh) → (135%, 86vh). 0.86% × 149s ≈ 1.28s. */
+/* S2 — lower sweep L→R. Path: (-10%, 78vh) → (135%, 86vh). 0.57% × 223s ≈ 1.27s. */
 @keyframes heroShoot2 {
   0%    { transform: translate(0, 0) rotate(-4deg); opacity: 0; }
-  0.10% { opacity: 0.9; }
-  0.62% { opacity: 0.9; }
-  0.86% { transform: translate(145vw, 8vh) rotate(-4deg); opacity: 0; }
+  0.07% { opacity: 0.9; }
+  0.41% { opacity: 0.9; }
+  0.57% { transform: translate(145vw, 8vh) rotate(-4deg); opacity: 0; }
   100%  { transform: translate(145vw, 8vh) rotate(-4deg); opacity: 0; }
 }
-/* S3 — upper sweep R→L. Path: (108%, 14vh) → (-25%, 26vh). 0.74% × 181s ≈ 1.34s. */
+/* S3 — upper sweep R→L. Path: (108%, 14vh) → (-25%, 26vh). 0.49% × 271s ≈ 1.33s. */
 @keyframes heroShoot3 {
   0%    { transform: translate(0, 0) rotate(184deg); opacity: 0; }
-  0.09% { opacity: 0.9; }
-  0.53% { opacity: 0.9; }
-  0.74% { transform: translate(-133vw, 12vh) rotate(184deg); opacity: 0; }
+  0.06% { opacity: 0.9; }
+  0.36% { opacity: 0.9; }
+  0.49% { transform: translate(-133vw, 12vh) rotate(184deg); opacity: 0; }
   100%  { transform: translate(-133vw, 12vh) rotate(184deg); opacity: 0; }
 }
 /* S4 — left-flank dive. Path: (-15%, 5vh) → (28%, 78vh). x stays ≤28%, well
    left of the centre band. Steep diagonal, brushes the logo's far-left edge
-   only at small widths. 0.45% × 211s ≈ 0.95s. */
+   only at small widths. 0.30% × 317s ≈ 0.95s. */
 @keyframes heroShoot4 {
   0%    { transform: translate(0, 0) rotate(-58deg); opacity: 0; }
-  0.05% { opacity: 0.9; }
-  0.33% { opacity: 0.9; }
-  0.45% { transform: translate(43vw, 73vh) rotate(-58deg); opacity: 0; }
+  0.04% { opacity: 0.9; }
+  0.22% { opacity: 0.9; }
+  0.30% { transform: translate(43vw, 73vh) rotate(-58deg); opacity: 0; }
   100%  { transform: translate(43vw, 73vh) rotate(-58deg); opacity: 0; }
 }
 /* S5 — right-flank dive. Path: (108%, 8vh) → (72%, 86vh). x stays ≥72%, well
    right of the centre band. Steep diagonal, brushes the logo's far-right
-   edge only at small widths. 0.37% × 263s ≈ 0.97s. */
+   edge only at small widths. 0.24% × 397s ≈ 0.97s. */
 @keyframes heroShoot5 {
   0%    { transform: translate(0, 0) rotate(244deg); opacity: 0; }
-  0.04% { opacity: 0.85; }
-  0.27% { opacity: 0.85; }
-  0.37% { transform: translate(-36vw, 78vh) rotate(244deg); opacity: 0; }
+  0.03% { opacity: 0.85; }
+  0.18% { opacity: 0.85; }
+  0.24% { transform: translate(-36vw, 78vh) rotate(244deg); opacity: 0; }
   100%  { transform: translate(-36vw, 78vh) rotate(244deg); opacity: 0; }
 }
 
