@@ -138,8 +138,16 @@ export default function App() {
     const apply = (sel, mv) => {
       const els = document.querySelectorAll(sel);
       if (!els.length) return null;
+      let lastY = null;
       return mv.on('change', (v) => {
-        for (const el of els) el.style.transform = `translate3d(0, ${v}px, 0)`;
+        // Round to integer pixels — fractional sub-pixel transforms force
+        // Chromium to re-rasterise the (heavy radial-gradient) star layer on
+        // every scroll tick and contribute to a stationary flicker. Bail
+        // when the integer hasn't changed so we don't write redundantly.
+        const y = Math.round(v);
+        if (y === lastY) return;
+        lastY = y;
+        for (const el of els) el.style.transform = `translate3d(0, ${y}px, 0)`;
       });
     };
     const u1 = apply('[data-parallax="far"]',  farY);
