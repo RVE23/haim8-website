@@ -36,16 +36,16 @@ export const STAGES = [
       bullets: ['Web chat trained on your services and tone', 'After-hours email triage and reply-drafting', 'Voice-call deflection and missed-call rescue', 'Warm-lead routing to phone, SMS or owner inbox'] }},
   { num: '02', key: 'generate', icon: 'chart',     name: 'Generate',  outcome: 'Daily, signal-driven pipeline — beyond referrals.', emWord: 'referrals',
     detail: { headline: <>Pipeline beyond <em>referrals</em>.</>,
-      lede: 'Sector-targeted scrape, enrich, score, drop into the CRM — refreshed daily. We write the signals. You work the list.',
-      bullets: ['Sector-targeted prospecting on real signals', 'Enrichment, scoring and dedupe before CRM hand-off', 'Daily refresh — fresh leads every morning', 'You see the source on every record'] }},
+      lede: 'We watch the right signals in your sector, find the matching businesses, and drop them in your CRM every morning. We pick the signals. You work the list.',
+      bullets: ['Sector-targeted prospecting on real signals', 'Cleaned, ranked by fit, and dropped into your CRM', 'Daily refresh — fresh leads every morning', 'You see the source on every record'] }},
   { num: '03', key: 'activate', icon: 'bolt',      name: 'Activate',  outcome: 'First contact in 5 minutes, every time.', emWord: '5 minutes',
     detail: { headline: <>From lead to first call in <em>5 minutes</em>.</>,
-      lede: 'Auto follow-up orchestration. Callback scheduler, sequence sender, nurture flows, SLA timer per lead. No spreadsheet, no rot.',
-      bullets: ['Callback scheduler with owner SLA timer', 'Sequence sender with brand-grade templates', 'Nurture flows that pause when humans take over', 'Per-lead audit trail — every touch, every hour'] }},
+      lede: 'Follow-ups that just run. Callback scheduler, sequence sender, nurture flows, SLA timer per lead. No spreadsheet, no rot.',
+      bullets: ['Callback scheduler with owner SLA timer', 'Sequence sender with templates in your voice', 'Nurture flows that pause when humans take over', 'Per-lead audit trail — every touch, every hour'] }},
   { num: '04', key: 'close',    icon: 'sign',      name: 'Close',     outcome: 'Proposals, contracts and signatures — done for you.', emWord: 'done for you',
     detail: { headline: <>Close & Sign — <em>done for you</em>.</>,
-      lede: 'Managed Contract & Signature Automation. We build the templates, wire the send-sequence, track sent → viewed → signed, and trigger onboarding the moment a contract is countersigned.',
-      bullets: ['Proposal, MSA, NDA and schedule templates — drafted by us', 'Send-sequence: draft → revise → final → sign', 'Status tracking sent / viewed / signed in one view', 'Auto-trigger onboarding when contracts countersign', 'Simple CRM setup and a deal-predictability dashboard'] }},
+      lede: 'We build the templates, send them, track sent → viewed → signed, and kick off onboarding the moment your customer signs.',
+      bullets: ['Proposal, contract and schedule templates — drafted by us', 'Send-sequence: draft → revise → final → sign', 'Status tracking sent / viewed / signed in one view', 'Auto-trigger onboarding the moment a contract signs', 'Simple CRM setup and one screen showing every deal’s status'] }},
   { num: '05', key: 'process',  icon: 'gear',      name: 'Process',   outcome: 'Onboard a customer in minutes, not days.', emWord: 'minutes, not days',
     detail: { headline: <>Onboard in <em>minutes, not days</em>.</>,
       lede: 'Customer-ops automation. Intake → CRM → invoicing → onboarding email → portal. Multi-tenant where you need sub-accounts.',
@@ -130,7 +130,7 @@ export function Nav({ active, onNav }) {
         <img src="assets/haim8-logo.png" alt="HAIM8 — home" style={{ height: 36, width: 'auto', display: 'block' }}/>
       </div>
       <div className="nav__links">
-        <Item id="values" label="Values" />
+        <Item id="values" label="Concept" />
         <div className="nav__menu" ref={menuRef}>
           <button
             className={'nav__link' + (active === 'stack' || active === 'stage' ? ' active' : '')}
@@ -138,7 +138,7 @@ export function Nav({ active, onNav }) {
             aria-haspopup="true"
             aria-expanded={openStack}
           >
-            The Stack <I name="down" size={14}/>
+            Offerings <I name="down" size={14}/>
           </button>
           {openStack && (
             <div className="nav__dropdown" role="menu">
@@ -164,8 +164,8 @@ export function Nav({ active, onNav }) {
           )}
         </div>
         <Item id="customers" label="Customers" />
-        <Item id="deliver"   label="How we deliver" />
-        <Item id="about"     label="About" />
+        <Item id="deliver"   label="Delivery" />
+        <Item id="whynow"    label="Timing" />
         <ThemeToggle/>
         <button className="nav__cta" onClick={() => onNav('contact')} style={{ whiteSpace: 'nowrap' }}>Book a call</button>
       </div>
@@ -178,8 +178,10 @@ export function Hero() {
   return (
     <section className="hero section dark on-dark hero--cosmic">
       <div className="hero-cosmos" aria-hidden="true">
-        <div className="hero-cosmos__stars"/>
-        <div className="hero-cosmos__stars hero-cosmos__stars--mid"/>
+        <div className="hero-cosmos__stars hero-cosmos__stars--far" data-parallax="far"/>
+        <div className="hero-cosmos__milkyway"/>
+        <div className="hero-cosmos__stars hero-cosmos__stars--mid" data-parallax="mid"/>
+        <div className="hero-cosmos__stars" data-parallax="near"/>
         <div className="hero-cosmos__nebula"/>
         <div className="hero-cosmos__flare hero-cosmos__flare--lg"/>
         <div className="hero-cosmos__flare hero-cosmos__flare--lg2"/>
@@ -191,6 +193,9 @@ export function Hero() {
         <div className="hero-cosmos__flare hero-cosmos__flare--corner2"/>
         <div className="hero-cosmos__shoot"/>
         <div className="hero-cosmos__shoot hero-cosmos__shoot--alt"/>
+        <div className="hero-cosmos__shoot hero-cosmos__shoot--v3"/>
+        <div className="hero-cosmos__shoot hero-cosmos__shoot--v4"/>
+        <div className="hero-cosmos__shoot hero-cosmos__shoot--v5"/>
       </div>
       <div className="glow-blob b1"/><div className="glow-blob b2"/><div className="glow-blob b3"/>
 
@@ -248,7 +253,7 @@ export function ValuesSection() {
       <div className="glow-blob b2" style={{ top: '20%', right: '8%', left: 'auto' }}/>
       <div className="container">
         <div className="section-head">
-          <div className="h-eyebrow">The H stands for</div>
+          <div className="h-eyebrow">Concept</div>
           <h2 className="h-display h-display-lg">Three values. <em>Helpful, Handy, Honest.</em></h2>
           <p className="h-lede">The shape of how we work, named. The boring promise we keep that beats every flashy one.</p>
         </div>
@@ -284,9 +289,9 @@ export function StackSection({ onNav }) {
       <div className="glow-blob b3" style={{ top:'10%', left:'5%' }}/>
       <div className="container">
         <div className="section-head">
-          <div className="h-eyebrow">The Stack — 5 stages of revenue software</div>
-          <h2 className="h-display h-display-lg">Revenue happens in <em>stages</em>. We ship across all of them.</h2>
-          <p className="h-lede">Buy any stage on its own. Ladder up when you're ready. The customer journey doesn't break at a vendor handover — and neither do we.</p>
+          <div className="h-eyebrow">Offerings</div>
+          <h2 className="h-display h-display-lg">Growth happens in <em>stages</em>. We ship across all of them.</h2>
+          <p className="h-lede">Buy what you need now, add the rest later. No awkward hand-offs between tools — and no awkward hand-offs from us either.</p>
         </div>
 
         <div className="stack-row">
@@ -572,7 +577,7 @@ export function DeliverSection({ onNav }) {
       <div className="container">
         <div className="deliver-head">
           <div className="section-head" style={{ textAlign:'left', maxWidth: 640, margin: 0 }}>
-            <div className="h-eyebrow">How we deliver</div>
+            <div className="h-eyebrow">Delivery</div>
             <h2 className="h-display h-display-lg">Discovery, Pilot, Build, Grow, Run — <em>rinse and repeat</em>.</h2>
           </div>
           <DeliverCycleGraphic/>
@@ -617,24 +622,70 @@ export function DeliverSection({ onNav }) {
   );
 }
 
+/* ─── Why now ──────────────────────────────────────────────────
+   The case for moving on AI now rather than later. Stub copy — same
+   structure as ValuesSection so it lands consistently with the rest
+   of the page. Anchored at #sec-whynow for the nav 'Why now' tab. */
+export function WhyNowSection() {
+  const reasons = [
+    { title: 'Costs collapsed',
+      copy: 'What cost £50k a year ago costs £500 now. The companies who waited are paying the same price as the ones who moved — but a year behind.' },
+    { title: 'The tools work',
+      copy: 'Not "demo work" — actual production-grade work. Drafting, sorting, scheduling, replying. The same capability that drove your competitors’ margins last quarter.' },
+    { title: 'Customers noticed',
+      copy: 'A 3-minute reply is the floor now, not the ceiling. The speed your customers got from someone else this morning is the speed they’ll expect from you tomorrow.' },
+    { title: 'The window is open, briefly',
+      copy: 'First-movers in your sector are stitching AI advantages together right now. The gap they’re building closes faster the longer you wait.' },
+  ];
+  return (
+    <motion.section className="section deep on-dark" id="sec-whynow" {...REVEAL}>
+      <div className="glow-blob b3" style={{ top: '15%', left: '10%' }}/>
+      <div className="container">
+        <div className="section-head">
+          <div className="h-eyebrow">Timing</div>
+          <h2 className="h-display h-display-lg">AI just crossed the line from <em>toy</em> to tool.</h2>
+          <p className="h-lede">The price dropped, the capability arrived, and your customers noticed. Four reasons the next twelve months matter more than the last twelve.</p>
+        </div>
+        <div className="values-grid">
+          {reasons.map((r, i) => (
+            <motion.div
+              key={r.title}
+              className="values-card"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.3 }}
+              transition={{ duration: 0.6, delay: i * 0.1, ease: [0.16, 1, 0.3, 1] }}
+              whileHover={{ y: -4 }}
+            >
+              <span className="values-card__num">0{i + 1} / 0{reasons.length}</span>
+              <h3 className="values-card__title">{r.title}<em>.</em></h3>
+              <p className="values-card__copy">{r.copy}</p>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </motion.section>
+  );
+}
+
 /* ─── Customers / Lighthouse ─────────────────────────────────── */
 export function CustomersSection({ onNav }) {
   return (
     <motion.section className="section subtle" id="sec-customers" {...REVEAL}>
       <div className="container">
         <div className="section-head">
-          <div className="h-eyebrow">Lighthouse customers · anonymised pending sign-off</div>
+          <div className="h-eyebrow">Customers</div>
           <h2 className="h-display h-display-lg">Work that <em>belongs</em> in the business it lives in.</h2>
-          <p className="h-lede">Bespoke build means the software looks like it was made for them — because it was. Three real engagements, three different shapes of revenue work.</p>
+          <p className="h-lede">The software looks hand-made for them — because it is. Three real engagements, three different shapes of growth work.</p>
         </div>
 
         <div className="lighthouse">
           {[
             { tag:'Stage 2 + 3', quote:'A UK insolvency-intelligence firm. Daily signal-driven pipeline, plus 5-minute first-touch SLA wired into their CRM.',
               meta:[['Stages','Generate · Activate'],['Shipped in','6 weeks'],['Posture','A-grade security'],['Sign-off','Pending — name on request']] },
-            { tag:'Stage 0 + 4', quote:'A premium private clinic group. Brand-grade marketing site, AI-search visibility, and Managed Close & Sign across three locations.',
+            { tag:'Stage 0 + 4', quote:'A premium private clinic group. A site that signals premium, AI-search visibility, and Close & Sign run by us across three locations.',
               meta:[['Stages','Be Found · Close'],['Shipped in','9 weeks'],['Posture','UK GDPR'],['Sign-off','Pending — name on request']] },
-            { tag:'Full Stack', quote:'A premium-construction PM firm. End-to-end revenue stack — from search through to onboarding portal — multi-tenant per project.',
+            { tag:'Full Stack', quote:'A premium-construction PM firm. End-to-end — from getting found to onboarding — with a separate portal for each project.',
               meta:[['Stages','Full Stack'],['Run by','HAIM8 ops'],['Posture','UK GDPR + DPA'],['Sign-off','Pending — name on request']] },
           ].map((c,i) => (
             <motion.div
@@ -688,7 +739,7 @@ export function Footer({ onNav }) {
         <div className="footer__cols">
           <div className="footer__brand">
             <Wordmark height={28}/>
-            <p className="footer__pitch">Revenue software for businesses that need to look as good as they are. UK Ltd. Built in Britain.</p>
+            <p className="footer__pitch">Software that helps you grow — built for businesses that should look as good as they are. UK Ltd. Built in Britain.</p>
           </div>
           <div className="footer__col">
             <h4 className="footer__col-title">The Stack</h4>
@@ -699,10 +750,11 @@ export function Footer({ onNav }) {
           <div className="footer__col">
             <h4 className="footer__col-title">Company</h4>
             <ul>
-              <li onClick={() => onNav('about')}>About</li>
-              <li onClick={() => onNav('values')}>Values</li>
+              <li onClick={() => onNav('values')}>Concept</li>
+              <li onClick={() => onNav('stack')}>Offerings</li>
               <li onClick={() => onNav('customers')}>Customers</li>
-              <li onClick={() => onNav('deliver')}>How we deliver</li>
+              <li onClick={() => onNav('deliver')}>Delivery</li>
+              <li onClick={() => onNav('whynow')}>Timing</li>
             </ul>
           </div>
           <div className="footer__col">
@@ -725,7 +777,7 @@ export function Footer({ onNav }) {
         </div>
         <div className="footer__base">
           <span>© HAIM8 Ltd. All prices in GBP. Indicative until discovery.</span>
-          <span>Built in the UK · Bespoke build, production-grade, brand-grade</span>
+          <span>Built in the UK · Hand-made, production-ready, brand-grade</span>
         </div>
       </div>
     </footer>
