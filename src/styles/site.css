@@ -286,12 +286,16 @@ a { color: inherit; text-decoration: none; }
 /* Star layers get parallax via JS-driven transform — transforms create a new
    containing block which breaks `background-attachment: fixed`, so explicitly
    restore the default scroll attachment for stars (the parallax driver in
-   App.jsx handles vertical offset per layer). */
+   App.jsx handles vertical offset per layer).
+   NOTE: deliberately NO `will-change: transform` here. Combined with the
+   heavy radial-gradient backgrounds + the JS-driven transform, Chromium
+   over-aggressively re-rasterised these layers and produced a visible flicker
+   when the page sat still. The browser still creates a compositing layer
+   when transform is applied; the hint just made things worse. */
 .hero-cosmos__stars,
 .hero-cosmos__stars--mid,
 .hero-cosmos__stars--far {
   background-attachment: scroll;
-  will-change: transform;
 }
 /* Near layer — biggest, brightest stars; mostly cool whites + a few warmer ones.
    Sizes mostly 1–2.5px with two ~3px standouts (first-magnitude). Parallax: most.
