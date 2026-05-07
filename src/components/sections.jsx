@@ -6,7 +6,15 @@
      - Buttons get a subtle whileHover/whileTap micro-interaction
 */
 import React from 'react';
-import { motion } from 'motion/react';
+import {
+  motion,
+  AnimatePresence,
+  useScroll,
+  useTransform,
+  useMotionValue,
+  useReducedMotion,
+  animate,
+} from 'motion/react';
 import { I } from './icons.jsx';
 import { ScrollIndicator } from './scroll-indicator.jsx';
 
@@ -130,7 +138,7 @@ export function Nav({ active, onNav }) {
         <img src="assets/haim8-logo.png" alt="HAIM8 — home" style={{ height: 36, width: 'auto', display: 'block' }}/>
       </div>
       <div className="nav__links">
-        <Item id="values" label="Concept" />
+        <Item id="concept" label="Concept" />
         <div className="nav__menu" ref={menuRef}>
           <button
             className={'nav__link' + (active === 'stack' || active === 'stage' ? ' active' : '')}
@@ -235,45 +243,383 @@ export function Hero() {
   );
 }
 
-/* ─── Values ──────────────────────────────────────────────────── */
-/* The H stands for: Helpful, Handy, Honest.
-   Stub starting content from the partner-site values; user can refine copy
-   without restructure. Anchored at #sec-values for the nav Values tab. */
-export function ValuesSection() {
-  const values = [
-    { title: 'Helpful',
-      copy: 'We do the hard thinking so you don’t have to. The answer is always clearer than the problem.' },
-    { title: 'Handy',
-      copy: 'Things actually ship. Nothing stays in planning for longer than it takes to build it.' },
-    { title: 'Honest',
-      copy: 'Real numbers, real timelines, real trade-offs. No agency theatre — just the work.' },
-  ];
+/* ─── Concept ─────────────────────────────────────────────────── */
+/* Four-act animated narrative for HAIM8's pitch: SMB AI consultancy
+   that turns AI into ROI, plain English, no jargon. Anchored at
+   #sec-concept (was #sec-values). */
+
+const HOOK_LEFT  = ['AI', 'Automations', 'Agents', 'Tools'];
+const HOOK_RIGHT = ['ROI', 'Revenue', 'Hours back', 'Savings'];
+
+function HookHeadline({ reduced }) {
+  const [i, setI] = React.useState(0);
+  // reveal: 0 = nothing, 1 = "We turn", 2 = + L grad, 3 = + "into", 4 = + R grad
+  const [reveal, setReveal] = React.useState(reduced ? 4 : 4);
+  const [paused, setPaused] = React.useState(false);
+  const pausedRef = React.useRef(false);
+  pausedRef.current = paused;
+
+  React.useEffect(() => {
+    if (reduced) { setReveal(4); return; }
+    let alive = true;
+    let timer = null;
+    const wait = (ms) => new Promise((res) => { timer = setTimeout(res, ms); });
+    const waitWhilePaused = async () => {
+      while (alive && pausedRef.current) await wait(120);
+    };
+
+    // Timings (ms) — premium pacing
+    const HOLD_AFTER_FULL = 4500; // long read time once full phrase visible
+    const EXIT_DUR        = 1600; // slow, soft fade-out
+    const EMPTY_HOLD      = 200;  // brief empty-screen beat after exit completes
+    const STATIC_DUR      = 1400; // duration framer needs to fade in static word
+    const GRAD_DUR        = 1600; // gradient word reveal — slowest of all
+    const PAUSE           = 600;  // pause between each part landing
+
+    const run = async () => {
+      // Page first paints with reveal=4 (all visible). Hold, then loop.
+      while (alive) {
+        // 1) Held complete phrase
+        await wait(HOLD_AFTER_FULL);
+        if (!alive) return;
+        await waitWhilePaused();
+
+        // 2) All four exit together
+        setReveal(0);
+        await wait(EXIT_DUR + EMPTY_HOLD);
+        if (!alive) return;
+        await waitWhilePaused();
+
+        // 3) Bump to next word pair
+        setI((n) => (n + 1) % HOOK_LEFT.length);
+        await wait(20); // let React settle the new words at hidden state
+
+        // 4) Sequential reveal: "We turn" → grad-L → "into" → grad-R
+        setReveal(1);
+        await wait(STATIC_DUR + PAUSE);
+        if (!alive) return;
+        setReveal(2);
+        await wait(GRAD_DUR + PAUSE);
+        if (!alive) return;
+        setReveal(3);
+        await wait(STATIC_DUR + PAUSE);
+        if (!alive) return;
+        setReveal(4);
+        await wait(GRAD_DUR);
+        // loop back to top — held visible time fires again
+      }
+    };
+    run();
+    return () => { alive = false; if (timer) clearTimeout(timer); };
+  }, [reduced]);
+
+  if (reduced) {
+    return (
+      <h2 className="h-display h-display-lg concept__hook-title">
+        <span className="concept__hook-row">We turn <em>AI</em></span>
+        <span className="concept__hook-row">into <em>ROI</em></span>
+      </h2>
+    );
+  }
+
+  const SOFT_EASE = [0.22, 1, 0.36, 1];
+  const variantsStatic = {
+    hidden:  { opacity: 0, filter: 'blur(10px)', transition: { duration: 1.6, ease: SOFT_EASE } },
+    visible: { opacity: 1, filter: 'blur(0px)',  transition: { duration: 1.4, ease: SOFT_EASE } },
+  };
+  const variantsGrad = {
+    hidden:  { opacity: 0, filter: 'blur(16px)', transition: { duration: 1.6, ease: SOFT_EASE } },
+    visible: { opacity: 1, filter: 'blur(0px)',  transition: { duration: 1.6, ease: SOFT_EASE } },
+  };
+
   return (
-    <motion.section className="section deep on-dark" id="sec-values" {...REVEAL}>
-      <div className="glow-blob b2" style={{ top: '20%', right: '8%', left: 'auto' }}/>
-      <div className="container">
-        <div className="section-head">
-          <div className="h-eyebrow">Concept</div>
-          <h2 className="h-display h-display-lg">Three values. <em>Helpful, Handy, Honest.</em></h2>
-          <p className="h-lede">The shape of how we work, named. The boring promise we keep that beats every flashy one.</p>
-        </div>
-        <div className="values-grid">
-          {values.map((v, i) => (
-            <motion.div
-              key={v.title}
-              className="values-card"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.3 }}
-              transition={{ duration: 0.6, delay: i * 0.1, ease: [0.16, 1, 0.3, 1] }}
-              whileHover={{ y: -4 }}
+    <h2
+      className="h-display h-display-lg concept__hook-title"
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
+    >
+      <span className="concept__hook-row">
+        <span className="concept__hook-static">
+          <motion.span
+            variants={variantsStatic}
+            initial="hidden"
+            animate={reveal >= 1 ? 'visible' : 'hidden'}
+          >
+            We turn
+          </motion.span>
+        </span>
+        {' '}
+        <span className="concept__hook-slot">
+          <motion.em
+            variants={variantsGrad}
+            initial="hidden"
+            animate={reveal >= 2 ? 'visible' : 'hidden'}
+          >
+            {HOOK_LEFT[i]}
+          </motion.em>
+        </span>
+      </span>
+      <span className="concept__hook-row">
+        <span className="concept__hook-static">
+          <motion.span
+            variants={variantsStatic}
+            initial="hidden"
+            animate={reveal >= 3 ? 'visible' : 'hidden'}
+          >
+            into
+          </motion.span>
+        </span>
+        {' '}
+        <span className="concept__hook-slot">
+          <motion.em
+            variants={variantsGrad}
+            initial="hidden"
+            animate={reveal >= 4 ? 'visible' : 'hidden'}
+          >
+            {HOOK_RIGHT[i]}
+          </motion.em>
+        </span>
+      </span>
+    </h2>
+  );
+}
+
+/* 1:1 with the 6-stage Stack — each row mirrors one Offerings stage so the
+   Concept story and the Offerings story reinforce each other. Ids match
+   STAGES[].key so the mapping is self-documenting. */
+const MACHINE_INPUTS = [
+  { id: 'found',    num: '25', label: 'Searches made where you didn’t come up', body: 'Invisible online' },
+  { id: 'capture',  num: '12', label: 'Missed calls a day',                     body: 'Missed inquiries' },
+  { id: 'generate', num: '3',  label: 'Referrals each month',                   body: 'No pipeline' },
+  { id: 'activate', num: '60', label: 'Mins to first response',                 body: 'Slow follow-up' },
+  { id: 'close',    num: '4',  label: 'Days proposals sit unsent',              body: 'Stuck at the proposal' },
+  { id: 'process',  num: '5',  label: 'Days to invoice a customer',             body: 'Invoice chaos' },
+];
+const MACHINE_OUTPUTS = [
+  { id: 'found',    num: '0',  unit: '', label: 'Missed opportunities', body: 'SEO & AEO so you come up first in any search' },
+  { id: 'capture',  num: '0',  unit: '', label: 'Missed enquiries',     body: '24/7 AI Receptionist' },
+  { id: 'generate', num: '50', unit: '', label: 'Fit leads daily',      body: 'Automated pipeline generation' },
+  { id: 'activate', num: '5',  unit: '', label: 'Min auto follow-up',   body: 'Always-on AI assistant' },
+  { id: 'close',    num: '0',  unit: '', label: 'Days to onboarding',   body: 'Auto-sent, signed and onboarded — same day' },
+  { id: 'process',  num: '5',  unit: '', label: 'Min invoice turnaround', body: 'Auto-invoiced the moment they sign' },
+];
+
+function CounterTile({ tile, active, reduced, kickoff }) {
+  /* numeric portion of `num` (handles £3.2k, −18, 24/7, 0, '5'). */
+  const numeric = React.useMemo(() => {
+    const m = String(tile.num).match(/-?\d+(?:\.\d+)?/);
+    return m ? parseFloat(m[0]) : null;
+  }, [tile.num]);
+  const mv = useMotionValue(0);
+  const [text, setText] = React.useState(reduced || numeric == null ? tile.num : tile.num.replace(/-?\d+(?:\.\d+)?/, '0'));
+  React.useEffect(() => {
+    if (!kickoff || numeric == null || reduced) {
+      setText(tile.num);
+      return;
+    }
+    const controls = animate(mv, numeric, {
+      duration: 1.4,
+      ease: [0.16, 1, 0.3, 1],
+      onUpdate: (v) => {
+        const formatted = Number.isInteger(numeric)
+          ? Math.round(v).toString()
+          : v.toFixed(1);
+        setText(tile.num.replace(/-?\d+(?:\.\d+)?/, formatted));
+      },
+    });
+    return () => controls.stop();
+  }, [kickoff, numeric, reduced, tile.num, mv]);
+  return (
+    <motion.div
+      className={'concept__tile' + (active ? ' is-active' : '')}
+      animate={{
+        scale: active ? 1.04 : 1,
+        borderColor: active ? 'rgba(0,128,228,0.55)' : 'rgba(255,255,255,0.10)',
+      }}
+      transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+    >
+      <div className="concept__tile-num">{text}</div>
+      {tile.unit ? <div className="concept__tile-unit">{tile.unit}</div> : null}
+      <div className="concept__tile-lbl">{tile.label}</div>
+      {tile.body ? <div className="concept__tile-body">{tile.body}</div> : null}
+    </motion.div>
+  );
+}
+
+function ConceptMachine({ reduced }) {
+  const ref = React.useRef(null);
+  const [hover, setHover] = React.useState(null);
+  const [kickoff, setKickoff] = React.useState(false);
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ['start 80%', 'center 30%'],
+  });
+
+  React.useEffect(() => {
+    if (reduced) { setKickoff(true); return; }
+    const u = scrollYProgress.on('change', (v) => { if (v > 0.5) setKickoff(true); });
+    return () => u();
+  }, [reduced, scrollYProgress]);
+
+  return (
+    <div className="concept__machine" ref={ref}>
+      <div className="concept__machine-head">
+        <span className="concept__machine-eyebrow">How it works</span>
+        <h3 className="concept__machine-title">
+          Your data in. <em>Our results out</em>
+        </h3>
+        <motion.span
+          aria-hidden="true"
+          className="concept__machine-underline"
+          initial={{ scaleX: 0 }}
+          whileInView={{ scaleX: 1 }}
+          viewport={{ once: true, amount: 0.6 }}
+          transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+        />
+      </div>
+      <ul className="concept__machine-rows" role="list">
+        <li className="concept__machine-headers" aria-hidden="true">
+          <span>What goes in</span>
+          <span/>
+          <span>What comes out</span>
+        </li>
+        {MACHINE_INPUTS.map((it, i) => {
+          const out = MACHINE_OUTPUTS[i];
+          const active = hover === it.id;
+          return (
+            <li
+              key={it.id}
+              className={'concept__mrow' + (active ? ' is-active' : '')}
+              onMouseEnter={() => setHover(it.id)}
+              onMouseLeave={() => setHover(null)}
+              onFocus={() => setHover(it.id)}
+              onBlur={() => setHover(null)}
+              tabIndex={0}
             >
-              <span className="values-card__num">0{i + 1} / 03</span>
-              <h3 className="values-card__title">{v.title}<em>.</em></h3>
-              <p className="values-card__copy">{v.copy}</p>
-            </motion.div>
-          ))}
-        </div>
+              <motion.div
+                className={'concept__mrow-input' + (it.num ? ' concept__mrow-input--rich' : '')}
+                initial={reduced ? false : { opacity: 0, x: -28 }}
+                whileInView={reduced ? undefined : { opacity: 1, x: 0 }}
+                viewport={{ once: true, amount: 0.4 }}
+                transition={{ duration: 0.55, delay: 0.08 * i, ease: [0.16, 1, 0.3, 1] }}
+              >
+                {it.num ? (
+                  <>
+                    <div className="concept__mrow-input-num">{it.num}</div>
+                    <div className="concept__mrow-input-lbl">{it.label}</div>
+                    {it.body ? <div className="concept__mrow-input-body">{it.body}</div> : null}
+                  </>
+                ) : (
+                  <>
+                    <span className="concept__mrow-ico"><I name={it.icon} size={18}/></span>
+                    <span className="concept__mrow-lbl">{it.label}</span>
+                  </>
+                )}
+              </motion.div>
+              <div className="concept__mrow-arrow" aria-hidden="true">
+                <I name="arrow-right" size={18}/>
+              </div>
+              <motion.div
+                className="concept__mrow-output"
+                initial={reduced ? false : { opacity: 0, x: 28 }}
+                whileInView={reduced ? undefined : { opacity: 1, x: 0 }}
+                viewport={{ once: true, amount: 0.4 }}
+                transition={{ duration: 0.55, delay: 0.08 * i + 0.1, ease: [0.16, 1, 0.3, 1] }}
+              >
+                <CounterTile tile={out} active={active} reduced={reduced} kickoff={kickoff}/>
+              </motion.div>
+            </li>
+          );
+        })}
+      </ul>
+    </div>
+  );
+}
+
+function ConceptHandoff({ onNav, reduced }) {
+  const lines = ["You stay focused on your business.", "Whilst we turn AI into ROI"];
+  return (
+    <div className="concept__handoff">
+      <motion.h3
+        className="concept__handoff-line"
+        initial="hidden"
+        whileInView="show"
+        viewport={{ once: true, amount: 0.4 }}
+        variants={{
+          hidden: {},
+          show: { transition: { staggerChildren: reduced ? 0 : 0.05, delayChildren: 0.05 } },
+        }}
+        aria-label={lines.join(' ')}
+      >
+        {lines.map((rowText, ri) => { const ws = rowText.split(' '); return (
+          <span key={ri} className="concept__handoff-line-row">
+          {ws.map((w, wi) => {
+          const i = wi; const words = ws;
+          const accent = w === 'AI' || w === 'ROI';
+          return (
+          <motion.span
+            key={i}
+            aria-hidden="true"
+            className={'concept__handoff-word' + (accent ? ' concept__handoff-word--accent' : '')}
+            variants={{
+              hidden: { opacity: 0, y: 14, filter: 'blur(4px)' },
+              show:   { opacity: 1, y: 0, filter: 'blur(0px)', transition: { duration: 0.55, ease: [0.16, 1, 0.3, 1] } },
+            }}
+          >
+            {w}
+            {i < words.length - 1 ? ' ' : ''}
+          </motion.span>
+          );
+        })}
+        </span>
+        ); })}
+      </motion.h3>
+      <span className="concept__handoff-pulse" aria-hidden="true"/>
+      <div className="concept__handoff-ctas">
+        <button className="btn btn--primary" onClick={() => onNav('contact')}>
+          Book a 30-min call <I name="arrow-right" size={16}/>
+        </button>
+        <button className="btn btn--glass" onClick={() => onNav('stack')}>
+          See what we ship
+        </button>
+      </div>
+    </div>
+  );
+}
+
+export function ConceptSection({ onNav }) {
+  const reduced = useReducedMotion();
+  return (
+    <motion.section
+      className="section deep on-dark concept"
+      id="sec-concept"
+      initial={{ opacity: 0 }}
+      whileInView={{ opacity: 1 }}
+      viewport={{ once: true, amount: 0.05 }}
+      transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+    >
+      <div className="glow-blob b2" style={{ top: '15%', right: '6%', left: 'auto' }}/>
+      <div className="glow-blob b3" style={{ top: '60%', left: '4%' }}/>
+      <div className="container">
+        {/* Act 1 — Hook */}
+        <motion.div className="concept__hook" {...REVEAL}>
+          <div className="h-eyebrow">Concept</div>
+          <HookHeadline reduced={reduced}/>
+          <p className="h-lede concept__hook-lede">
+            For all businesses that want results, not jargon. We build the AI
+            behind the scenes — you keep doing what you do best.
+          </p>
+        </motion.div>
+
+        {/* Act 2 — Interactive AI→ROI machine (translator-style rows) */}
+        <motion.div {...REVEAL_QUICK}>
+          <ConceptMachine reduced={reduced}/>
+        </motion.div>
+
+        {/* Act 3 — Handoff */}
+        <motion.div {...REVEAL_QUICK}>
+          <ConceptHandoff onNav={onNav} reduced={reduced}/>
+        </motion.div>
       </div>
     </motion.section>
   );
@@ -750,7 +1096,7 @@ export function Footer({ onNav }) {
           <div className="footer__col">
             <h4 className="footer__col-title">Company</h4>
             <ul>
-              <li onClick={() => onNav('values')}>Concept</li>
+              <li onClick={() => onNav('concept')}>Concept</li>
               <li onClick={() => onNav('stack')}>Offerings</li>
               <li onClick={() => onNav('customers')}>Customers</li>
               <li onClick={() => onNav('deliver')}>Delivery</li>
