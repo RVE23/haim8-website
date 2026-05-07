@@ -21,7 +21,7 @@ import './styles/extras.css';
 import {
   Nav,
   Hero,
-  ValuesSection,
+  ConceptSection,
   StackSection,
   DeliverSection,
   WhyNowSection,
@@ -108,7 +108,8 @@ export default function App() {
       return;
     }
     const map = {
-      values:     'sec-values',
+      values:     'sec-concept',
+      concept:    'sec-concept',
       customers:  'sec-customers',
       deliver:    'sec-deliver',
       whynow:     'sec-whynow',
@@ -167,7 +168,7 @@ export default function App() {
           <>
             <Nav active={active} onNav={onNav}/>
             <Hero/>
-            <ValuesSection/>
+            <ConceptSection onNav={onNav}/>
             <StackSection onNav={onNav}/>
             <CustomersSection onNav={onNav}/>
             <DeliverSection onNav={onNav}/>
