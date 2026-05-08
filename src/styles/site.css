@@ -712,7 +712,7 @@ a { color: inherit; text-decoration: none; }
   background: rgba(0,128,228,0.14);
   border: 1px solid rgba(0,128,228,0.30);
   color: var(--h8-blue-50);
-  margin-bottom: 14px;
+  margin: 0 auto 14px;
 }
 .stack-card.is-active .stack-card__icon,
 .stack-card:hover .stack-card__icon {

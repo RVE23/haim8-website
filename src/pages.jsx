@@ -18,7 +18,7 @@ const REVEAL = {
 /* ─── Stage data (full copy + section content) ─────────────────── */
 const STAGE_PAGES = [
   {
-    key: 'found', num: '00', name: 'Be Found', icon: 'magnifier',
+    key: 'found', num: '01', name: 'Search', icon: 'magnifier',
     tagline: 'Brand-grade site that shows up — on Google and in AI search.',
     challenge: {
       eyebrow: 'The problem',
@@ -59,7 +59,7 @@ const STAGE_PAGES = [
     },
   },
   {
-    key: 'capture', num: '01', name: 'Capture', icon: 'chat',
+    key: 'capture', num: '02', name: 'Capture', icon: 'chat',
     tagline: 'Never miss an inquiry — after-hours, weekends, on jobs.',
     challenge: {
       eyebrow: 'The problem',
@@ -87,20 +87,20 @@ const STAGE_PAGES = [
       number: '5m',
       label: 'first-touch SLA on every inquiry — day, night, weekend, holiday.',
       pills: ['24/7 web chat', 'After-hours triage', 'Missed-call rescue', 'Warm-lead routing'],
-      pull: <>Stage 1 typically <em>pays for itself</em> the first month it stops a missed inquiry.</>,
+      pull: <>Stage 2 typically <em>pays for itself</em> the first month it stops a missed inquiry.</>,
     },
     impact: {
       eyebrow: 'What it moves',
       tiles: [
         { num: '70%', lbl: 'Out-of-hours value retained', ctx: 'Inquiries that would have converted at 9am next day, captured the moment they arrive.' },
-        { num: '£3.2k', lbl: 'Per saved dental case', ctx: 'Average lifetime value of a UK cosmetic-dentistry case. Stage 1 saves several per month.' },
+        { num: '£3.2k', lbl: 'Per saved dental case', ctx: 'Average lifetime value of a UK cosmetic-dentistry case. Stage 2 saves several per month.' },
         { num: '4m 12s', lbl: 'Avg first-touch time', ctx: 'Across Lighthouse tenants — well inside the 5-minute SLA, end-to-end.' },
       ],
-      ref: 'Indicative; UK Lighthouse tenants. Stage 1 typically pays for itself within month one.',
+      ref: 'Indicative; UK Lighthouse tenants. Stage 2 typically pays for itself within month one.',
     },
   },
   {
-    key: 'generate', num: '02', name: 'Generate', icon: 'chart',
+    key: 'generate', num: '03', name: 'Generate', icon: 'chart',
     tagline: 'Daily, signal-driven pipeline — beyond referrals.',
     challenge: {
       eyebrow: 'The problem',
@@ -135,13 +135,13 @@ const STAGE_PAGES = [
       tiles: [
         { num: '12×', lbl: 'List-to-meeting rate', ctx: 'Versus generic data-vendor lists — because the signal is yours, not someone else\'s pre-canned ICP.' },
         { num: 'Daily', lbl: 'Refresh cadence', ctx: 'Every morning the list is fresh. No quarterly stale-data clean-up. No "we need to buy a new tool."' },
-        { num: '£0', lbl: 'List-buying spend', ctx: 'You stop renting other people\'s data. Stage 2 is yours, by-name, with the signal trail.' },
+        { num: '£0', lbl: 'List-buying spend', ctx: 'You stop renting other people\'s data. Stage 3 is yours, by-name, with the signal trail.' },
       ],
-      ref: 'Indicative; based on Lighthouse insolvency-intelligence engagement (Stage 2 + 3).',
+      ref: 'Indicative; based on Lighthouse insolvency-intelligence engagement (Stage 3 + 4).',
     },
   },
   {
-    key: 'activate', num: '03', name: 'Activate', icon: 'bolt',
+    key: 'activate', num: '04', name: 'Activate', icon: 'bolt',
     tagline: 'First contact in 5 minutes, every time.',
     challenge: {
       eyebrow: 'The problem',
@@ -182,7 +182,7 @@ const STAGE_PAGES = [
     },
   },
   {
-    key: 'close', num: '04', name: 'Close', icon: 'sign',
+    key: 'close', num: '05', name: 'Close', icon: 'sign',
     tagline: 'Proposals, contracts and signatures — done for you.',
     challenge: {
       eyebrow: 'The problem',
@@ -210,7 +210,7 @@ const STAGE_PAGES = [
       number: '0',
       label: 'days between signed contract and onboarding starting. Same minute, every time.',
       pills: ['Custom templates', 'Status tracking', 'Auto-trigger onboarding', 'One screen for every deal'],
-      pull: <>Stage 4 is the difference between "we won the deal" and "the deal <em>actually closed</em>."</>,
+      pull: <>Stage 5 is the difference between "we won the deal" and "the deal <em>actually closed</em>."</>,
     },
     impact: {
       eyebrow: 'What it moves',
@@ -223,7 +223,7 @@ const STAGE_PAGES = [
     },
   },
   {
-    key: 'process', num: '05', name: 'Process', icon: 'gear',
+    key: 'process', num: '06', name: 'Process', icon: 'gear',
     tagline: 'Onboard a customer in minutes, not days.',
     challenge: {
       eyebrow: 'The problem',
@@ -349,7 +349,7 @@ export function StagePage({ stageKey, onNav }) {
               <span className="crumb__sep">/</span>
               <span className="crumb__here">Stage {s.num} · {s.name}</span>
             </div>
-            <div className="h-eyebrow" style={{ display:'inline-block', marginBottom: 14, color: 'var(--h8-electric-blue)', whiteSpace: 'nowrap' }}>Stage {s.num} of 05</div>
+            <div className="h-eyebrow" style={{ display:'inline-block', marginBottom: 14, color: 'var(--h8-electric-blue)', whiteSpace: 'nowrap' }}>Stage {s.num} of 06</div>
             <h1 className="h-display h-display-lg page-hero__title">
               {s.name}.
             </h1>
@@ -625,7 +625,7 @@ export function StackHubPage({ onNav }) {
             </div>
             <div className="use-grid" style={{ gridTemplateColumns: '1fr' }}>
               {[
-                { num: '01 · Single stage', title: 'One gap, fixed scope.', body: 'Pick the stage where the leak is biggest. Tier C, from £12k. Most start at Stage 01 — Capture.' },
+                { num: '01 · Single stage', title: 'One gap, fixed scope.', body: 'Pick the stage where the leak is biggest. Tier C, from £12k. Most start at Stage 02 — Capture.' },
                 { num: '02 · Multi-stage', title: 'Two or three, wired together.', body: 'The compounding starts. Capture + Activate, or Generate + Activate + Close. Tier B, from £35k.' },
                 { num: '03 · Full Stack', title: 'End-to-end, run by us.', body: 'All six stages, plus Managed Close & Sign and the run plan. Tier A, from £80k.' },
               ].map((x, i) => (
