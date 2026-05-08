@@ -1021,18 +1021,28 @@ export function CustomersSection({ onNav }) {
       <div className="container">
         <div className="section-head">
           <div className="h-eyebrow">Customers</div>
-          <h2 className="h-display h-display-lg">Work that <em>belongs</em> in the business it lives in.</h2>
-          <p className="h-lede">The software looks hand-made for them — because it is. Three real engagements, three different shapes of growth work.</p>
+          <h2 className="h-display h-display-lg">
+            Work that{' '}
+            <motion.em
+              initial={{ opacity: 0, filter: 'blur(12px)', y: 6 }}
+              whileInView={{ opacity: 1, filter: 'blur(0px)', y: 0 }}
+              viewport={{ once: true, amount: 0.4 }}
+              transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1], delay: 0.45 }}
+              style={{ display: 'inline-block' }}
+            >belongs</motion.em>
+            {' '}in the software it lives in
+          </h2>
+          <p className="h-lede">The platform looks hand-made for them — because it is. Three real engagements, three different shapes of growth work.</p>
         </div>
 
         <div className="lighthouse">
           {[
             { tag:'Stage 3 + 4', quote:'A UK insolvency-intelligence firm. Daily signal-driven pipeline, plus 5-minute first-touch SLA wired into their CRM.',
-              meta:[['Stages','Generate · Activate'],['Shipped in','6 weeks'],['Posture','A-grade security'],['Sign-off','Pending — name on request']] },
+              meta:[['Stages','Generate · Activate'],['Shipped in','4 weeks'],['Posture','A-grade security'],['Sign-off','Pending — name on request']] },
             { tag:'Stage 1 + 5', quote:'A premium private clinic group. A site that signals premium, AI-search visibility, and Close & Sign run by us across three locations.',
-              meta:[['Stages','Search · Close'],['Shipped in','9 weeks'],['Posture','UK GDPR'],['Sign-off','Pending — name on request']] },
+              meta:[['Stages','Search · Close'],['Shipped in','5 weeks'],['Posture','UK GDPR'],['Sign-off','Pending — name on request']] },
             { tag:'Full Stack', quote:'A premium-construction PM firm. End-to-end — from getting found to onboarding — with a separate portal for each project.',
-              meta:[['Stages','Full Stack'],['Run by','HAIM8 ops'],['Posture','UK GDPR + DPA'],['Sign-off','Pending — name on request']] },
+              meta:[['Stages','Full Stack'],['Shipped in','6 weeks'],['Posture','UK GDPR + DPA'],['Sign-off','Pending — name on request']] },
           ].map((c,i) => (
             <motion.div
               key={i}
