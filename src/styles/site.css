@@ -83,9 +83,18 @@ a { color: inherit; text-decoration: none; }
   background: #FFFFFF;
   color: var(--ink-1);
 }
+/* Section bg is pinned white in both themes, so re-bind ink tokens locally
+   to the light-theme values when the rest of the page is in dark mode.
+   This keeps timeline text legible against the white bg regardless of theme. */
+:root[data-theme="dark"] .section.deliver-section {
+  --ink-1: #0A1628;
+  --ink-2: rgba(10,22,40,0.78);
+  --ink-3: rgba(10,22,40,0.55);
+  --ink-mute: rgba(10,22,40,0.40);
+}
 .section.deliver-section .h-eyebrow { color: var(--h8-electric-blue); }
 .section.deliver-section .h-display,
-.section.deliver-section h2 { color: var(--h8-white); }
+.section.deliver-section h2 { color: var(--ink-1); }
 .section.deliver-section .h-lede { color: var(--ink-2); }
 .section.deliver-section .timeline-phase {
   background: rgba(10,22,40,0.03);
