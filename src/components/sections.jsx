@@ -1041,7 +1041,7 @@ export function CustomersSection({ onNav }) {
               meta:[['Stages','Generate · Activate'],['Shipped in','4 weeks'],['Posture','A-grade security'],['Sign-off','Pending — name on request']] },
             { tag:'Stage 1 + 5', quote:'A premium private clinic group. A site that signals premium, AI-search visibility, and Close & Sign run by us across three locations.',
               meta:[['Stages','Search · Close'],['Shipped in','5 weeks'],['Posture','UK GDPR'],['Sign-off','Pending — name on request']] },
-            { tag:'Full Stack', quote:'A premium-construction PM firm. End-to-end — from getting found to onboarding — with a separate portal for each project.',
+            { tag:'Full Stack', quote:'A leading events waste-management company. End-to-end — from getting found to onboarding — with a separate portal for each event.',
               meta:[['Stages','Full Stack'],['Shipped in','6 weeks'],['Posture','UK GDPR + DPA'],['Sign-off','Pending — name on request']] },
           ].map((c,i) => (
             <motion.div
