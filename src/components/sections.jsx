@@ -34,27 +34,27 @@ const REVEAL_QUICK = {
 };
 
 export const STAGES = [
-  { num: '00', key: 'found',    icon: 'magnifier', name: 'Be Found',  outcome: 'Brand-grade site that shows up — on Google and in AI search.', emWord: 'deserve',
+  { num: '01', key: 'found',    icon: 'magnifier', name: 'Search',    outcome: 'Brand-grade site that shows up — on Google and in AI search.', emWord: 'deserve',
     detail: { headline: <>You <em>deserve</em> to be found.</>,
       lede: 'A site that signals premium. Schema, structured data and AI-search visibility set up properly. Google Business owned, not abandoned.',
       bullets: ['Branded marketing site, brand-grade build', 'Schema, structured data, technical SEO foundation', 'AI-search / LLM visibility configured', 'Google Business presence — owned, not abandoned'] }},
-  { num: '01', key: 'capture',  icon: 'chat',      name: 'Capture',   outcome: 'Never miss an inquiry — after-hours, weekends, on jobs.', emWord: 'miss',
+  { num: '02', key: 'capture',  icon: 'chat',      name: 'Capture',   outcome: 'Never miss an inquiry — after-hours, weekends, on jobs.', emWord: 'miss',
     detail: { headline: <>Stop losing <em>inquiries</em> after hours.</>,
       lede: 'AI concierge handles web chat, after-hours email triage, voice deflection and missed-call rescue. Warm leads routed to a human in seconds.',
       bullets: ['Web chat trained on your services and tone', 'After-hours email triage and reply-drafting', 'Voice-call deflection and missed-call rescue', 'Warm-lead routing to phone, SMS or owner inbox'] }},
-  { num: '02', key: 'generate', icon: 'chart',     name: 'Generate',  outcome: 'Daily, signal-driven pipeline — beyond referrals.', emWord: 'referrals',
+  { num: '03', key: 'generate', icon: 'chart',     name: 'Generate',  outcome: 'Daily, signal-driven pipeline — beyond referrals.', emWord: 'referrals',
     detail: { headline: <>Pipeline beyond <em>referrals</em>.</>,
       lede: 'We watch the right signals in your sector, find the matching businesses, and drop them in your CRM every morning. We pick the signals. You work the list.',
       bullets: ['Sector-targeted prospecting on real signals', 'Cleaned, ranked by fit, and dropped into your CRM', 'Daily refresh — fresh leads every morning', 'You see the source on every record'] }},
-  { num: '03', key: 'activate', icon: 'bolt',      name: 'Activate',  outcome: 'First contact in 5 minutes, every time.', emWord: '5 minutes',
+  { num: '04', key: 'activate', icon: 'bolt',      name: 'Activate',  outcome: 'First contact in 5 minutes, every time.', emWord: '5 minutes',
     detail: { headline: <>From lead to first call in <em>5 minutes</em>.</>,
       lede: 'Follow-ups that just run. Callback scheduler, sequence sender, nurture flows, SLA timer per lead. No spreadsheet, no rot.',
       bullets: ['Callback scheduler with owner SLA timer', 'Sequence sender with templates in your voice', 'Nurture flows that pause when humans take over', 'Per-lead audit trail — every touch, every hour'] }},
-  { num: '04', key: 'close',    icon: 'sign',      name: 'Close',     outcome: 'Proposals, contracts and signatures — done for you.', emWord: 'done for you',
+  { num: '05', key: 'close',    icon: 'sign',      name: 'Close',     outcome: 'Proposals, contracts and signatures — done for you.', emWord: 'done for you',
     detail: { headline: <>Close & Sign — <em>done for you</em>.</>,
       lede: 'We build the templates, send them, track sent → viewed → signed, and kick off onboarding the moment your customer signs.',
       bullets: ['Proposal, contract and schedule templates — drafted by us', 'Send-sequence: draft → revise → final → sign', 'Status tracking sent / viewed / signed in one view', 'Auto-trigger onboarding the moment a contract signs', 'Simple CRM setup and one screen showing every deal’s status'] }},
-  { num: '05', key: 'process',  icon: 'gear',      name: 'Process',   outcome: 'Onboard a customer in minutes, not days.', emWord: 'minutes, not days',
+  { num: '06', key: 'process',  icon: 'gear',      name: 'Process',   outcome: 'Onboard a customer in minutes, not days.', emWord: 'minutes, not days',
     detail: { headline: <>Onboard in <em>minutes, not days</em>.</>,
       lede: 'Customer-ops automation. Intake → CRM → invoicing → onboarding email → portal. Multi-tenant where you need sub-accounts.',
       bullets: ['Intake forms wired to your CRM', 'Invoicing and onboarding emails on autopilot', 'Customer portal — multi-tenant where needed', 'Hand-offs you can audit, not chase'] }},
@@ -796,7 +796,7 @@ function CostSwitcher() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
         >{cur.value}</motion.div>
-        <div className="cost-switch__caption">{cur.detail}<br/>Stage 1 · Capture pays for itself the first month it stops one.</div>
+        <div className="cost-switch__caption">{cur.detail}<br/>Stage 2 · Capture pays for itself the first month it stops one.</div>
       </div>
     </div>
   );
@@ -1027,10 +1027,10 @@ export function CustomersSection({ onNav }) {
 
         <div className="lighthouse">
           {[
-            { tag:'Stage 2 + 3', quote:'A UK insolvency-intelligence firm. Daily signal-driven pipeline, plus 5-minute first-touch SLA wired into their CRM.',
+            { tag:'Stage 3 + 4', quote:'A UK insolvency-intelligence firm. Daily signal-driven pipeline, plus 5-minute first-touch SLA wired into their CRM.',
               meta:[['Stages','Generate · Activate'],['Shipped in','6 weeks'],['Posture','A-grade security'],['Sign-off','Pending — name on request']] },
-            { tag:'Stage 0 + 4', quote:'A premium private clinic group. A site that signals premium, AI-search visibility, and Close & Sign run by us across three locations.',
-              meta:[['Stages','Be Found · Close'],['Shipped in','9 weeks'],['Posture','UK GDPR'],['Sign-off','Pending — name on request']] },
+            { tag:'Stage 1 + 5', quote:'A premium private clinic group. A site that signals premium, AI-search visibility, and Close & Sign run by us across three locations.',
+              meta:[['Stages','Search · Close'],['Shipped in','9 weeks'],['Posture','UK GDPR'],['Sign-off','Pending — name on request']] },
             { tag:'Full Stack', quote:'A premium-construction PM firm. End-to-end — from getting found to onboarding — with a separate portal for each project.',
               meta:[['Stages','Full Stack'],['Run by','HAIM8 ops'],['Posture','UK GDPR + DPA'],['Sign-off','Pending — name on request']] },
           ].map((c,i) => (
