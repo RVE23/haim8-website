@@ -1038,11 +1038,11 @@ export function CustomersSection({ onNav }) {
         <div className="lighthouse">
           {[
             { tag:'Stage 3 + 4', quote:'A UK insolvency-intelligence firm. Daily signal-driven pipeline, plus 5-minute first-touch SLA wired into their CRM.',
-              meta:[['Stages','Generate · Activate'],['Shipped in','4 weeks'],['Posture','A-grade security · UK GDPR'],['Sign-off','Pending — name on request']] },
+              meta:[['Stages','Generate · Activate'],['Shipped in','4 weeks'],['Posture',['A-grade security','UK GDPR']],['Sign-off','Pending — name on request']] },
             { tag:'Stage 1 + 5', quote:'A premium private clinic group. A site that signals premium, AI-search visibility, and Close & Sign run by us across three locations.',
-              meta:[['Stages','Search · Close'],['Shipped in','5 weeks'],['Posture','A-grade security · UK GDPR · Multi-tenancy'],['Sign-off','Pending — name on request']] },
+              meta:[['Stages','Search · Close'],['Shipped in','5 weeks'],['Posture',['A-grade security','UK GDPR','Multi-tenancy']],['Sign-off','Pending — name on request']] },
             { tag:'Full Stack', quote:'A leading events waste-management company. End-to-end — from getting found to onboarding — with a separate portal for each event.',
-              meta:[['Stages','Full Stack'],['Shipped in','6 weeks'],['Posture','A-grade security · UK GDPR + DPA · Multi-tenancy'],['Sign-off','Pending — name on request']] },
+              meta:[['Stages','Full Stack'],['Shipped in','6 weeks'],['Posture',['A-grade security','UK GDPR + DPA','Multi-tenancy']],['Sign-off','Pending — name on request']] },
           ].map((c,i) => (
             <motion.div
               key={i}
@@ -1057,7 +1057,12 @@ export function CustomersSection({ onNav }) {
               <p className="lighthouse-card__quote">"{c.quote}"</p>
               <div className="lighthouse-card__meta">
                 {c.meta.map(([k,v],j) => (
-                  <div key={j}><div className="lighthouse-card__meta-k">{k}</div><div className="lighthouse-card__meta-v">{v}</div></div>
+                  <div key={j}>
+                    <div className="lighthouse-card__meta-k">{k}</div>
+                    {Array.isArray(v)
+                      ? v.map((line, m) => <div key={m} className="lighthouse-card__meta-v">{line}</div>)
+                      : <div className="lighthouse-card__meta-v">{v}</div>}
+                  </div>
                 ))}
               </div>
             </motion.div>
