@@ -928,16 +928,16 @@ export function DeliverSection({ onNav }) {
           </div>
           <DeliverCycleGraphic/>
         </div>
-        <p className="h-lede" style={{ marginLeft: 0, marginTop: 24, maxWidth: 720 }}>Named owner. Weekly UAT. We hit renewal dates. The boring promise that beats every flashy one.</p>
+        <p className="h-lede" style={{ marginLeft: 0, marginTop: 24, maxWidth: 720 }}>One person you can name on every stage. You see progress every week. We deliver when we promise — no theatre.</p>
 
         <div className="timeline">
           <div className="timeline-axis">
             {[
-              { name:'Discovery', time:'1 wk',     fill:'14%',  pills:['Owner: Strategy lead','Workshop + audit'], detail:'We map your revenue stack, name the gaps, agree the scope. You leave with a one-page plan.' },
-              { name:'Pilot',     time:'1 wk',     fill:'28%',  pills:['Owner: Solutions eng','Working slice'],   detail:'A small, real slice shipped end-to-end so the team trusts the approach before we scale.' },
-              { name:'Build',     time:'4–8 wks',  fill:'60%',  pills:['Owner: Delivery lead','Weekly UAT'],       detail:'Production-grade build with weekly demos. You see it, you sign it off, we move on.' },
-              { name:'Grow',      time:'4–6 wks',  fill:'80%',  pills:['Owner: Growth lead','Iteration sprints'], detail:'We tune what is shipped — funnels, prompts, models, copy — until the metrics that matter actually move.' },
-              { name:'Run',       time:'ongoing',  fill:'100%', pills:['Owner: HAIM8 ops','Monthly review'],       detail:'We run it. Observability, on-call, monthly business review. You get the upside; we get the bleep.' },
+              { name:'Discovery', time:'3 d',      fill:'10%',  pills:['Owner: Strategy lead','Workshop + audit'], detail:'We map your revenue stack, name the gaps, agree the scope. You leave with a one-page plan.' },
+              { name:'Pilot',     time:'3 d',      fill:'20%',  pills:['Owner: Solutions eng','Working slice'],   detail:'A small, real slice shipped end-to-end so the team trusts the approach before we scale.' },
+              { name:'Build',     time:'2–3 wks',  fill:'55%',  pills:['Owner: Delivery lead','Weekly demo'],     detail:'Production-grade build with weekly demos. You see it, you sign it off, we move on.' },
+              { name:'Grow',      time:'1–2 wks',  fill:'80%',  pills:['Owner: Growth lead','Iteration sprints'], detail:'We tune what is shipped — funnels, prompts, models, copy — until the metrics that matter actually move.' },
+              { name:'Run',       time:'ongoing',  fill:'100%', pills:['Owner: HAIM8 ops','Monthly review'],       detail:'We run it. Observability, on-call, monthly business review. You get the upside; we take the alerts at 3am.' },
             ].map((p,i) => (
               <motion.div
                 key={i}
