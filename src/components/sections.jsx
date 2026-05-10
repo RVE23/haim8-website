@@ -906,11 +906,11 @@ function DeliverCycleGraphic() {
       </svg>
       <div className="deliver-graphic__chip deliver-graphic__chip--tl">
         <div className="dgchip__num">1×</div>
-        <div className="dgchip__lbl">Named owner per stage</div>
+        <div className="dgchip__lbl">Output per stage</div>
       </div>
       <div className="deliver-graphic__chip deliver-graphic__chip--br">
         <div className="dgchip__num">7d</div>
-        <div className="dgchip__lbl">UAT cadence</div>
+        <div className="dgchip__lbl">Demo + sign-off</div>
       </div>
     </div>
   );
