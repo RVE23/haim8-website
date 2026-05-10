@@ -808,7 +808,7 @@ function DeliverCycleGraphic() {
     { name: 'Discovery', short: 'DISC' },
     { name: 'Pilot',     short: 'PILOT' },
     { name: 'Build',     short: 'BUILD' },
-    { name: 'Grow',      short: 'GROW' },
+    { name: 'Tune',      short: 'TUNE' },
     { name: 'Run',       short: 'RUN' },
   ];
   const cx = 200, cy = 200, r = 130;
@@ -924,7 +924,7 @@ export function DeliverSection({ onNav }) {
         <div className="deliver-head">
           <div className="section-head" style={{ textAlign:'left', maxWidth: 640, margin: 0 }}>
             <div className="h-eyebrow">Delivery</div>
-            <h2 className="h-display h-display-lg">Discovery, Pilot, Build, Grow, Run — <em>rinse and repeat</em>.</h2>
+            <h2 className="h-display h-display-lg">Discovery, Pilot, Build, Tune, Run — <em>rinse and repeat</em>.</h2>
           </div>
           <DeliverCycleGraphic/>
         </div>
@@ -936,7 +936,7 @@ export function DeliverSection({ onNav }) {
               { name:'Discovery', time:'3 d',      fill:'10%',  pills:['Output: One-page plan','Workshop + audit'], detail:'We map your revenue stack, name the gaps, agree the scope. You leave with a one-page plan.' },
               { name:'Pilot',     time:'3 d',      fill:'20%',  pills:['Output: Working slice','End-to-end test'], detail:'A small, real slice shipped end-to-end so the team trusts the approach before we scale.' },
               { name:'Build',     time:'2–3 wks',  fill:'55%',  pills:['Output: Production build','Weekly demo'],  detail:'Production-grade build with weekly demos. You see it, you sign it off, we move on.' },
-              { name:'Grow',      time:'1–2 wks',  fill:'80%',  pills:['Output: Tuned metrics','Iteration sprints'], detail:'We tune what is shipped — funnels, prompts, models, copy — until the metrics that matter actually move.' },
+              { name:'Tune',      time:'1–2 wks',  fill:'80%',  pills:['Output: Refined metrics','Iteration sprints'], detail:'We tune what is shipped — funnels, prompts, models, copy — until the metrics that matter actually move.' },
               { name:'Run',       time:'ongoing',  fill:'100%', pills:['Output: Live system','Monthly review'],   detail:'We run it. Observability, on-call, monthly business review. You get the upside; we take the alerts at 3am.' },
             ].map((p,i) => (
               <motion.div
