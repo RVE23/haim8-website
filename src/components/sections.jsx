@@ -1129,11 +1129,11 @@ export function ClosingCTA({ onNav }) {
       <div className="glow-blob b2"/>
       <div className="container-narrow" style={{ textAlign:'center' }}>
         <div className="h-eyebrow" style={{ display:'inline-block', marginBottom: 16 }}>Next step</div>
-        <h2 className="h-display h-display-lg" style={{ color:'var(--h8-white)' }}>Tell us where the <em>revenue</em> leaks. We'll show you the solution.</h2>
+        <h2 className="h-display h-display-lg" style={{ color:'var(--h8-white)' }}>Tell us where the <em>revenue</em> leaks. We'll show you the <em>solution</em>.</h2>
         <p className="h-lede on-dark" style={{ margin:'18px auto 28px', maxWidth: 620 }}>A real conversation about your business. No SaaS sales cadence — you'll leave with a clear plan, whether you work with us or not.</p>
         <div className="row" style={{ justifyContent:'center' }}>
           <button className="btn btn--primary btn--shimmer" onClick={() => onNav('contact')}>Book a discovery call <I name="arrow-right" size={16}/></button>
-          <button className="btn btn--glass" onClick={() => onNav('audit')}>Free online presence audit</button>
+          <button className="btn btn--glass btn--beam" onClick={() => onNav('audit')}>Free online presence audit</button>
         </div>
       </div>
     </motion.section>

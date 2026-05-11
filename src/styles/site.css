@@ -267,6 +267,40 @@ a { color: inherit; text-decoration: none; }
 }
 .btn--primary:hover { transform: translateY(-1px); box-shadow: inset 0 1px 0 rgba(255,255,255,.45), 0 14px 30px rgba(0,128,228,.45); }
 
+/* Border beam — a bright arc travels around the button perimeter.
+   Uses @property so the conic-gradient angle is actually animatable.
+   Pair with .btn--glass to get the glassy inner fill. */
+@property --beam-from {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+}
+.btn--beam {
+  position: relative;
+  background:
+    linear-gradient(rgba(255,255,255,0.08), rgba(255,255,255,0.08)) padding-box,
+    conic-gradient(from var(--beam-from),
+      rgba(255,255,255,0.18) 0deg,
+      rgba(255,255,255,0.18) 270deg,
+      var(--h8-electric-blue) 320deg,
+      var(--h8-vision-purple) 360deg
+    ) border-box;
+  border: 1.5px solid transparent;
+  animation: btnBeamSpin 3.5s linear infinite;
+}
+.btn--beam:hover { animation-duration: 2s; }
+@keyframes btnBeamSpin {
+  to { --beam-from: 360deg; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .btn--beam {
+    animation: none;
+    background:
+      linear-gradient(rgba(255,255,255,0.08), rgba(255,255,255,0.08)) padding-box,
+      linear-gradient(135deg, var(--h8-electric-blue), var(--h8-vision-purple)) border-box;
+  }
+}
+
 /* Shimmer — diagonal sheen that loops slowly across the button and
    speeds up on hover. Lifted from the 21st.dev "shiny button" pattern. */
 .btn--shimmer {
