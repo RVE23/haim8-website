@@ -1151,7 +1151,7 @@ export function ClosingCTA({ onNav }) {
         <p className="h-lede on-dark" style={{ margin:'18px auto 28px', maxWidth: 620 }}>A real conversation about your business. No SaaS sales cadence — you'll leave with a clear plan, whether you work with us or not.</p>
         <div className="row" style={{ justifyContent:'center' }}>
           <button className="btn btn--primary btn--shimmer" onClick={() => onNav('contact')}>Book a discovery call <I name="arrow-right" size={16}/></button>
-          <button className="btn btn--glass btn--beam" onClick={() => onNav('audit')}>Free online presence audit</button>
+          <button className="btn btn--shiny" onClick={() => onNav('audit')}><span>Free online presence audit</span></button>
         </div>
       </div>
     </motion.section>
