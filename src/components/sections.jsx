@@ -1165,8 +1165,8 @@ export function Footer({ onNav }) {
       <div className="footer__inner">
         <div className="footer__cols">
           <div className="footer__brand">
-            <Wordmark height={28}/>
-            <p className="footer__pitch">Software that helps you grow — built for businesses that should look as good as they are. UK Ltd. Built in Britain.</p>
+            <img src="assets/haim8-logo.png" alt="HAIM8" style={{ height: 40, width: 'auto', display: 'block' }}/>
+            <p className="footer__pitch">Software that helps you grow — built for businesses that should look as good as they are.</p>
           </div>
           <div className="footer__col">
             <h4 className="footer__col-title">The Stack</h4>
@@ -1196,14 +1196,14 @@ export function Footer({ onNav }) {
           <div className="footer__col">
             <h4 className="footer__col-title">Contact</h4>
             <ul>
-              <li onClick={() => onNav('contact')}>Book a strategy call</li>
-              <li onClick={() => onNav('contact')}>Get a tailored proposal</li>
-              <li>hello@haim8.co.uk</li>
+              <li onClick={() => onNav('contact')}>Book a discovery call</li>
+              <li onClick={() => onNav('audit')}>Get a free online audit</li>
+              <li>hello@haim8.com</li>
             </ul>
           </div>
         </div>
         <div className="footer__base">
-          <span>© HAIM8 Ltd. All prices in GBP. Indicative until discovery.</span>
+          <span>© HAIM8 Ltd.</span>
           <span>Built in the UK · Hand-made, production-ready, brand-grade</span>
         </div>
       </div>
