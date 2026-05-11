@@ -283,19 +283,15 @@ a { color: inherit; text-decoration: none; }
 }
 .btn--gradient:hover,
 .btn--gradient:focus-visible {
-  transform: translateY(-2px) scale(1.025);
-  background: linear-gradient(120deg, #60a5fa 0%, #9b5fd4 50%, #c084fc 100%);
-  letter-spacing: .005em;
+  transform: translateY(-2px) scale(1.02);
   box-shadow:
-    0 0 0 1px rgba(168, 85, 247, 0.55),
-    0 0 36px -4px rgba(168, 85, 247, 0.65),
-    0 18px 44px -8px rgba(125, 65, 185, 0.7),
-    0 30px 70px -16px rgba(59, 130, 246, 0.5);
+    0 0 0 1.5px rgba(168, 85, 247, 0.45),
+    0 14px 36px -8px rgba(125, 65, 185, 0.55);
 }
-/* Slide the trailing icon further when the hover ramps up */
+/* Slide the trailing icon a touch when the hover ramps up */
 .btn--gradient svg { transition: transform .35s var(--h8-ease-out); }
 .btn--gradient:hover svg,
-.btn--gradient:focus-visible svg { transform: translateX(4px); }
+.btn--gradient:focus-visible svg { transform: translateX(3px); }
 
 /* Shiny CTA — 21st.dev "Shiny Button" pattern ported from the TSX
    flagship's components/ui/ShinyButton.css. A conic-gradient ring
@@ -383,6 +379,27 @@ a { color: inherit; text-decoration: none; }
     0 0 32px -2px rgba(168, 85, 247, 0.65),
     0 16px 40px -6px rgba(125, 65, 185, 0.7);
 }
+
+/* When .btn--shiny composes onto the blue .btn--primary, retint the
+   ring + halo so the button glows blue (matches the colour palette
+   it sits on). Same intensity as .btn--gradient's hover for parity. */
+.btn--primary.btn--shiny {
+  --shiny-highlight: #60a5fa;
+  --shiny-highlight-subtle: #93c5fd;
+  transition: 800ms cubic-bezier(0.25, 1, 0.5, 1);
+  transition-property: transform, box-shadow, --gradient-angle-offset, --gradient-percent, --gradient-shine;
+}
+.btn--primary.btn--shiny:hover,
+.btn--primary.btn--shiny:focus-visible {
+  transform: translateY(-2px) scale(1.02);
+  --gradient-percent: 28%;
+  --gradient-angle-offset: 95deg;
+  --gradient-shine: var(--shiny-highlight-subtle);
+  box-shadow:
+    inset 0 0 0 1px var(--shiny-bg-subtle),
+    0 0 0 1.5px rgba(96, 165, 250, 0.5),
+    0 14px 36px -8px rgba(0, 128, 228, 0.6);
+}
 .btn--shiny:hover::after,
 .btn--shiny:focus-visible::after {
   opacity: 0.75;
@@ -416,13 +433,7 @@ a { color: inherit; text-decoration: none; }
   pointer-events: none;
 }
 .btn--shimmer:hover::after,
-.btn--shimmer:focus-visible::after {
-  animation-duration: 1.2s;
-  background: linear-gradient(120deg,
-    transparent 30%,
-    rgba(255,255,255,0.60) 50%,
-    transparent 70%);
-}
+.btn--shimmer:focus-visible::after { animation-duration: 1.8s; }
 @keyframes btnShimmer {
   0%   { transform: translateX(-110%); }
   55%  { transform: translateX(110%); }
