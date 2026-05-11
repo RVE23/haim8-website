@@ -969,46 +969,106 @@ export function DeliverSection({ onNav }) {
 }
 
 /* ─── Why now ──────────────────────────────────────────────────
-   The case for moving on AI now rather than later. Stub copy — same
-   structure as ValuesSection so it lands consistently with the rest
-   of the page. Anchored at #sec-whynow for the nav 'Why now' tab. */
+   Sequenced scroll-driven reveal. Each card has its own scrollYProgress
+   target so it animates as it crosses the viewport — zig-zag entry,
+   y-rise, opacity fade, subtle scale. Each card leads with a giant
+   gradient metric. Anchored at #sec-whynow for the nav 'Timing' tab. */
+const WHYNOW_REASONS = [
+  {
+    title: 'Costs collapsed',
+    metric: '£30k → £3k',
+    copy: 'What cost £30k a year ago costs £3k now. The companies who waited are paying the same price as the ones who moved — but a year behind.',
+  },
+  {
+    title: 'The tools work',
+    metric: 'Today',
+    copy: 'Not "demo work" — actual production-grade work. Drafting, sorting, scheduling, replying. The same capability that drove your competitors’ margins last quarter.',
+  },
+  {
+    title: 'The window is open, briefly',
+    metric: '12 months',
+    copy: 'First-movers in your sector are stitching AI advantages together right now. The gap they’re building closes faster the longer you wait.',
+  },
+];
+
+function WhyNowCard({ reason, index, total, reduced }) {
+  const ref = React.useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ['start 92%', 'end 60%'],
+  });
+  const isOdd = index % 2 === 1;
+  // Scroll-progress driven entry — each card animates on its own bounding box
+  const opacity = useTransform(scrollYProgress, [0, 0.45, 1], [0.12, 1, 1]);
+  const y       = useTransform(scrollYProgress, [0, 0.5], [80, 0]);
+  const x       = useTransform(scrollYProgress, [0, 0.5], [isOdd ? 48 : -48, 0]);
+  const scale   = useTransform(scrollYProgress, [0, 0.5], [0.95, 1]);
+  return (
+    <motion.li
+      ref={ref}
+      className={'whynow-card' + (isOdd ? ' whynow-card--flip' : '')}
+      style={reduced ? undefined : { opacity, y, x, scale }}
+    >
+      <span className="whynow-card__num">0{index + 1} <span>/ 0{total}</span></span>
+      <div className="whynow-card__metric">{reason.metric}</div>
+      <h3 className="whynow-card__title">{reason.title}</h3>
+      <p className="whynow-card__copy">{reason.copy}</p>
+    </motion.li>
+  );
+}
+
 export function WhyNowSection() {
-  const reasons = [
-    { title: 'Costs collapsed',
-      copy: 'What cost £50k a year ago costs £500 now. The companies who waited are paying the same price as the ones who moved — but a year behind.' },
-    { title: 'The tools work',
-      copy: 'Not "demo work" — actual production-grade work. Drafting, sorting, scheduling, replying. The same capability that drove your competitors’ margins last quarter.' },
-    { title: 'Customers noticed',
-      copy: 'A 3-minute reply is the floor now, not the ceiling. The speed your customers got from someone else this morning is the speed they’ll expect from you tomorrow.' },
-    { title: 'The window is open, briefly',
-      copy: 'First-movers in your sector are stitching AI advantages together right now. The gap they’re building closes faster the longer you wait.' },
-  ];
+  const reduced = useReducedMotion();
+  // Vertical spine that fills as the user scrolls through the stack
+  const stackRef = React.useRef(null);
+  const { scrollYProgress: stackProgress } = useScroll({
+    target: stackRef,
+    offset: ['start 80%', 'end 70%'],
+  });
+  const spineScale = useTransform(stackProgress, [0, 1], [0, 1]);
   return (
     <motion.section className="section deep on-dark" id="sec-whynow" {...REVEAL}>
       <div className="glow-blob b3" style={{ top: '15%', left: '10%' }}/>
       <div className="container">
         <div className="section-head">
           <div className="h-eyebrow">Timing</div>
-          <h2 className="h-display h-display-lg">AI just crossed the line from <em>toy</em> to tool.</h2>
-          <p className="h-lede">The price dropped, the capability arrived, and your customers noticed. Four reasons the next twelve months matter more than the last twelve.</p>
+          <h2 className="h-display h-display-lg">
+            AI just crossed the line from{' '}
+            <motion.em
+              initial={{ opacity: 0, filter: 'blur(12px)', y: 6 }}
+              whileInView={{ opacity: 1, filter: 'blur(0px)', y: 0 }}
+              viewport={{ once: true, amount: 0.4 }}
+              transition={{ duration: 1.0, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
+              style={{ display: 'inline-block' }}
+            >toy</motion.em>
+            {' '}to{' '}
+            <motion.em
+              initial={{ opacity: 0, filter: 'blur(12px)', y: 6 }}
+              whileInView={{ opacity: 1, filter: 'blur(0px)', y: 0 }}
+              viewport={{ once: true, amount: 0.4 }}
+              transition={{ duration: 1.0, ease: [0.16, 1, 0.3, 1], delay: 0.85 }}
+              style={{ display: 'inline-block' }}
+            >tool</motion.em>
+            .
+          </h2>
+          <p className="h-lede">AI is finally production-ready. Over the next twelve months, the businesses that pull ahead will be the ones who put it to work fastest — and most effectively.</p>
         </div>
-        <div className="values-grid">
-          {reasons.map((r, i) => (
-            <motion.div
+        <ul ref={stackRef} className="whynow-stack" role="list">
+          <motion.span
+            aria-hidden="true"
+            className="whynow-stack__spine"
+            style={reduced ? { scaleY: 1 } : { scaleY: spineScale }}
+          />
+          {WHYNOW_REASONS.map((r, i) => (
+            <WhyNowCard
               key={r.title}
-              className="values-card"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.3 }}
-              transition={{ duration: 0.6, delay: i * 0.1, ease: [0.16, 1, 0.3, 1] }}
-              whileHover={{ y: -4 }}
-            >
-              <span className="values-card__num">0{i + 1} / 0{reasons.length}</span>
-              <h3 className="values-card__title">{r.title}<em>.</em></h3>
-              <p className="values-card__copy">{r.copy}</p>
-            </motion.div>
+              reason={r}
+              index={i}
+              total={WHYNOW_REASONS.length}
+              reduced={reduced}
+            />
           ))}
-        </div>
+        </ul>
       </div>
     </motion.section>
   );
