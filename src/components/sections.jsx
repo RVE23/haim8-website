@@ -991,23 +991,14 @@ const WHYNOW_REASONS = [
   },
 ];
 
-function WhyNowCard({ reason, index, total, reduced }) {
-  const ref = React.useRef(null);
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ['start 92%', 'end 60%'],
-  });
-  const isOdd = index % 2 === 1;
-  // Scroll-progress driven entry — each card animates on its own bounding box
-  const opacity = useTransform(scrollYProgress, [0, 0.45, 1], [0.12, 1, 1]);
-  const y       = useTransform(scrollYProgress, [0, 0.5], [80, 0]);
-  const x       = useTransform(scrollYProgress, [0, 0.5], [isOdd ? 48 : -48, 0]);
-  const scale   = useTransform(scrollYProgress, [0, 0.5], [0.95, 1]);
+function WhyNowCard({ reason, index, total }) {
   return (
     <motion.li
-      ref={ref}
-      className={'whynow-card' + (isOdd ? ' whynow-card--flip' : '')}
-      style={reduced ? undefined : { opacity, y, x, scale }}
+      className="whynow-card"
+      variants={{
+        hidden: { opacity: 0, y: 36, scale: 0.96 },
+        show:   { opacity: 1, y: 0, scale: 1, transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] } },
+      }}
     >
       <span className="whynow-card__num">0{index + 1} <span>/ 0{total}</span></span>
       <div className="whynow-card__metric">{reason.metric}</div>
@@ -1019,13 +1010,6 @@ function WhyNowCard({ reason, index, total, reduced }) {
 
 export function WhyNowSection() {
   const reduced = useReducedMotion();
-  // Vertical spine that fills as the user scrolls through the stack
-  const stackRef = React.useRef(null);
-  const { scrollYProgress: stackProgress } = useScroll({
-    target: stackRef,
-    offset: ['start 80%', 'end 70%'],
-  });
-  const spineScale = useTransform(stackProgress, [0, 1], [0, 1]);
   return (
     <motion.section className="section deep on-dark" id="sec-whynow" {...REVEAL}>
       <div className="glow-blob b3" style={{ top: '15%', left: '10%' }}/>
@@ -1053,22 +1037,26 @@ export function WhyNowSection() {
           </h2>
           <p className="h-lede">AI is finally production-ready. Over the next twelve months, the businesses that pull ahead will be the ones who put it to work fastest — and most effectively.</p>
         </div>
-        <ul ref={stackRef} className="whynow-stack" role="list">
-          <motion.span
-            aria-hidden="true"
-            className="whynow-stack__spine"
-            style={reduced ? { scaleY: 1 } : { scaleY: spineScale }}
-          />
+        <motion.ul
+          className="whynow-stack"
+          role="list"
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, amount: 0.25 }}
+          variants={{
+            hidden: {},
+            show: { transition: { staggerChildren: reduced ? 0 : 0.18, delayChildren: 0.1 } },
+          }}
+        >
           {WHYNOW_REASONS.map((r, i) => (
             <WhyNowCard
               key={r.title}
               reason={r}
               index={i}
               total={WHYNOW_REASONS.length}
-              reduced={reduced}
             />
           ))}
-        </ul>
+        </motion.ul>
       </div>
     </motion.section>
   );
