@@ -46,7 +46,7 @@ export const STAGES = [
     detail: { headline: <>Pipeline beyond <em>referrals</em>.</>,
       lede: 'We watch the right signals in your sector, find the matching businesses, and drop them in your CRM every morning. We pick the signals. You work the list.',
       bullets: ['Sector-targeted prospecting on real signals', 'Cleaned, ranked by fit, and dropped into your CRM', 'Daily refresh — fresh leads every morning', 'You see the source on every record'] }},
-  { num: '04', key: 'activate', icon: 'bolt',      name: 'Activate',  outcome: 'First contact in 5 minutes, every time.', emWord: '5 minutes',
+  { num: '04', key: 'activate', icon: 'bolt',      name: 'React',     outcome: 'First contact in 5 minutes, every time.', emWord: '5 minutes',
     detail: { headline: <>From lead to first call in <em>5 minutes</em>.</>,
       lede: 'Follow-ups that just run. Callback scheduler, sequence sender, nurture flows, SLA timer per lead. No spreadsheet, no rot.',
       bullets: ['Callback scheduler with owner SLA timer', 'Sequence sender with templates in your voice', 'Nurture flows that pause when humans take over', 'Per-lead audit trail — every touch, every hour'] }},
@@ -1098,7 +1098,7 @@ export function CustomersSection({ onNav }) {
         <div className="lighthouse">
           {[
             { tag:'Stage 3 + 4', quote:'A UK insolvency-intelligence firm. Daily signal-driven pipeline, plus 5-minute first-touch SLA wired into their CRM.',
-              meta:[['Stages','Generate · Activate'],['Shipped in','4 weeks'],['Posture',['A-grade security','UK GDPR']],['Sign-off','Pending — name on request']] },
+              meta:[['Stages','Generate · React'],['Shipped in','4 weeks'],['Posture',['A-grade security','UK GDPR']],['Sign-off','Pending — name on request']] },
             { tag:'Stage 1 + 5', quote:'A premium private clinic group. A site that signals premium, AI-search visibility, and Close & Sign run by us across three locations.',
               meta:[['Stages','Search · Close'],['Shipped in','5 weeks'],['Posture',['A-grade security','UK GDPR','Multi-tenancy']],['Sign-off','Pending — name on request']] },
             { tag:'Full Stack', quote:'A leading events waste-management company. End-to-end — from getting found to onboarding — with a separate portal for each event.',

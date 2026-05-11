@@ -141,7 +141,7 @@ const STAGE_PAGES = [
     },
   },
   {
-    key: 'activate', num: '04', name: 'Activate', icon: 'bolt',
+    key: 'activate', num: '04', name: 'React', icon: 'bolt',
     tagline: 'First contact in 5 minutes, every time.',
     challenge: {
       eyebrow: 'The problem',
@@ -626,7 +626,7 @@ export function StackHubPage({ onNav }) {
             <div className="use-grid" style={{ gridTemplateColumns: '1fr' }}>
               {[
                 { num: '01 · Single stage', title: 'One gap, fixed scope.', body: 'Pick the stage where the leak is biggest. Tier C, from £12k. Most start at Stage 02 — Capture.' },
-                { num: '02 · Multi-stage', title: 'Two or three, wired together.', body: 'The compounding starts. Capture + Activate, or Generate + Activate + Close. Tier B, from £35k.' },
+                { num: '02 · Multi-stage', title: 'Two or three, wired together.', body: 'The compounding starts. Capture + React, or Generate + React + Close. Tier B, from £35k.' },
                 { num: '03 · Full Stack', title: 'End-to-end, run by us.', body: 'All six stages, plus Managed Close & Sign and the run plan. Tier A, from £80k.' },
               ].map((x, i) => (
                 <motion.div
