@@ -1,0 +1,517 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#0A1628" />
+    <meta name="robots" content="index, follow" />
+    <link rel="icon" type="image/svg+xml" href="/assets/haim8-sparkle-logomark.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Sora:wght@500;700&family=Inter:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <title>Privacy Notice — HAIM8 LTD</title>
+    <meta
+      name="description"
+      content="How HAIM8 LTD collects, uses, and protects personal data as an independent data controller. UK GDPR / Data Protection Act 2018."
+    />
+
+    <style>
+      :root {
+        --h8-white: #FEFEFE;
+        --h8-light-grey: #E8E8E9;
+        --h8-electric-blue: #0080E4;
+        --h8-steel-grey: #969AA2;
+        --h8-graphite-grey: #6B6F7B;
+        --h8-navy: #0A1628;
+        --h8-navy-10: #1A2A44;
+        --h8-navy-30: #273856;
+
+        --content-max: 760px;
+      }
+
+      * { box-sizing: border-box; }
+
+      html { -webkit-text-size-adjust: 100%; }
+
+      body {
+        margin: 0;
+        background: var(--h8-white);
+        color: var(--h8-navy);
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        font-size: 16px;
+        line-height: 1.65;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+
+      header.site {
+        border-bottom: 1px solid var(--h8-light-grey);
+        background: var(--h8-white);
+      }
+      header.site .row {
+        max-width: var(--content-max);
+        margin: 0 auto;
+        padding: 20px 24px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+      }
+      header.site a.brand {
+        font-family: 'Sora', sans-serif;
+        font-weight: 700;
+        font-size: 18px;
+        letter-spacing: -0.01em;
+        color: var(--h8-navy);
+        text-decoration: none;
+      }
+      header.site nav a {
+        color: var(--h8-graphite-grey);
+        text-decoration: none;
+        font-weight: 500;
+        font-size: 14px;
+      }
+      header.site nav a:hover { color: var(--h8-electric-blue); }
+
+      main {
+        max-width: var(--content-max);
+        margin: 0 auto;
+        padding: 48px 24px 96px;
+      }
+
+      .eyebrow {
+        font-family: 'Inter', sans-serif;
+        font-weight: 600;
+        font-size: 12px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--h8-electric-blue);
+        margin: 0 0 12px;
+      }
+
+      h1 {
+        font-family: 'Sora', sans-serif;
+        font-weight: 700;
+        font-size: clamp(32px, 5vw, 44px);
+        line-height: 1.15;
+        letter-spacing: -0.02em;
+        margin: 0 0 24px;
+      }
+
+      .meta {
+        color: var(--h8-graphite-grey);
+        font-size: 14px;
+        margin: 0 0 40px;
+        padding: 16px 20px;
+        background: var(--h8-light-grey);
+        border-radius: 12px;
+      }
+      .meta strong { color: var(--h8-navy); font-weight: 600; }
+
+      h2 {
+        font-family: 'Sora', sans-serif;
+        font-weight: 700;
+        font-size: 24px;
+        line-height: 1.25;
+        letter-spacing: -0.01em;
+        margin: 56px 0 16px;
+        scroll-margin-top: 24px;
+      }
+      h2::before {
+        content: counter(h2-counter) ".  ";
+        color: var(--h8-electric-blue);
+        font-weight: 500;
+      }
+      main { counter-reset: h2-counter; }
+      h2 { counter-increment: h2-counter; }
+
+      h3 {
+        font-family: 'Sora', sans-serif;
+        font-weight: 500;
+        font-size: 18px;
+        margin: 28px 0 10px;
+      }
+
+      p { margin: 0 0 16px; }
+
+      a { color: var(--h8-electric-blue); text-decoration: none; }
+      a:hover { text-decoration: underline; }
+
+      ul {
+        margin: 0 0 16px;
+        padding-left: 22px;
+      }
+      ul li { margin-bottom: 8px; }
+      ul li::marker { color: var(--h8-electric-blue); }
+
+      .table-wrap {
+        margin: 16px 0 28px;
+        overflow-x: auto;
+        border: 1px solid var(--h8-light-grey);
+        border-radius: 12px;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 14px;
+      }
+      th, td {
+        text-align: left;
+        padding: 12px 16px;
+        border-bottom: 1px solid var(--h8-light-grey);
+        vertical-align: top;
+      }
+      th {
+        background: #F7F7F8;
+        font-weight: 600;
+        color: var(--h8-navy);
+      }
+      tr:last-child td { border-bottom: none; }
+
+      .callout {
+        margin: 24px 0;
+        padding: 16px 20px;
+        background: rgba(0, 128, 228, 0.06);
+        border-left: 3px solid var(--h8-electric-blue);
+        border-radius: 0 8px 8px 0;
+        font-size: 15px;
+      }
+
+      footer.site {
+        margin-top: 64px;
+        padding: 32px 24px;
+        border-top: 1px solid var(--h8-light-grey);
+        text-align: center;
+        color: var(--h8-graphite-grey);
+        font-size: 13px;
+      }
+      footer.site a { color: var(--h8-graphite-grey); }
+      footer.site a:hover { color: var(--h8-electric-blue); }
+
+      @media (prefers-color-scheme: dark) {
+        body { background: var(--h8-navy); color: #E8EEF5; }
+        header.site { background: var(--h8-navy); border-bottom-color: var(--h8-navy-30); }
+        header.site a.brand { color: #FFFFFF; }
+        header.site nav a { color: var(--h8-steel-grey); }
+        .meta { background: var(--h8-navy-10); color: var(--h8-steel-grey); }
+        .meta strong { color: #E8EEF5; }
+        .table-wrap { border-color: var(--h8-navy-30); }
+        th { background: var(--h8-navy-10); color: #E8EEF5; }
+        th, td { border-bottom-color: var(--h8-navy-30); }
+        .callout { background: rgba(0, 128, 228, 0.08); }
+        footer.site { border-top-color: var(--h8-navy-30); }
+      }
+    </style>
+  </head>
+
+  <body>
+    <header class="site">
+      <div class="row">
+        <a class="brand" href="/">HAIM8</a>
+        <nav><a href="/">← Back to haim8.com</a></nav>
+      </div>
+    </header>
+
+    <main>
+      <p class="eyebrow">Legal · UK GDPR / Data Protection Act 2018</p>
+      <h1>HAIM8 LTD — Privacy Notice</h1>
+
+      <div class="meta">
+        <strong>Effective:</strong> 18 May 2026 &nbsp;·&nbsp;
+        <strong>Version:</strong> 1.0 &nbsp;·&nbsp;
+        <strong>Controller:</strong> HAIM8 LTD, company number 17177572 (England &amp; Wales), registered office 24 Sherrick Green Road, London NW10 1LD &nbsp;·&nbsp;
+        <strong>Privacy contact:</strong> <a href="mailto:privacy@haim8.com">privacy@haim8.com</a>
+      </div>
+
+      <p>
+        This notice explains how <strong>HAIM8 LTD</strong> (&ldquo;HAIM8&rdquo;, &ldquo;we&rdquo;, &ldquo;us&rdquo;)
+        collects, uses, and protects personal data as an
+        <strong>independent data controller</strong> under the UK GDPR and the Data Protection Act 2018.
+      </p>
+
+      <div class="callout">
+        <strong>Scope.</strong> This notice covers personal data we handle for our own purposes &mdash;
+        operating the business, dealing with customers and suppliers, providing this website, and meeting
+        legal obligations. When we build and host software platforms for our customers, we act as a
+        <em>data processor</em> for those customers&rsquo; data, not as a controller; that processing
+        is governed by the customer&rsquo;s own privacy policy (e.g. each customer&rsquo;s in-app
+        Privacy Policy) and by the Data Processing Agreement we sign with that customer. This notice
+        does not change those processor obligations.
+      </div>
+
+      <h2>Who we are and how to contact us</h2>
+      <p>
+        HAIM8 LTD is a private limited company registered in England and Wales (company number
+        <strong>17177572</strong>) with registered office at 24 Sherrick Green Road, London NW10 1LD,
+        United Kingdom. We design, build, and operate software products for small and mid-size
+        organisations.
+      </p>
+      <p>
+        For any question about this notice, to exercise a data-protection right, or to raise a
+        concern, please contact us at
+        <a href="mailto:privacy@haim8.com">privacy@haim8.com</a>.
+      </p>
+
+      <h2>What personal data we collect, and why</h2>
+
+      <h3>2.1 Business contacts (customers, prospects, suppliers, partners)</h3>
+      <p>
+        When you correspond with us about our services or work with us on an engagement, we collect:
+        name, business email address, phone number, employer, role, and the content of our exchanges
+        (emails, meeting notes, contract details). We use this to deliver our services, manage the
+        commercial relationship, raise and collect invoices, respond to enquiries, and keep records
+        we are legally required to keep.
+      </p>
+
+      <h3>2.2 Website visitors (haim8.com)</h3>
+      <p>
+        When you visit haim8.com we automatically receive standard request data &mdash; IP address,
+        user agent, page requested, referring URL, and timestamp &mdash; logged by our hosting provider
+        to operate the site, detect abuse, and produce aggregate, non-identifying usage information.
+        haim8.com does <strong>not</strong> set non-essential cookies and does <strong>not</strong> run
+        third-party analytics or advertising trackers.
+      </p>
+
+      <h3>2.3 Recipients of our emails, invoices, and contract documents</h3>
+      <p>
+        We retain copies of correspondence and documents we send and receive (proposals, contracts,
+        invoices, change orders, support tickets), which include the personal data of the people named
+        in those documents. We use this to perform our contracts, evidence what was agreed, and meet
+        record-keeping obligations under company and tax law.
+      </p>
+
+      <h3>2.4 Job applicants and candidates</h3>
+      <p>
+        If you apply to work with us, we collect the personal data you provide in your application
+        (CV, contact details, work history, references) plus any notes we make during interview. We
+        use this to assess your suitability and to communicate with you about the role.
+      </p>
+
+      <h3>2.5 Operational security data</h3>
+      <p>
+        We log access to our internal systems and to the platforms we operate (sign-in events, IP
+        addresses, security alerts). We use this to investigate incidents, prevent unauthorised access,
+        and meet our obligations under contracts and Data Protection Laws.
+      </p>
+
+      <h2>Lawful bases for processing (Article 6 UK GDPR)</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Purpose</th><th>Lawful basis</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Performing our contract with you (delivery, invoicing, support)</td>
+              <td>Performance of a contract &mdash; Art 6(1)(b)</td>
+            </tr>
+            <tr>
+              <td>Responding to enquiries you send us about our services</td>
+              <td>Steps prior to a contract &mdash; Art 6(1)(b); or our legitimate interest in replying &mdash; Art 6(1)(f)</td>
+            </tr>
+            <tr>
+              <td>Marketing and outreach to business prospects</td>
+              <td>Legitimate interests &mdash; Art 6(1)(f), balanced against your reasonable expectations; you may object at any time</td>
+            </tr>
+            <tr>
+              <td>Keeping accounting and tax records (e.g. HMRC, Companies House)</td>
+              <td>Legal obligation &mdash; Art 6(1)(c)</td>
+            </tr>
+            <tr>
+              <td>Security monitoring and incident response</td>
+              <td>Legitimate interests &mdash; Art 6(1)(f) (operating a secure service)</td>
+            </tr>
+            <tr>
+              <td>Recruitment (job applicants)</td>
+              <td>Steps prior to a contract of employment &mdash; Art 6(1)(b); legitimate interests for unsolicited applications &mdash; Art 6(1)(f)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p>
+        We do not knowingly process special-category data (Article 9 UK GDPR) or criminal-offence
+        data (Article 10) in the ordinary course. If your role or engagement makes such processing
+        necessary, we will identify a separate condition under those Articles and tell you.
+      </p>
+
+      <h2>Who we share personal data with</h2>
+      <p>
+        We share personal data with the following categories of recipients, each engaged under
+        appropriate contractual safeguards:
+      </p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Recipient</th><th>What we share, and why</th><th>Location</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Google Workspace (Google Ireland Limited)</td>
+              <td>Email, calendar, file storage, and document collaboration for HAIM8&rsquo;s own internal operations</td>
+              <td>EEA / United Kingdom (Google Ireland is the EEA contracting entity)</td>
+            </tr>
+            <tr>
+              <td>Monzo Bank Limited</td>
+              <td>Business banking; we share bank-account details and payee names to receive and make payments</td>
+              <td>United Kingdom</td>
+            </tr>
+            <tr>
+              <td>Vercel, Inc.</td>
+              <td>Hosting of haim8.com (this site) and customer-facing platforms; receives standard request data and any data submitted via the site</td>
+              <td>USA (legal entity) &mdash; UK Addendum to EU Standard Contractual Clauses in place</td>
+            </tr>
+            <tr>
+              <td>Hiscox Insurance Company Limited and connected underwriters</td>
+              <td>Business insurance (professional indemnity, cyber, legal protection); receives the information required to underwrite cover and handle any claim</td>
+              <td>United Kingdom</td>
+            </tr>
+            <tr>
+              <td>HM Revenue &amp; Customs, Companies House, and other UK regulators</td>
+              <td>Statutory returns, tax filings, and any lawful regulatory request</td>
+              <td>United Kingdom</td>
+            </tr>
+            <tr>
+              <td>Professional advisers (accountant, solicitors)</td>
+              <td>Information necessary to take advice or to give us professional services, under their own duty of confidentiality</td>
+              <td>United Kingdom</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p>
+        We do not sell personal data, and we do not use it for behavioural advertising. We do not
+        engage data brokers, contact-discovery providers, or data-enrichment services in connection
+        with the HAIM8 business or the haim8.com website.
+      </p>
+      <div class="callout">
+        <strong>Customer platforms are separate.</strong> When you use a software platform we have
+        built for one of our customers (for example, Nu Group&rsquo;s waste-intelligence dashboard
+        at <em>nugroup.haim8.com</em>), the personal data processed inside that platform is governed
+        by that customer&rsquo;s own privacy policy and by the Data Processing Agreement between
+        HAIM8 and that customer. The list of sub-processors for each customer platform is published
+        in the respective in-app Privacy Policy, not in this notice.
+      </div>
+
+      <h2>International transfers</h2>
+      <p>
+        Some of our recipients are based outside the United Kingdom. Where personal data is
+        transferred outside the UK, we rely on safeguards approved under the UK GDPR, in particular
+        the UK adequacy regulations (for the EEA), the UK International Data Transfer Agreement, or
+        the UK Addendum to the EU Standard Contractual Clauses. Transfer Impact Assessments are
+        carried out where required.
+      </p>
+
+      <h2>How long we keep personal data</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Category</th><th>Retention</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Contracts, invoices, and other accounting records</td>
+              <td>Six (6) years from the end of the financial year to which they relate, in line with the Companies Act 2006 and HMRC requirements</td>
+            </tr>
+            <tr>
+              <td>Customer and supplier correspondence relating to an active engagement</td>
+              <td>For the duration of the engagement, then up to six (6) years for our own legal-claim limitation purposes</td>
+            </tr>
+            <tr>
+              <td>Marketing and prospect contacts</td>
+              <td>Until you ask us to stop, or until the contact has lapsed for more than twenty-four (24) months</td>
+            </tr>
+            <tr>
+              <td>Website request logs</td>
+              <td>Up to ninety (90) days for security and abuse-detection purposes, then automatically purged</td>
+            </tr>
+            <tr>
+              <td>Unsuccessful job applications</td>
+              <td>Up to twelve (12) months from the decision, unless you ask us to delete sooner</td>
+            </tr>
+            <tr>
+              <td>Security and audit logs of access to our internal systems</td>
+              <td>Up to twelve (12) months</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p>
+        We may keep data for longer where we are required to by law, or where it is necessary to
+        establish, exercise, or defend a legal claim. When the retention period ends, we delete or
+        anonymise the data.
+      </p>
+
+      <h2>How we keep personal data secure</h2>
+      <ul>
+        <li>Access to systems containing personal data is restricted to people who need it for their role and is protected by multi-factor authentication where supported.</li>
+        <li>Data in transit is encrypted using TLS. Data at rest is encrypted by our hosting and storage providers (Google Workspace, Vercel, and any customer platform&rsquo;s underlying provider).</li>
+        <li>We carry professional indemnity and cyber-liability insurance with Hiscox under our active business insurance policy.</li>
+        <li>We respond to suspected personal-data breaches without undue delay and, where required, notify the Information Commissioner&rsquo;s Office (ICO) within 72 hours of becoming aware.</li>
+      </ul>
+
+      <h2>Your rights under the UK GDPR</h2>
+      <p>You have the following rights in respect of your personal data:</p>
+      <ul>
+        <li><strong>Access</strong> &mdash; ask for a copy of the personal data we hold about you (Article 15).</li>
+        <li><strong>Rectification</strong> &mdash; ask us to correct inaccurate or incomplete data (Article 16).</li>
+        <li><strong>Erasure</strong> &mdash; ask us to delete your data where one of the grounds in Article 17 applies.</li>
+        <li><strong>Restriction</strong> &mdash; ask us to limit how we use your data (Article 18).</li>
+        <li><strong>Portability</strong> &mdash; ask us to provide your data in a structured, commonly-used, machine-readable format where Article 20 applies.</li>
+        <li><strong>Objection</strong> &mdash; object to processing based on legitimate interests, including direct marketing (Article 21).</li>
+        <li><strong>Withdraw consent</strong> &mdash; where we rely on consent, withdraw it at any time without affecting the lawfulness of processing before withdrawal (Article 7(3)).</li>
+        <li><strong>Automated decision-making</strong> &mdash; we do not currently make decisions about you based solely on automated processing.</li>
+      </ul>
+      <p>
+        To exercise any of these rights, email
+        <a href="mailto:privacy@haim8.com">privacy@haim8.com</a>. We will respond within one month
+        of receiving a valid request, in line with Article 12 UK GDPR.
+      </p>
+      <p>
+        If you are not satisfied with how we have handled your data or your request, you can complain
+        to the UK Information Commissioner&rsquo;s Office at
+        <a href="https://ico.org.uk/make-a-complaint/" target="_blank" rel="noopener">ico.org.uk/make-a-complaint</a>,
+        by telephone on 0303 123 1113, or by post to the Information Commissioner&rsquo;s Office,
+        Wycliffe House, Water Lane, Wilmslow, Cheshire SK9 5AF.
+      </p>
+
+      <h2>Cookies and similar technologies</h2>
+      <p>
+        haim8.com uses only strictly-necessary technical storage (such as a preference for light or
+        dark theme, where applicable). It does not set advertising, profiling, or third-party
+        analytics cookies, and it does not require a cookie banner under the Privacy and Electronic
+        Communications Regulations 2003 as currently published.
+      </p>
+      <p>
+        Customer platforms we operate may set additional cookies as described in that platform&rsquo;s
+        own privacy policy &mdash; for example, an authentication cookie for signed-in users, or an
+        opt-in analytics cookie where the platform&rsquo;s customer has chosen to enable product
+        analytics. Those cookies are not set on haim8.com.
+      </p>
+
+      <h2>Changes to this notice</h2>
+      <p>
+        We may update this notice from time to time. When we do, we will change the version number
+        and effective date at the top of the page. Material changes that affect the categories of
+        data we collect or the purposes we use it for will be highlighted, and (where appropriate)
+        notified to people who have given us their contact details.
+      </p>
+
+      <h2>Contact</h2>
+      <p>
+        <strong>HAIM8 LTD</strong><br />
+        24 Sherrick Green Road, London NW10 1LD, United Kingdom<br />
+        Company number: 17177572 (England &amp; Wales)<br />
+        Privacy contact: <a href="mailto:privacy@haim8.com">privacy@haim8.com</a><br />
+        General: <a href="mailto:support@haim8.co.uk">support@haim8.co.uk</a>
+      </p>
+    </main>
+
+    <footer class="site">
+      &copy; 2026 HAIM8 LTD. &nbsp;·&nbsp; <a href="/">haim8.com</a>
+    </footer>
+  </body>
+</html>
