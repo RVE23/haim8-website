@@ -103,11 +103,12 @@ the payload shape is known. Three gates, all in `api/clarifi-lead.js`:
 | Origin must match Host | cross-origin browser posts (CSRF); scripts sending no Origin | a script that sets the header itself |
 | Honeypot `cl_website` | form-filling bots — answers 200 so they don't retry | a client that omits the field |
 | Work-email rule | free mailboxes, server-side not just in the browser | a real work-domain address |
-| Rate limit, 5/min/IP | bursts from one IP hitting one instance | a distributed flood, or bursts spread across instances |
+| Rate limit, 5/min/IP | bursts from one IP hitting one instance — keyed on Vercel's `x-vercel-forwarded-for`, which a caller cannot forge | a distributed flood, or bursts spread across instances |
 
 **Read that right-hand column.** `Origin` means something only because *browsers*
 enforce it — it authenticates nothing coming from a script, and the rate limit is
-per-instance in-memory, so Vercel recycling instances defeats it. Together these
+per-instance in-memory, so spreading a flood across instances or source IPs
+defeats it. Together these
 raise the bar and cover the ordinary cases; they do not make the endpoint safe
 against someone deliberately targeting it. Closing that needs a CAPTCHA
 (Turnstile), a signed proof-of-page-load token, or Vercel Firewall rate rules.

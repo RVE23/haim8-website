@@ -87,9 +87,11 @@ const FREE_EMAIL_DOMAINS = new Set([
 
 /* ---- helpers ------------------------------------------------------------- */
 
-// ponytail: per-instance in-memory counter. Vercel runs many instances and
-// recycles them, so this throttles a burst from one IP within one instance's
-// lifetime — it is NOT a global limit and a distributed flood defeats it.
+// ponytail: per-instance in-memory counter, bucketed on Vercel's own
+// x-vercel-forwarded-for so the key cannot be forged by the caller. Vercel runs
+// many instances and recycles them, so this throttles a burst from one IP within
+// one instance's lifetime — it is NOT a global limit, and a flood spread across
+// instances or source IPs defeats it.
 // Upgrade path when that matters: Vercel Firewall rate rules (no code), or a
 // KV/Upstash counter (a dependency + a credential).
 const RATE_WINDOW_MS = 60_000;
@@ -97,18 +99,52 @@ const RATE_MAX_PER_WINDOW = 5;
 const RATE_MAX_TRACKED_IPS = 5000;
 const rateHits = new Map();
 
+// x-vercel-forwarded-for is written by Vercel's edge and cannot be set by the
+// caller. x-forwarded-for CAN be — a client sends its own, so bucketing on it
+// lets an attacker rotate the value per request and never hit the limit. The
+// other two are fallbacks for running outside Vercel; they are only reached
+// when the trusted header is absent.
 function clientIp(req) {
-  const fwd = req.headers['x-forwarded-for'];
-  if (typeof fwd === 'string' && fwd) return fwd.split(',')[0].trim();
-  return req.headers['x-real-ip'] || 'unknown';
+  const trusted = req.headers['x-vercel-forwarded-for'];
+  const raw = (typeof trusted === 'string' && trusted)
+    ? trusted
+    : (req.headers['x-real-ip'] || req.headers['x-forwarded-for'] || '');
+  const ip = String(raw).split(',')[0].trim();
+  // Header values reach the log; strip anything that could forge a log line.
+  return ip ? ip.replace(/[^\w.:%[\]-]/g, '').slice(0, 45) : 'unknown';
+}
+
+// Bounding the map by clearing it wholesale would wipe buckets that are actively
+// being throttled, so anyone able to mint fresh keys could force a clear and
+// reset their own allowance. Oldest-first has the same hole: the attacker's own
+// bucket ages out. So evict in order of what is safe to lose.
+function evict(now) {
+  // 1. Expired windows — free, nobody loses anything.
+  for (const [key, rec] of rateHits) {
+    if (now - rec.start > RATE_WINDOW_MS) rateHits.delete(key);
+  }
+  if (rateHits.size <= RATE_MAX_TRACKED_IPS) return;
+
+  // 2. Buckets that are NOT currently throttled, oldest first. Dropping one of
+  //    these only forgives a caller who was under the limit anyway; dropping a
+  //    throttled one would hand an attacker the reset we are trying to deny.
+  for (const [key, rec] of rateHits) {
+    if (rateHits.size <= RATE_MAX_TRACKED_IPS) break;
+    if (rec.count <= RATE_MAX_PER_WINDOW) rateHits.delete(key);
+  }
+
+  // 3. Pathological: RATE_MAX_TRACKED_IPS+ genuinely throttled sources inside one
+  //    window. That is a distributed attack, which a per-instance counter cannot
+  //    answer anyway — stay bounded and let the Firewall/KV upgrade path handle it.
+  while (rateHits.size > RATE_MAX_TRACKED_IPS) {
+    rateHits.delete(rateHits.keys().next().value);
+  }
 }
 
 function isRateLimited(req) {
   const ip = clientIp(req);
   const now = Date.now();
-  // Unbounded growth is the only way this leaks; drop everything rather than
-  // evict cleverly. Worst case a few callers get a fresh window.
-  if (rateHits.size > RATE_MAX_TRACKED_IPS) rateHits.clear();
+  if (rateHits.size > RATE_MAX_TRACKED_IPS) evict(now);
   const rec = rateHits.get(ip);
   if (!rec || now - rec.start > RATE_WINDOW_MS) {
     rateHits.set(ip, { start: now, count: 1 });
