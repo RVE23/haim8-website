@@ -62,9 +62,18 @@ const CONTACT_PROPERTY_KEYS = [
 ];
 
 // Bot defence. The endpoint writes to the CRM and the repo is public, so the
-// payload shape is known: without these, anyone can flood HubSpot with junk
-// contacts + deals. Honeypot catches form-filling bots; the origin check
-// catches direct curl/script POSTs.
+// payload shape is known.
+//
+// What these gates DO stop: cross-origin browser requests (CSRF), form-filling
+// bots, free-mailbox junk, and unsophisticated scripted floods.
+//
+// What they DO NOT stop, and must not be read as stopping: a scripted client
+// that simply sends `Origin: https://www.haim8.com`. Origin is only meaningful
+// because *browsers* enforce it; it authenticates nothing coming from a script.
+// Closing that needs a CAPTCHA (Turnstile), a signed proof-of-page-load token,
+// or a real distributed rate limit — each needs a secret or a dependency this
+// function does not have. The per-instance limiter below is a partial measure,
+// not that fix. Treat the residual risk as open.
 const HONEYPOT_FIELD = 'cl_website';
 
 // Mirrors FREE_DOMAINS in public/clarifi/_shared/capture.js. The client-side
@@ -78,6 +87,37 @@ const FREE_EMAIL_DOMAINS = new Set([
 
 /* ---- helpers ------------------------------------------------------------- */
 
+// ponytail: per-instance in-memory counter. Vercel runs many instances and
+// recycles them, so this throttles a burst from one IP within one instance's
+// lifetime — it is NOT a global limit and a distributed flood defeats it.
+// Upgrade path when that matters: Vercel Firewall rate rules (no code), or a
+// KV/Upstash counter (a dependency + a credential).
+const RATE_WINDOW_MS = 60_000;
+const RATE_MAX_PER_WINDOW = 5;
+const RATE_MAX_TRACKED_IPS = 5000;
+const rateHits = new Map();
+
+function clientIp(req) {
+  const fwd = req.headers['x-forwarded-for'];
+  if (typeof fwd === 'string' && fwd) return fwd.split(',')[0].trim();
+  return req.headers['x-real-ip'] || 'unknown';
+}
+
+function isRateLimited(req) {
+  const ip = clientIp(req);
+  const now = Date.now();
+  // Unbounded growth is the only way this leaks; drop everything rather than
+  // evict cleverly. Worst case a few callers get a fresh window.
+  if (rateHits.size > RATE_MAX_TRACKED_IPS) rateHits.clear();
+  const rec = rateHits.get(ip);
+  if (!rec || now - rec.start > RATE_WINDOW_MS) {
+    rateHits.set(ip, { start: now, count: 1 });
+    return false;
+  }
+  rec.count += 1;
+  return rec.count > RATE_MAX_PER_WINDOW;
+}
+
 function isEmailShape(v) {
   return typeof v === 'string' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim());
 }
@@ -89,8 +129,9 @@ function isWorkEmail(v) {
 
 // Browsers set Origin on every POST, same-origin included, so comparing it to
 // the Host we were reached on accepts production and every preview deployment
-// without hardcoding a domain — while rejecting anything posted from elsewhere
-// or from a script that sends no Origin at all.
+// without hardcoding a domain. This is a CSRF control: it rejects posts from
+// another origin, and scripts that send no Origin. It is NOT an authentication
+// check — a script that sets the header itself passes. See the note above.
 function isSameOrigin(req) {
   const origin = req.headers.origin;
   if (!origin) return false;
@@ -226,6 +267,13 @@ export default async function handler(req, res) {
   if (!isSameOrigin(req)) {
     console.warn('[clarifi-lead] rejected cross-origin POST from:', req.headers.origin || '(none)');
     res.status(403).json({ ok: false, error: 'Forbidden' });
+    return;
+  }
+
+  if (isRateLimited(req)) {
+    console.warn('[clarifi-lead] rate limited:', clientIp(req));
+    res.setHeader('Retry-After', String(RATE_WINDOW_MS / 1000));
+    res.status(429).json({ ok: false, error: 'Too many requests' });
     return;
   }
 

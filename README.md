@@ -98,11 +98,20 @@ bundle or the repo. Without it the pages render fine and only form submission fa
 **Bot defence.** `/api/clarifi-lead` writes to the CRM and this repo is public, so
 the payload shape is known. Three gates, all in `api/clarifi-lead.js`:
 
-| Gate | Stops |
-|---|---|
-| Origin must match Host | direct `curl` / scripted POSTs (no Origin = refused) |
-| Honeypot `cl_website` | form-filling bots — answers 200 so they don't retry |
-| Work-email rule | free mailboxes, enforced server-side not just in the browser |
+| Gate | Stops | Does not stop |
+|---|---|---|
+| Origin must match Host | cross-origin browser posts (CSRF); scripts sending no Origin | a script that sets the header itself |
+| Honeypot `cl_website` | form-filling bots — answers 200 so they don't retry | a client that omits the field |
+| Work-email rule | free mailboxes, server-side not just in the browser | a real work-domain address |
+| Rate limit, 5/min/IP | bursts from one IP hitting one instance | a distributed flood, or bursts spread across instances |
+
+**Read that right-hand column.** `Origin` means something only because *browsers*
+enforce it — it authenticates nothing coming from a script, and the rate limit is
+per-instance in-memory, so Vercel recycling instances defeats it. Together these
+raise the bar and cover the ordinary cases; they do not make the endpoint safe
+against someone deliberately targeting it. Closing that needs a CAPTCHA
+(Turnstile), a signed proof-of-page-load token, or Vercel Firewall rate rules.
+**Treat it as open.**
 
 `HONEYPOT_FIELD` in the function and `HONEYPOT` in `capture.js` must stay equal.
 The field is injected by `capture.js`, so pages never need to declare it.
