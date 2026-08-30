@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Terms of Use · Clarifi by HAIM8</title>
+  <meta name="description" content="The terms on which HAIM8 Ltd makes the Clarifi website available — acceptable use, intellectual property, no-warranty and liability position, and the governing law.">
+  <link rel="canonical" href="https://www.haim8.com/clarifi/terms.html">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Clarifi by HAIM8">
+  <meta property="og:title" content="Terms of Use · Clarifi by HAIM8">
+  <meta property="og:description" content="The terms on which HAIM8 Ltd makes the Clarifi website available.">
+  <meta property="og:url" content="https://www.haim8.com/clarifi/terms.html">
+  <meta name="robots" content="index,follow">
+
+  <!-- ============================ STYLES ============================ -->
+  <link rel="stylesheet" href="/clarifi/_shared/clarifi.css">
+
+  <!-- ============================ BLOCK A — instrumentation (config + consent + analytics) ============================ -->
+  <!-- 1. Shared config (must load before everything else) -->
+  <script src="/clarifi/_shared/config.js"></script>
+
+  <!-- 2. Consent + tag loader + analytics helper (deny-by-default) -->
+  <script>
+  (function () {
+    'use strict';
+    var CFG = window.CLARIFI_CONFIG || {};
+    var STORE_KEY = 'clarifi_consent';            // 'grant' | 'deny'
+
+    /* ---- PENDING partner IDs (install-only — fill, never invent) ----------- */
+    var LINKEDIN_PARTNER_ID = null;  // e.g. '1234567' once the LinkedIn Insight Tag is provisioned
+    var META_PIXEL_ID       = null;  // e.g. '1234567890123456' once the Meta Pixel is provisioned
+
+    function getConsent() {
+      try { return localStorage.getItem(STORE_KEY); } catch (e) { return null; }
+    }
+    function setConsent(v) {
+      try { localStorage.setItem(STORE_KEY, v); } catch (e) {}
+    }
+
+    /* ---- Tag loaders (only ever called AFTER explicit grant) --------------- */
+    function loadHubSpot() {
+      if (document.getElementById('hs-script-loader')) return;
+      var s = document.createElement('script');
+      s.type = 'text/javascript';
+      s.id = 'hs-script-loader';
+      s.async = true;
+      s.defer = true;
+      // EU residency endpoint for portal 148769785
+      s.src = '//js-eu1.hs-scripts.com/' + (CFG.hubspotPortalId || '148769785') + '.js';
+      document.head.appendChild(s);
+    }
+
+    function loadLinkedIn() {
+      if (!LINKEDIN_PARTNER_ID) return; // PENDING — no ID, nothing fires (install-only)
+      window._linkedin_partner_id = LINKEDIN_PARTNER_ID;
+      window._linkedin_data_partner_ids = window._linkedin_data_partner_ids || [];
+      window._linkedin_data_partner_ids.push(LINKEDIN_PARTNER_ID);
+      var b = document.createElement('script');
+      b.type = 'text/javascript'; b.async = true;
+      b.src = 'https://snap.licdn.com/li.lms-analytics/insight.min.js';
+      document.head.appendChild(b);
+    }
+
+    function loadMeta() {
+      if (!META_PIXEL_ID) return; // PENDING — no ID, nothing fires (install-only)
+      !function (f, b, e, v, n, t, s) {
+        if (f.fbq) return; n = f.fbq = function () {
+          n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments);
+        };
+        if (!f._fbq) f._fbq = n; n.push = n; n.loaded = !0; n.version = '2.0';
+        n.queue = []; t = b.createElement(e); t.async = !0; t.src = v;
+        s = b.getElementsByTagName(e)[0]; s.parentNode.insertBefore(t, s);
+      }(window, document, 'script', 'https://connect.facebook.net/en_US/fbevents.js');
+      window.fbq('init', META_PIXEL_ID);
+      window.fbq('track', 'PageView');
+    }
+
+    function fireAllTags() {
+      loadHubSpot();
+      loadLinkedIn();
+      loadMeta();
+    }
+
+    /* ---- Public consent API ----------------------------------------------- */
+    window.ClarifiConsent = {
+      has: function () { return getConsent() === 'grant'; },
+      grant: function () {
+        setConsent('grant');
+        hideBanner();
+        fireAllTags();
+      },
+      deny: function () {
+        setConsent('deny');
+        hideBanner();
+        // nothing loads; existing choice persists
+      },
+      reset: function () { try { localStorage.removeItem(STORE_KEY); } catch (e) {} }
+    };
+
+    /* ---- Banner show/hide -------------------------------------------------- */
+    function banner() { return document.querySelector('.cl-cc'); }
+    function hideBanner() { var b = banner(); if (b) b.classList.remove('is-visible'); }
+    function showBanner() { var b = banner(); if (b) b.classList.add('is-visible'); }
+
+    function wireBanner() {
+      var b = banner();
+      if (!b) return;
+      var accept = b.querySelector('[data-cc-accept]');
+      var reject = b.querySelector('[data-cc-reject]');
+      if (accept) accept.addEventListener('click', function () { window.ClarifiConsent.grant(); });
+      if (reject) reject.addEventListener('click', function () { window.ClarifiConsent.deny(); });
+
+      var state = getConsent();
+      if (state === 'grant') { fireAllTags(); }        // returning, already accepted
+      else if (state === 'deny') { /* stay silent */ } // returning, already rejected
+      else { showBanner(); }                            // first visit -> ask, nothing fires
+    }
+
+    /* ---- Analytics helper (named conversion events) ------------------------
+       Safe to call anytime. If consent is granted and HubSpot is loaded it pushes
+       a custom-behavioural event; otherwise it no-ops on the network but always
+       mirrors to dataLayer so a future GTM/consent-mode setup can pick it up. -- */
+    function track(eventName, props) {
+      props = props || {};
+      window.dataLayer = window.dataLayer || [];
+      window.dataLayer.push(Object.assign({ event: eventName }, props));
+      if (window.ClarifiConsent.has() && window._hsq) {
+        window._hsq.push(['trackCustomBehavioralEvent', { name: eventName, properties: props }]);
+      }
+    }
+    window.ClarifiAnalytics = {
+      track: track,
+      leadSubmitted: function (p) { track('lead_submitted', p); },
+      calcCompleted: function (p) { track('calc_completed', p); },
+      callBooked:    function (p) { track('call_booked', p); }
+    };
+    window._hsq = window._hsq || [];
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', wireBanner);
+    } else { wireBanner(); }
+  })();
+  </script>
+  <!-- ============================ /BLOCK A ============================ -->
+
+  <!-- 3. Form capture handler (no form on this page; kept for include-order parity) -->
+  <script src="/clarifi/_shared/capture.js" defer></script>
+
+  <style>
+    /* ---- Page-local legal-document layout (no brand-token overrides) -------- */
+    .cl-draft-banner{
+      background:var(--h8-navy-deep);color:var(--h8-white);
+      font-size:var(--h8-text-body-sm);font-weight:600;letter-spacing:.01em;
+      text-align:center;padding:var(--h8-space-3) var(--h8-space-6);
+    }
+    .cl-legal{padding-top:var(--h8-space-16);padding-bottom:var(--h8-space-20)}
+    .cl-legal h1{font-size:var(--h8-text-display-sm);max-width:20ch;margin-bottom:var(--h8-space-3)}
+    .cl-legal .cl-legal-meta{color:var(--h8-steel);font-size:var(--h8-text-body-sm);margin-bottom:var(--h8-space-10)}
+    .cl-legal h2{font-size:var(--h8-text-h2);margin-top:var(--h8-space-12);margin-bottom:var(--h8-space-4);
+      padding-top:var(--h8-space-6);border-top:1px solid var(--h8-light-grey)}
+    .cl-legal h3{font-size:var(--h8-text-h3);margin-top:var(--h8-space-8);margin-bottom:var(--h8-space-3)}
+    .cl-legal p,.cl-legal li{max-width:70ch}
+    .cl-legal ul{padding-left:var(--h8-space-6);margin:0 0 var(--h8-space-4)}
+    .cl-legal li{margin-bottom:var(--h8-space-2)}
+    .cl-legal .cl-legal-contact{margin-top:var(--h8-space-12);padding:var(--h8-space-6);
+      background:var(--h8-white);border:1px solid var(--h8-light-grey);border-radius:var(--h8-radius-md)}
+  </style>
+</head>
+
+<body>
+
+  <!-- ============================ DRAFT BANNER ============================ -->
+  <p class="cl-draft-banner" role="note">This is a working draft pending final legal review.</p>
+
+  <!-- ============================ HEADER ============================ -->
+  <header class="cl-header">
+    <div class="cl-wrap">
+      <a class="cl-logo" href="/clarifi/index.html" aria-label="Clarifi by HAIM8 — home">
+        Clarifi <span class="by">by HAIM8</span>
+      </a>
+      <nav class="cl-nav" aria-label="Primary">
+        <a class="cl-nav-link" href="/clarifi/index.html#platform">Platform</a>
+        <a class="cl-nav-link" href="/clarifi/index.html#proof">Proof</a>
+        <a class="cl-nav-link" href="/clarifi/index.html">Resources</a>
+        <a class="cl-nav-link" href="/clarifi/reseller.html">Partners</a>
+        <a class="h8-btn" href="/book" target="_blank" rel="noopener">
+          Book a call
+        </a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ============================ LEGAL CONTENT ============================ -->
+  <main>
+  <section class="cl-legal">
+    <div class="cl-narrow">
+
+      <span class="h8-caption cl-eyebrow">Legal</span>
+      <h1>Terms of Use</h1>
+      <p class="cl-legal-meta">
+        The terms on which HAIM8&nbsp;Ltd makes this website available to you. Last reviewed:
+        <span data-cl-reviewed>2026</span>.
+      </p>
+
+      <p>
+        This website is operated by HAIM8&nbsp;Ltd, a company registered in England &amp; Wales
+        (company number&nbsp;17177572), based in London, United Kingdom. By using this site you agree
+        to these terms. If you do not agree, please do not use the site.
+      </p>
+
+      <h2>1. Using this site</h2>
+      <p>
+        You may use this site for lawful, informational and business purposes — reading our content,
+        requesting resources, and getting in touch with us. You agree not to misuse it: no attempting
+        to gain unauthorised access, no disrupting the site or its underlying systems, no scraping or
+        automated harvesting beyond ordinary browsing, and nothing that breaks the law or infringes
+        another person&rsquo;s rights.
+      </p>
+
+      <h2>2. Intellectual property</h2>
+      <p>
+        The content on this site — including text, graphics, the Clarifi and HAIM8 names and logos,
+        and the design — is owned by or licensed to HAIM8&nbsp;Ltd and is protected by intellectual
+        property laws. You may view and share links to our pages, and download resources we offer for
+        that purpose, for your own reference. You may not otherwise copy, republish or exploit our
+        content commercially without our written permission.
+      </p>
+
+      <h2>3. No advice, and information may change</h2>
+      <p>
+        The content on this site is provided for general information only. It is not legal, regulatory,
+        financial or professional advice, and you should not rely on it as such. Figures shown across
+        this site were measured on the Clarifi platform; client and event identities are withheld
+        pending consent. We may update, change or remove content at any time without notice.
+      </p>
+
+      <h2>4. Availability and links</h2>
+      <p>
+        We aim to keep the site available but do not guarantee it will be uninterrupted or error-free,
+        and we may suspend or withdraw it at any time. Where we link to third-party sites or embed
+        third-party tools (such as our booking scheduler), we do so for convenience; we are not
+        responsible for their content or practices.
+      </p>
+
+      <h2>5. Disclaimer and liability</h2>
+      <p>
+        This site is provided &ldquo;as is&rdquo; without warranties of any kind, to the fullest
+        extent permitted by law. Nothing in these terms limits or excludes our liability for death or
+        personal injury caused by negligence, for fraud, or for anything else that cannot lawfully be
+        limited or excluded. Subject to that, we are not liable for any loss arising from your use of,
+        or inability to use, this site.
+      </p>
+
+      <h2>6. Privacy and cookies</h2>
+      <p>
+        How we handle personal data is set out in our
+        <a href="/clarifi/privacy.html">Privacy&nbsp;Notice</a>, and how we use cookies is set out in
+        our <a href="/clarifi/cookies.html">Cookie&nbsp;Policy</a>. Both form part of your use of this
+        site.
+      </p>
+
+      <h2>7. Changes to these terms</h2>
+      <p>
+        We may revise these terms from time to time. The version on this page is always the current
+        one, and the review date above tells you when it last changed. Please check back when you
+        return.
+      </p>
+
+      <h2>8. Governing law</h2>
+      <p>
+        These terms are governed by the laws of England &amp; Wales, and the courts of England &amp;
+        Wales have exclusive jurisdiction over any dispute arising from them or from your use of this
+        site.
+      </p>
+
+      <div class="cl-legal-contact">
+        <h3 style="margin-top:0">Contact</h3>
+        <p style="margin-bottom:0">
+          <strong>HAIM8&nbsp;Ltd</strong>, London, United Kingdom · Company&nbsp;No.&nbsp;17177572 ·
+          <a href="mailto:hello@haim8.com">hello@haim8.com</a>
+        </p>
+      </div>
+
+    </div>
+  </section>
+  </main>
+
+  <!-- ============================ FOOTER ============================ -->
+  <footer class="cl-footer">
+    <div class="cl-wrap">
+      <div class="cl-grid cl-grid-4">
+
+        <div>
+          <a class="cl-logo" href="/clarifi/index.html">Clarifi <span class="by">by HAIM8</span></a>
+          <p style="margin-top:var(--h8-space-4);max-width:34ch">
+            The white-labeled, multi-tenant operational &amp; sustainability reporting
+            platform for high-throughput field operations. Close the reporting gap.
+          </p>
+          <a class="h8-btn ghost" href="/book" target="_blank" rel="noopener"
+             style="margin-top:var(--h8-space-2)">Book a 15-minute call</a>
+        </div>
+
+        <div>
+          <h4>Platform</h4>
+          <ul class="cl-footer-links">
+            <li><a href="/clarifi/index.html#platform">How it works</a></li>
+            <li><a href="/clarifi/index.html#proof">Proof &amp; results</a></li>
+            <li><a href="/clarifi/index.html">Resources</a></li>
+            <li><a href="/clarifi/roi-calculator.html">ROI calculator</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4>Sectors</h4>
+          <ul class="cl-footer-links">
+            <li><a href="/clarifi/index.html#proof">Events &amp; venues</a></li>
+            <li><a href="/clarifi/simpler-recycling.html">FM &amp; waste</a></li>
+            <li><a href="/clarifi/reseller.html">Become a reseller</a></li>
+            <li><a href="/clarifi/book-a-call.html">Talk to us</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4>Company</h4>
+          <ul class="cl-footer-links">
+            <li><a href="/clarifi/privacy.html">Privacy Notice</a></li>
+            <li><a href="/clarifi/cookies.html">Cookie Policy</a></li>
+            <li><a href="/clarifi/terms.html" aria-current="page">Terms</a></li>
+            <li><a href="mailto:hello@haim8.com">hello@haim8.com</a></li>
+          </ul>
+        </div>
+
+      </div>
+
+      <div class="cl-footer-legal">
+        <p>
+          <strong>HAIM8&nbsp;Ltd</strong>, London, United Kingdom · Registered in England &amp; Wales,
+          Companies&nbsp;House&nbsp;No.&nbsp;17177572. &copy; <span data-cl-year>2026</span> HAIM8&nbsp;Ltd.
+          All rights reserved.
+        </p>
+        <p>
+          Verified figures shown across this site were measured on the Clarifi platform; client and
+          event identities are withheld pending consent. Pricing on application — book a call.
+          Marketing emails from HAIM8&nbsp;Ltd include a one-click unsubscribe link.
+        </p>
+      </div>
+    </div>
+    <script>
+      (function () {
+        var y = document.querySelector('[data-cl-year]');
+        if (y) y.textContent = new Date().getFullYear();
+        var r = document.querySelector('[data-cl-reviewed]');
+        if (r) r.textContent = new Date().getFullYear();
+      })();
+    </script>
+  </footer>
+
+  <!-- ============================ BLOCK B — consent banner ============================ -->
+  <div class="cl-cc" role="dialog" aria-live="polite" aria-label="Cookie consent">
+    <div class="cl-cc-inner">
+      <p class="cl-cc-text">
+        We use cookies only to understand how this site performs and to improve it.
+        Nothing tracks you until you choose. We never load analytics or advertising
+        tags before you accept. See our
+        <a href="/clarifi/privacy.html">Privacy&nbsp;Notice</a> and
+        <a href="/clarifi/cookies.html">Cookie&nbsp;Policy</a>.
+      </p>
+      <div class="cl-cc-actions">
+        <button type="button" class="h8-btn ghost" data-cc-reject>Reject</button>
+        <button type="button" class="h8-btn" data-cc-accept>Accept</button>
+      </div>
+    </div>
+  </div>
+  <!-- ============================ /BLOCK B ============================ -->
+
+</body>
+</html>

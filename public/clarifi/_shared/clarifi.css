@@ -1,0 +1,318 @@
+/* ============================================================================
+   clarifi.css — Clarifi by HAIM8 · premium site design system (Wave 1)
+   ----------------------------------------------------------------------------
+   Self-contained. Every /clarifi page links ONLY this file (no external CSS
+   dependency). Tokens are inherited from the IMMUTABLE brand law in
+   brand-kit/clarifi-base.css and brand-kit/haim8_design/haim8-brand-pack —
+   re-declared here so the site folder ships as one portable unit.
+
+   Brand law restated (do not drift):
+     - Electric Blue #0080E4 is the PRIMARY accent / CTA.
+     - Vision Purple #7D41B9 is an emotional accent — cap <=10% of any composition.
+     - Navy #0A1628 / deep navy #0A0E1A are the dark surfaces (HAIM8 site continuity).
+     - Sora display (300/500/700) + Inter body. 16px default radius. >=60% white space.
+     - One gradient-emphasis word per headline (.h8-grad). Verified numbers as .h8-kpi.
+
+   Theme: light-first aurora (matches the shipped Clarifi landing/one-pagers),
+   with first-class DARK premium surfaces (.cl-dark / aurora-primary) for heroes
+   and CTAs — the HAIM8 dark-premium feel.
+   ========================================================================== */
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@300;500;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  /* Core brand */
+  --h8-white:#FEFEFE; --h8-light-grey:#E8E8E9;
+  --h8-electric-blue:#0080E4;           /* PRIMARY accent / CTA (tints, fills, focus) */
+  --h8-blue-ink:#0A6FC4;                /* accessible blue for TEXT on light (>=4.5:1) */
+  --h8-blue-cta:#0A74D0;                /* CTA fill: white label clears AA (4.75:1) */
+  --h8-vision-purple:#7D41B9;           /* emotional accent — cap <=10% */
+  --h8-navy:#0A1628;                    /* dark background */
+  --h8-navy-deep:#0A0E1A;               /* deepest navy — HAIM8 site continuity */
+  --h8-graphite:#6B6F7B;                /* text emphasis */
+  --h8-steel:#6E727A;                   /* muted text (>=4.5:1 on white) */
+  /* Semantic (status only — never decoration) */
+  --h8-risk:#D64545; --h8-success:#1F9D6B; --h8-warning:#E8A33D; --h8-info:#0080E4;
+
+  /* Type */
+  --h8-font-display:'Sora',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --h8-font-body:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --h8-font-mono:'JetBrains Mono','Fira Code',ui-monospace,monospace;
+  --h8-text-caption:12px; --h8-text-body-sm:14px; --h8-text-base:16px;
+  --h8-text-h3:18px; --h8-text-h2:24px; --h8-text-h1:32px;
+  --h8-text-display-sm:42px; --h8-text-display:56px; --h8-text-display-lg:75px;
+
+  /* Spacing (4px scale) */
+  --h8-space-1:4px;--h8-space-2:8px;--h8-space-3:12px;--h8-space-4:16px;--h8-space-5:20px;
+  --h8-space-6:24px;--h8-space-8:32px;--h8-space-10:40px;--h8-space-12:48px;
+  --h8-space-16:64px;--h8-space-20:80px;--h8-space-24:96px;
+
+  /* Radius */
+  --h8-radius-xs:4px;--h8-radius-sm:10px;--h8-radius-md:16px;--h8-radius-lg:24px;--h8-radius-pill:999px;
+
+  /* Motion */
+  --h8-ease-out:cubic-bezier(0.16,1,0.3,1); --h8-ease-inout:cubic-bezier(0.4,0,0.2,1);
+  --h8-dur-fast:180ms; --h8-dur-base:320ms; --h8-dur-slow:520ms;
+
+  /* Signature surfaces */
+  --h8-text-gradient:linear-gradient(180deg,#0080E4 0%,#7D41B9 100%);
+  --h8-edge-iridescent:linear-gradient(135deg,#0080E4 0%,#7D41B9 50%,#0080E4 100%);
+  --h8-glass-light:linear-gradient(180deg,rgba(255,255,255,.75),rgba(255,255,255,.45));
+  --h8-glass-dark:linear-gradient(180deg,rgba(255,255,255,.10),rgba(255,255,255,.03));
+  --h8-aurora-light:
+    radial-gradient(65% 55% at 15% 15%,rgba(0,128,228,.18),transparent 60%),
+    radial-gradient(55% 50% at 85% 25%,rgba(125,65,185,.15),transparent 60%),#FEFEFE;
+  --h8-aurora-primary:
+    radial-gradient(60% 50% at 20% 10%,rgba(0,128,228,.35),transparent 60%),
+    radial-gradient(55% 45% at 85% 30%,rgba(125,65,185,.30),transparent 65%),
+    radial-gradient(70% 60% at 50% 110%,rgba(0,128,228,.20),transparent 60%),#0A0E1A;
+  --h8-shadow-1:0 1px 0 0 rgba(255,255,255,.9) inset,0 4px 16px -8px rgba(10,22,40,.18);
+  --h8-shadow-2:0 1px 0 0 rgba(255,255,255,.9) inset,0 10px 30px -12px rgba(10,22,40,.25),0 8px 40px -20px rgba(0,128,228,.35);
+  --h8-shadow-cta:0 10px 30px -10px rgba(0,128,228,.5);
+
+  /* Layout */
+  --cl-maxw:1120px;
+  --cl-maxw-narrow:760px;
+}
+
+/* ===== Base ============================================================== */
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:var(--h8-font-body);font-size:var(--h8-text-base);line-height:1.65;
+  letter-spacing:-0.01em;color:var(--h8-navy);background:var(--h8-aurora-light);
+  -webkit-font-smoothing:antialiased;min-height:100vh}
+img{max-width:100%;display:block}
+
+h1,h2,h3,.h8-display{font-family:var(--h8-font-display);font-weight:300;line-height:1.05;
+  letter-spacing:-0.03em;color:var(--h8-navy);margin:0 0 var(--h8-space-4)}
+h1{font-size:var(--h8-text-h1);font-weight:500;line-height:1.2;letter-spacing:-0.01em}
+h2{font-size:var(--h8-text-h2);font-weight:500;line-height:1.2}
+h3{font-size:var(--h8-text-h3);font-weight:500;line-height:1.45}
+p{margin:0 0 var(--h8-space-4)}
+.h8-display{font-size:var(--h8-text-display);font-weight:300}
+.h8-display-lg{font-size:var(--h8-text-display-lg);font-weight:300}
+.h8-display-sm{font-size:var(--h8-text-display-sm);font-weight:300}
+.h8-caption{font-size:var(--h8-text-caption);font-weight:600;letter-spacing:0.12em;
+  text-transform:uppercase;color:var(--h8-steel)}
+.h8-mono{font-family:var(--h8-font-mono)}
+a{color:var(--h8-blue-ink);text-decoration:none;transition:color var(--h8-dur-fast) var(--h8-ease-out)}
+a:hover{color:#085aa0}
+.h8-lead{font-size:var(--h8-text-h3);font-weight:400;color:var(--h8-graphite);line-height:1.6}
+.h8-muted{color:var(--h8-steel)}
+
+/* Emphasis fingerprint — exactly one gradient word per headline */
+.h8-grad{background:var(--h8-text-gradient);-webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent}
+
+/* ===== Layout helpers ==================================================== */
+.cl-wrap{max-width:var(--cl-maxw);margin:0 auto;padding-left:var(--h8-space-6);padding-right:var(--h8-space-6)}
+.cl-narrow{max-width:var(--cl-maxw-narrow);margin:0 auto;padding-left:var(--h8-space-6);padding-right:var(--h8-space-6)}
+.cl-section{padding-top:var(--h8-space-20);padding-bottom:var(--h8-space-20)}
+.cl-section-sm{padding-top:var(--h8-space-12);padding-bottom:var(--h8-space-12)}
+.cl-stack > * + *{margin-top:var(--h8-space-4)}
+.cl-center{text-align:center}
+.cl-grid{display:grid;gap:var(--h8-space-6)}
+.cl-grid-2{grid-template-columns:repeat(2,1fr)}
+.cl-grid-3{grid-template-columns:repeat(3,1fr)}
+.cl-grid-4{grid-template-columns:repeat(4,1fr)}
+.cl-split{display:grid;grid-template-columns:1.1fr .9fr;gap:var(--h8-space-12);align-items:center}
+/* Let grid/flex items shrink below their content's intrinsic min-width — a
+   fixed-width image (e.g. width="1200") inside a track must not blow the layout
+   out and cause horizontal scroll on narrow viewports. */
+.cl-split > *,.cl-grid > *{min-width:0}
+
+/* ===== Dark / aurora premium surfaces =================================== */
+.cl-dark{background:var(--h8-navy-deep);color:var(--h8-white)}
+.cl-aurora{background:var(--h8-aurora-primary);color:var(--h8-white)}
+.cl-dark h1,.cl-dark h2,.cl-dark h3,.cl-aurora h1,.cl-aurora h2,.cl-aurora h3{color:var(--h8-white)}
+.cl-dark p,.cl-aurora p{color:#cdd6e4}
+.cl-dark .h8-caption,.cl-aurora .h8-caption{color:#97a9c9}
+.cl-dark a,.cl-aurora a{color:#5fb0f5}
+
+/* ===== Glass card ======================================================== */
+.h8-card{background:var(--h8-glass-light);backdrop-filter:blur(24px) saturate(160%);
+  -webkit-backdrop-filter:blur(24px) saturate(160%);border:1px solid rgba(255,255,255,.7);
+  border-radius:var(--h8-radius-md);box-shadow:var(--h8-shadow-2);padding:var(--h8-space-6)}
+.h8-card.cl-interactive{transition:transform var(--h8-dur-base) var(--h8-ease-out),
+  box-shadow var(--h8-dur-base) var(--h8-ease-out)}
+.h8-card.cl-interactive:hover{transform:translateY(-4px);box-shadow:var(--h8-shadow-2),0 18px 50px -22px rgba(0,128,228,.4)}
+.h8-on-dark{background:var(--h8-glass-dark);border-color:rgba(255,255,255,.14);color:var(--h8-white);
+  -webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px)}
+.h8-on-dark h3{color:var(--h8-white)}
+.h8-on-dark p{color:#aebdd6}
+
+/* ===== KPI — verified-number card (every value -> claims-substantiation) == */
+.h8-kpi{display:flex;flex-direction:column;gap:var(--h8-space-1)}
+.h8-kpi .val{font-family:var(--h8-font-display);font-weight:700;font-size:var(--h8-text-display-sm);
+  line-height:1;background:var(--h8-text-gradient);-webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent}
+.h8-kpi .lbl{font-size:var(--h8-text-body-sm);color:var(--h8-graphite)}
+.cl-dark .h8-kpi .lbl,.cl-aurora .h8-kpi .lbl,.h8-on-dark .h8-kpi .lbl{color:#c2d2ec}
+/* On dark/aurora glass the blue->purple value gradient muddies (its purple foot
+   drops below AA over tinted aurora). Lift to a light blue->periwinkle gradient
+   that keeps the brand direction and stays >=4.5:1 on the worst-case surface. */
+.cl-dark .h8-kpi .val,.cl-aurora .h8-kpi .val,.h8-on-dark .h8-kpi .val{
+  background:linear-gradient(180deg,#79c0ff 0%,#c4a8f5 100%);
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+
+/* ===== Buttons =========================================================== */
+.h8-btn{display:inline-flex;align-items:center;justify-content:center;gap:var(--h8-space-2);
+  font-family:var(--h8-font-body);font-weight:600;font-size:var(--h8-text-base);
+  padding:var(--h8-space-3) var(--h8-space-6);border-radius:var(--h8-radius-sm);border:0;cursor:pointer;
+  background:var(--h8-blue-cta);color:#fff;text-decoration:none;line-height:1.2;
+  transition:transform var(--h8-dur-fast) var(--h8-ease-out),box-shadow var(--h8-dur-fast) var(--h8-ease-out),
+  background var(--h8-dur-fast) var(--h8-ease-out)}
+.h8-btn:hover{transform:translateY(-1px);box-shadow:var(--h8-shadow-cta);color:#fff;background:#0863b5}
+/* Solid CTA labels must stay white even where a context link-colour rule
+   (.cl-nav a / .cl-dark a / .cl-aurora a / .cl-footer a) is more specific than
+   .h8-btn — otherwise the label inherits a low-contrast link colour on the blue
+   fill (was graphite 1.06:1 in nav, light-blue 2.04:1 on dark heroes). */
+.cl-nav a.h8-btn,.cl-dark a.h8-btn:not(.ghost),.cl-aurora a.h8-btn:not(.ghost),
+.cl-footer a.h8-btn:not(.ghost){color:#fff}
+.cl-nav a.h8-btn:hover,.cl-dark a.h8-btn:not(.ghost):hover,
+.cl-aurora a.h8-btn:not(.ghost):hover,.cl-footer a.h8-btn:not(.ghost):hover{color:#fff}
+.h8-btn.ghost{background:transparent;color:var(--h8-blue-ink);box-shadow:0 0 0 1px var(--h8-electric-blue) inset}
+.h8-btn.ghost:hover{background:rgba(0,128,228,.06);color:var(--h8-blue-ink)}
+.h8-btn.lg{font-size:var(--h8-text-h3);padding:var(--h8-space-4) var(--h8-space-8)}
+.h8-btn.block{width:100%}
+.h8-btn[disabled],.h8-btn.is-busy{opacity:.6;pointer-events:none;cursor:default}
+.cl-dark .h8-btn.ghost,.cl-aurora .h8-btn.ghost{color:#fff;box-shadow:0 0 0 1px rgba(255,255,255,.5) inset}
+.cl-dark .h8-btn.ghost:hover,.cl-aurora .h8-btn.ghost:hover{background:rgba(255,255,255,.08);color:#fff}
+
+/* ===== Pill / badge ====================================================== */
+.h8-pill{display:inline-flex;align-items:center;gap:var(--h8-space-1);font-size:var(--h8-text-caption);
+  font-weight:600;letter-spacing:.04em;padding:var(--h8-space-1) var(--h8-space-3);
+  border-radius:var(--h8-radius-pill);background:rgba(0,128,228,.12);color:#085AA0}
+.cl-dark .h8-pill,.cl-aurora .h8-pill{background:rgba(95,176,245,.16);color:#9fc8f7}
+
+/* ===== Site chrome: header ============================================== */
+.cl-header{position:sticky;top:0;z-index:50;background:rgba(254,254,254,.72);
+  -webkit-backdrop-filter:blur(16px) saturate(160%);backdrop-filter:blur(16px) saturate(160%);
+  border-bottom:1px solid rgba(10,22,40,.06)}
+.cl-header .cl-wrap{display:flex;align-items:center;justify-content:space-between;
+  padding-top:var(--h8-space-4);padding-bottom:var(--h8-space-4)}
+.cl-logo{display:inline-flex;align-items:baseline;gap:var(--h8-space-2);font-family:var(--h8-font-display);
+  font-weight:700;font-size:var(--h8-text-h3);letter-spacing:-0.02em;color:var(--h8-navy)}
+.cl-logo .by{font-family:var(--h8-font-body);font-weight:400;font-size:var(--h8-text-body-sm);color:var(--h8-steel)}
+.cl-nav{display:flex;align-items:center;gap:var(--h8-space-6)}
+.cl-nav a{font-size:var(--h8-text-body-sm);font-weight:500;color:var(--h8-graphite)}
+.cl-nav a:hover{color:var(--h8-navy)}
+.cl-nav .h8-btn{padding:var(--h8-space-2) var(--h8-space-5);font-size:var(--h8-text-body-sm)}
+
+/* ===== Site chrome: footer ============================================== */
+.cl-footer{background:var(--h8-navy-deep);color:#aebdd6;padding-top:var(--h8-space-16);
+  padding-bottom:var(--h8-space-10);margin-top:var(--h8-space-20)}
+.cl-footer h4{font-family:var(--h8-font-display);font-weight:500;color:var(--h8-white);
+  font-size:var(--h8-text-base);margin:0 0 var(--h8-space-4)}
+.cl-footer a{color:#aebdd6}
+.cl-footer a:hover{color:var(--h8-white)}
+.cl-footer .cl-grid{align-items:start}
+.cl-footer .cl-logo{color:var(--h8-white)}
+.cl-footer-links{list-style:none;margin:0;padding:0}
+.cl-footer-links li{margin-bottom:var(--h8-space-2)}
+.cl-footer-legal{border-top:1px solid rgba(255,255,255,.08);margin-top:var(--h8-space-10);
+  padding-top:var(--h8-space-6);font-size:var(--h8-text-caption);color:var(--h8-steel);line-height:1.7}
+
+/* ===== Premium forms ==================================================== */
+.cl-form{display:flex;flex-direction:column;gap:var(--h8-space-5)}
+.cl-field{display:flex;flex-direction:column;gap:var(--h8-space-2)}
+.cl-field-row{display:grid;grid-template-columns:1fr 1fr;gap:var(--h8-space-4)}
+.cl-label{font-size:var(--h8-text-body-sm);font-weight:600;color:var(--h8-navy)}
+.cl-label .req{color:var(--h8-blue-ink)}
+.cl-dark .cl-label,.cl-aurora .cl-label{color:#e6edf7}
+.cl-input,.cl-select,.cl-textarea{font-family:var(--h8-font-body);font-size:var(--h8-text-base);
+  color:var(--h8-navy);background:rgba(255,255,255,.9);border:1px solid rgba(10,22,40,.14);
+  border-radius:var(--h8-radius-sm);padding:var(--h8-space-3) var(--h8-space-4);width:100%;
+  transition:border-color var(--h8-dur-fast) var(--h8-ease-out),box-shadow var(--h8-dur-fast) var(--h8-ease-out)}
+.cl-input::placeholder,.cl-textarea::placeholder{color:var(--h8-steel)}
+.cl-input:focus,.cl-select:focus,.cl-textarea:focus{outline:none;border-color:var(--h8-electric-blue);
+  box-shadow:0 0 0 3px rgba(0,128,228,.16)}
+.cl-textarea{min-height:96px;resize:vertical}
+.cl-select{appearance:none;-webkit-appearance:none;
+  background-image:linear-gradient(45deg,transparent 50%,var(--h8-steel) 50%),
+  linear-gradient(135deg,var(--h8-steel) 50%,transparent 50%);
+  background-position:calc(100% - 20px) center,calc(100% - 15px) center;
+  background-size:5px 5px,5px 5px;background-repeat:no-repeat;padding-right:var(--h8-space-10)}
+/* Dark-surface form variant (for forms placed on .cl-dark / .cl-aurora) */
+.cl-dark .cl-input,.cl-dark .cl-select,.cl-dark .cl-textarea,
+.cl-aurora .cl-input,.cl-aurora .cl-select,.cl-aurora .cl-textarea{
+  background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.16);color:var(--h8-white)}
+.cl-dark .cl-input::placeholder,.cl-aurora .cl-input::placeholder{color:#9fb0d0}
+/* Focus ring on dark forms — the dark-variant border rule above is equal-
+   specificity and source-later than .cl-input:focus, so it would otherwise wipe
+   the focus border. Restore a brighter, clearly visible ring on dark surfaces. */
+.cl-dark .cl-input:focus,.cl-dark .cl-select:focus,.cl-dark .cl-textarea:focus,
+.cl-aurora .cl-input:focus,.cl-aurora .cl-select:focus,.cl-aurora .cl-textarea:focus{
+  border-color:#5fb0f5;box-shadow:0 0 0 3px rgba(95,176,245,.30)}
+/* Validation */
+.cl-field.is-invalid .cl-input,.cl-field.is-invalid .cl-select,.cl-field.is-invalid .cl-textarea{
+  border-color:var(--h8-risk);box-shadow:0 0 0 3px rgba(214,69,69,.14)}
+.cl-error{font-size:var(--h8-text-caption);color:var(--h8-risk);min-height:1em}
+.cl-form-note{font-size:var(--h8-text-caption);color:var(--h8-steel);line-height:1.6}
+.cl-consent{display:flex;gap:var(--h8-space-3);align-items:flex-start;font-size:var(--h8-text-body-sm);
+  color:var(--h8-graphite)}
+.cl-consent input[type=checkbox]{margin-top:3px;width:18px;height:18px;accent-color:var(--h8-electric-blue);flex:0 0 auto}
+.cl-form-status{font-size:var(--h8-text-body-sm);min-height:1.2em}
+.cl-form-status.err{color:var(--h8-risk)}
+.cl-form-status.ok{color:var(--h8-success)}
+
+/* ===== Cookie-consent banner =========================================== */
+.cl-cc{position:fixed;left:0;right:0;bottom:0;z-index:90;display:none;
+  padding:var(--h8-space-5) var(--h8-space-6)}
+.cl-cc.is-visible{display:block}
+.cl-cc-inner{max-width:var(--cl-maxw);margin:0 auto;display:flex;gap:var(--h8-space-6);
+  align-items:center;justify-content:space-between;flex-wrap:wrap;
+  background:var(--h8-navy-deep);color:#cdd6e4;border:1px solid rgba(255,255,255,.10);
+  border-radius:var(--h8-radius-md);padding:var(--h8-space-5) var(--h8-space-6);
+  box-shadow:0 18px 50px -20px rgba(0,0,0,.6)}
+.cl-cc-text{font-size:var(--h8-text-body-sm);line-height:1.6;max-width:62ch;margin:0}
+.cl-cc-text a{color:#5fb0f5}
+.cl-cc-actions{display:flex;gap:var(--h8-space-3);flex-wrap:wrap}
+.cl-cc .h8-btn{padding:var(--h8-space-2) var(--h8-space-5);font-size:var(--h8-text-body-sm)}
+.cl-cc .h8-btn.ghost{color:#fff;box-shadow:0 0 0 1px rgba(255,255,255,.4) inset}
+
+/* ===== Book-a-call component =========================================== */
+.cl-bookcall{border-radius:var(--h8-radius-lg);overflow:hidden}
+.cl-meetings-embed{width:100%;min-height:680px;border:0;border-radius:var(--h8-radius-md);
+  background:rgba(255,255,255,.04)}
+.cl-meetings-fallback{display:flex;flex-direction:column;align-items:flex-start;gap:var(--h8-space-4)}
+
+/* ===== Misc ============================================================= */
+.cl-divider{height:1px;background:rgba(10,22,40,.08);border:0;margin:var(--h8-space-12) 0}
+.cl-dark .cl-divider,.cl-aurora .cl-divider{background:rgba(255,255,255,.10)}
+.cl-eyebrow{display:block;margin-bottom:var(--h8-space-3)}
+[hidden]{display:none !important}
+
+/* ===== Responsive ====================================================== */
+@media(max-width:920px){
+  .cl-split{grid-template-columns:1fr;gap:var(--h8-space-8)}
+  .cl-grid-3,.cl-grid-4{grid-template-columns:repeat(2,1fr)}
+  .h8-display{font-size:var(--h8-text-display-sm)}
+}
+@media(max-width:640px){
+  .cl-grid-2,.cl-grid-3,.cl-grid-4{grid-template-columns:1fr}
+  .cl-field-row{grid-template-columns:1fr}
+  .cl-section{padding-top:var(--h8-space-12);padding-bottom:var(--h8-space-12)}
+  h1{font-size:var(--h8-text-h1)}
+  .h8-display,.h8-display-lg{font-size:var(--h8-text-h1)}
+  .cl-nav{gap:var(--h8-space-4)}
+  .cl-nav .cl-nav-link{display:none}  /* collapse text links on mobile; keep CTA + logo */
+  .cl-cc-inner{flex-direction:column;align-items:stretch}
+  .cl-cc-actions{justify-content:stretch}
+  .cl-cc-actions .h8-btn{flex:1}
+}
+
+/* ===== Reduced motion ================================================== */
+@media(prefers-reduced-motion:reduce){
+  *{transition-duration:.001ms !important;animation-duration:.001ms !important}
+  html{scroll-behavior:auto}
+}
+
+/* ===== Print / PDF fidelity ============================================ */
+@media print{
+  body{background:#fff}
+  .cl-header,.cl-cc,.cl-footer{box-shadow:none}
+  .h8-card{box-shadow:none;border:1px solid var(--h8-light-grey);backdrop-filter:none;background:#fff;break-inside:avoid}
+  .h8-grad,.h8-kpi .val{-webkit-text-fill-color:initial;color:var(--h8-electric-blue);background:none}
+  a{color:var(--h8-navy)}
+  @page{margin:18mm}
+}

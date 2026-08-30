@@ -1,0 +1,172 @@
+<!-- ============================================================================
+     hubspot.html — Clarifi by HAIM8 · paste-in instrumentation block (Wave 1)
+     ----------------------------------------------------------------------------
+     This file is a SNIPPET LIBRARY, not a standalone page. Copy the two blocks
+     below into every /clarifi page:
+
+       BLOCK A  -> just before </head>   (config + consent + analytics helper)
+       BLOCK B  -> just before </body>   (consent banner markup)
+
+     DENY-BY-DEFAULT (UK PECR / GDPR): no tracking script, pixel, or tag fires
+     until the visitor clicks "Accept". HubSpot analytics, LinkedIn Insight Tag
+     and Meta Pixel are ALL gated behind consent. Reject keeps everything off.
+     Consent choice is remembered in localStorage ('clarifi_consent' = grant|deny).
+
+     Tracking IDs: HubSpot portal 148769785 EU is REAL. LinkedIn + Meta IDs are
+     install-only PENDING placeholders — do NOT invent them; fill after the
+     partner accounts are provisioned.
+     ============================================================================ -->
+
+
+<!-- ====================== BLOCK A — paste before </head> ==================== -->
+
+<!-- 1. Shared config (must load before everything else) -->
+<script src="/clarifi/_shared/config.js"></script>
+
+<!-- 2. Consent + tag loader + analytics helper (deny-by-default) -->
+<script>
+(function () {
+  'use strict';
+  var CFG = window.CLARIFI_CONFIG || {};
+  var STORE_KEY = 'clarifi_consent';            // 'grant' | 'deny'
+
+  /* ---- PENDING partner IDs (install-only — fill, never invent) ----------- */
+  var LINKEDIN_PARTNER_ID = null;  // e.g. '1234567' once the LinkedIn Insight Tag is provisioned
+  var META_PIXEL_ID       = null;  // e.g. '1234567890123456' once the Meta Pixel is provisioned
+
+  function getConsent() {
+    try { return localStorage.getItem(STORE_KEY); } catch (e) { return null; }
+  }
+  function setConsent(v) {
+    try { localStorage.setItem(STORE_KEY, v); } catch (e) {}
+  }
+
+  /* ---- Tag loaders (only ever called AFTER explicit grant) --------------- */
+  function loadHubSpot() {
+    if (document.getElementById('hs-script-loader')) return;
+    var s = document.createElement('script');
+    s.type = 'text/javascript';
+    s.id = 'hs-script-loader';
+    s.async = true;
+    s.defer = true;
+    // EU residency endpoint for portal 148769785
+    s.src = '//js-eu1.hs-scripts.com/' + (CFG.hubspotPortalId || '148769785') + '.js';
+    document.head.appendChild(s);
+  }
+
+  function loadLinkedIn() {
+    if (!LINKEDIN_PARTNER_ID) return; // PENDING — no ID, nothing fires (install-only)
+    window._linkedin_partner_id = LINKEDIN_PARTNER_ID;
+    window._linkedin_data_partner_ids = window._linkedin_data_partner_ids || [];
+    window._linkedin_data_partner_ids.push(LINKEDIN_PARTNER_ID);
+    var b = document.createElement('script');
+    b.type = 'text/javascript'; b.async = true;
+    b.src = 'https://snap.licdn.com/li.lms-analytics/insight.min.js';
+    document.head.appendChild(b);
+  }
+
+  function loadMeta() {
+    if (!META_PIXEL_ID) return; // PENDING — no ID, nothing fires (install-only)
+    !function (f, b, e, v, n, t, s) {
+      if (f.fbq) return; n = f.fbq = function () {
+        n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments);
+      };
+      if (!f._fbq) f._fbq = n; n.push = n; n.loaded = !0; n.version = '2.0';
+      n.queue = []; t = b.createElement(e); t.async = !0; t.src = v;
+      s = b.getElementsByTagName(e)[0]; s.parentNode.insertBefore(t, s);
+    }(window, document, 'script', 'https://connect.facebook.net/en_US/fbevents.js');
+    window.fbq('init', META_PIXEL_ID);
+    window.fbq('track', 'PageView');
+  }
+
+  function fireAllTags() {
+    loadHubSpot();
+    loadLinkedIn();
+    loadMeta();
+  }
+
+  /* ---- Public consent API ----------------------------------------------- */
+  window.ClarifiConsent = {
+    has: function () { return getConsent() === 'grant'; },
+    grant: function () {
+      setConsent('grant');
+      hideBanner();
+      fireAllTags();
+    },
+    deny: function () {
+      setConsent('deny');
+      hideBanner();
+      // nothing loads; existing choice persists
+    },
+    reset: function () { try { localStorage.removeItem(STORE_KEY); } catch (e) {} }
+  };
+
+  /* ---- Banner show/hide -------------------------------------------------- */
+  function banner() { return document.querySelector('.cl-cc'); }
+  function hideBanner() { var b = banner(); if (b) b.classList.remove('is-visible'); }
+  function showBanner() { var b = banner(); if (b) b.classList.add('is-visible'); }
+
+  function wireBanner() {
+    var b = banner();
+    if (!b) return;
+    var accept = b.querySelector('[data-cc-accept]');
+    var reject = b.querySelector('[data-cc-reject]');
+    if (accept) accept.addEventListener('click', function () { window.ClarifiConsent.grant(); });
+    if (reject) reject.addEventListener('click', function () { window.ClarifiConsent.deny(); });
+
+    var state = getConsent();
+    if (state === 'grant') { fireAllTags(); }        // returning, already accepted
+    else if (state === 'deny') { /* stay silent */ } // returning, already rejected
+    else { showBanner(); }                            // first visit -> ask, nothing fires
+  }
+
+  /* ---- Analytics helper (named conversion events) ------------------------
+     Safe to call anytime. If consent is granted and HubSpot is loaded it pushes
+     a custom-behavioural event; otherwise it no-ops on the network but always
+     mirrors to dataLayer so a future GTM/consent-mode setup can pick it up. -- */
+  function track(eventName, props) {
+    props = props || {};
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push(Object.assign({ event: eventName }, props));
+    if (window.ClarifiConsent.has() && window._hsq) {
+      window._hsq.push(['trackCustomBehavioralEvent', { name: eventName, properties: props }]);
+    }
+  }
+  window.ClarifiAnalytics = {
+    track: track,
+    leadSubmitted: function (p) { track('lead_submitted', p); },
+    calcCompleted: function (p) { track('calc_completed', p); },
+    callBooked:    function (p) { track('call_booked', p); }
+  };
+  window._hsq = window._hsq || [];
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', wireBanner);
+  } else { wireBanner(); }
+})();
+</script>
+
+<!-- ====================== /BLOCK A ========================================= -->
+
+
+
+<!-- ====================== BLOCK B — paste before </body> =================== -->
+
+<!-- Cookie-consent banner (deny-by-default; styled by clarifi.css .cl-cc) -->
+<div class="cl-cc" role="dialog" aria-live="polite" aria-label="Cookie consent">
+  <div class="cl-cc-inner">
+    <p class="cl-cc-text">
+      We use cookies only to understand how this site performs and to improve it.
+      Nothing tracks you until you choose. We never load analytics or advertising
+      tags before you accept. See our
+      <a href="/clarifi/privacy.html">Privacy&nbsp;Notice</a> and
+      <a href="/clarifi/cookies.html">Cookie&nbsp;Policy</a>.
+    </p>
+    <div class="cl-cc-actions">
+      <button type="button" class="h8-btn ghost" data-cc-reject>Reject</button>
+      <button type="button" class="h8-btn" data-cc-accept>Accept</button>
+    </div>
+  </div>
+</div>
+
+<!-- ====================== /BLOCK B ========================================= -->

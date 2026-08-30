@@ -1,0 +1,720 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Become a Clarifi Reseller — White-label Reporting for FM &amp; Waste Partners | Clarifi by HAIM8</title>
+<meta name="description" content="Resell a branded, multi-tenant reporting portal to your whole client base — your name, your logo, their data. No per-client development. A retention and premium-pricing lever for FM agencies and waste contractors.">
+
+<!-- Shared design system (self-contained HAIM8 system) -->
+<link rel="stylesheet" href="/clarifi/_shared/clarifi.css">
+
+<!-- ====================== hubspot.html BLOCK A (config + consent + analytics) ==================== -->
+<!-- 1. Shared config (must load before everything else) -->
+<script src="/clarifi/_shared/config.js"></script>
+
+<!-- 2. Consent + tag loader + analytics helper (deny-by-default) -->
+<script>
+(function () {
+  'use strict';
+  var CFG = window.CLARIFI_CONFIG || {};
+  var STORE_KEY = 'clarifi_consent';            // 'grant' | 'deny'
+
+  /* ---- PENDING partner IDs (install-only — fill, never invent) ----------- */
+  var LINKEDIN_PARTNER_ID = null;  // e.g. '1234567' once the LinkedIn Insight Tag is provisioned
+  var META_PIXEL_ID       = null;  // e.g. '1234567890123456' once the Meta Pixel is provisioned
+
+  function getConsent() {
+    try { return localStorage.getItem(STORE_KEY); } catch (e) { return null; }
+  }
+  function setConsent(v) {
+    try { localStorage.setItem(STORE_KEY, v); } catch (e) {}
+  }
+
+  /* ---- Tag loaders (only ever called AFTER explicit grant) --------------- */
+  function loadHubSpot() {
+    if (document.getElementById('hs-script-loader')) return;
+    var s = document.createElement('script');
+    s.type = 'text/javascript';
+    s.id = 'hs-script-loader';
+    s.async = true;
+    s.defer = true;
+    // EU residency endpoint for portal 148769785
+    s.src = '//js-eu1.hs-scripts.com/' + (CFG.hubspotPortalId || '148769785') + '.js';
+    document.head.appendChild(s);
+  }
+
+  function loadLinkedIn() {
+    if (!LINKEDIN_PARTNER_ID) return; // PENDING — no ID, nothing fires (install-only)
+    window._linkedin_partner_id = LINKEDIN_PARTNER_ID;
+    window._linkedin_data_partner_ids = window._linkedin_data_partner_ids || [];
+    window._linkedin_data_partner_ids.push(LINKEDIN_PARTNER_ID);
+    var b = document.createElement('script');
+    b.type = 'text/javascript'; b.async = true;
+    b.src = 'https://snap.licdn.com/li.lms-analytics/insight.min.js';
+    document.head.appendChild(b);
+  }
+
+  function loadMeta() {
+    if (!META_PIXEL_ID) return; // PENDING — no ID, nothing fires (install-only)
+    !function (f, b, e, v, n, t, s) {
+      if (f.fbq) return; n = f.fbq = function () {
+        n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments);
+      };
+      if (!f._fbq) f._fbq = n; n.push = n; n.loaded = !0; n.version = '2.0';
+      n.queue = []; t = b.createElement(e); t.async = !0; t.src = v;
+      s = b.getElementsByTagName(e)[0]; s.parentNode.insertBefore(t, s);
+    }(window, document, 'script', 'https://connect.facebook.net/en_US/fbevents.js');
+    window.fbq('init', META_PIXEL_ID);
+    window.fbq('track', 'PageView');
+  }
+
+  function fireAllTags() {
+    loadHubSpot();
+    loadLinkedIn();
+    loadMeta();
+  }
+
+  /* ---- Public consent API ----------------------------------------------- */
+  window.ClarifiConsent = {
+    has: function () { return getConsent() === 'grant'; },
+    grant: function () {
+      setConsent('grant');
+      hideBanner();
+      fireAllTags();
+    },
+    deny: function () {
+      setConsent('deny');
+      hideBanner();
+      // nothing loads; existing choice persists
+    },
+    reset: function () { try { localStorage.removeItem(STORE_KEY); } catch (e) {} }
+  };
+
+  /* ---- Banner show/hide -------------------------------------------------- */
+  function banner() { return document.querySelector('.cl-cc'); }
+  function hideBanner() { var b = banner(); if (b) b.classList.remove('is-visible'); }
+  function showBanner() { var b = banner(); if (b) b.classList.add('is-visible'); }
+
+  function wireBanner() {
+    var b = banner();
+    if (!b) return;
+    var accept = b.querySelector('[data-cc-accept]');
+    var reject = b.querySelector('[data-cc-reject]');
+    if (accept) accept.addEventListener('click', function () { window.ClarifiConsent.grant(); });
+    if (reject) reject.addEventListener('click', function () { window.ClarifiConsent.deny(); });
+
+    var state = getConsent();
+    if (state === 'grant') { fireAllTags(); }        // returning, already accepted
+    else if (state === 'deny') { /* stay silent */ } // returning, already rejected
+    else { showBanner(); }                            // first visit -> ask, nothing fires
+  }
+
+  /* ---- Analytics helper (named conversion events) ------------------------ */
+  function track(eventName, props) {
+    props = props || {};
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push(Object.assign({ event: eventName }, props));
+    if (window.ClarifiConsent.has() && window._hsq) {
+      window._hsq.push(['trackCustomBehavioralEvent', { name: eventName, properties: props }]);
+    }
+  }
+  window.ClarifiAnalytics = {
+    track: track,
+    leadSubmitted: function (p) { track('lead_submitted', p); },
+    calcCompleted: function (p) { track('calc_completed', p); },
+    callBooked:    function (p) { track('call_booked', p); }
+  };
+  window._hsq = window._hsq || [];
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', wireBanner);
+  } else { wireBanner(); }
+})();
+</script>
+<!-- ====================== /hubspot.html BLOCK A ==================== -->
+
+<!-- 3. Lead-capture handler (load after config + analytics) -->
+<script src="/clarifi/_shared/capture.js" defer></script>
+
+<style>
+  /* ---- Page-local layout only (no token redefinition; design system owns colour) ---- */
+  .rs-hero{position:relative;overflow:hidden}
+  .rs-hero .cl-wrap{padding-top:var(--h8-space-20);padding-bottom:var(--h8-space-20)}
+  .rs-hero h1{font-size:var(--h8-text-display-sm);font-weight:300;max-width:18ch;margin-top:var(--h8-space-5)}
+  .rs-hero .h8-lead{max-width:54ch;color:#cdd6e4}
+  .rs-hero-cta{display:flex;gap:var(--h8-space-4);flex-wrap:wrap;margin-top:var(--h8-space-8)}
+  .rs-hero-proof{display:flex;gap:var(--h8-space-10);flex-wrap:wrap;margin-top:var(--h8-space-12);
+    padding-top:var(--h8-space-8);border-top:1px solid rgba(255,255,255,.10)}
+
+  .rs-eco{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--h8-space-6)}
+  .rs-eco .h8-card{display:flex;flex-direction:column;gap:var(--h8-space-3)}
+  .rs-eco .num{font-family:var(--h8-font-display);font-weight:700;font-size:var(--h8-text-h2);
+    color:var(--h8-electric-blue);line-height:1}
+
+  .rs-steps{counter-reset:step;display:grid;gap:var(--h8-space-5)}
+  .rs-step{display:grid;grid-template-columns:auto 1fr;gap:var(--h8-space-5);align-items:start}
+  .rs-step .n{counter-increment:step;width:40px;height:40px;flex:0 0 auto;border-radius:var(--h8-radius-pill);
+    display:flex;align-items:center;justify-content:center;font-family:var(--h8-font-display);font-weight:700;
+    background:rgba(0,128,228,.10);color:var(--h8-blue-ink)}
+  .rs-step .n::before{content:counter(step)}
+
+  .rs-flow{display:flex;flex-wrap:wrap;gap:var(--h8-space-3);align-items:center}
+  .rs-flow .pill{font-family:var(--h8-font-display);font-weight:500;font-size:var(--h8-text-body-sm);
+    padding:var(--h8-space-2) var(--h8-space-4);border-radius:var(--h8-radius-pill);
+    background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);color:#e6edf7}
+  .rs-flow .arrow{color:#5fb0f5;font-weight:600}
+
+  .rs-compare{width:100%;border-collapse:collapse;border-radius:var(--h8-radius-md);overflow:hidden;
+    box-shadow:var(--h8-shadow-1)}
+  .rs-compare th,.rs-compare td{padding:var(--h8-space-4) var(--h8-space-5);text-align:left;
+    border-bottom:1px solid rgba(10,22,40,.08);vertical-align:top;font-size:var(--h8-text-body-sm)}
+  .rs-compare thead th{font-family:var(--h8-font-display);font-weight:600;font-size:var(--h8-text-body-sm);
+    background:rgba(0,128,228,.06)}
+  .rs-compare thead th:last-child{background:rgba(0,128,228,.12);color:var(--h8-navy)}
+  .rs-compare tbody td:first-child{font-weight:600;color:var(--h8-navy)}
+  .rs-compare td.yes{color:var(--h8-success);font-weight:600}
+  .rs-compare td.no{color:var(--h8-steel)}
+
+  .rs-apply{display:grid;grid-template-columns:1fr 1fr;gap:var(--h8-space-12);align-items:start}
+  .rs-apply-form{background:var(--h8-glass-light);backdrop-filter:blur(24px) saturate(160%);
+    -webkit-backdrop-filter:blur(24px) saturate(160%);border:1px solid rgba(255,255,255,.7);
+    border-radius:var(--h8-radius-lg);box-shadow:var(--h8-shadow-2);padding:var(--h8-space-10)}
+  .rs-faq summary{cursor:pointer;font-family:var(--h8-font-display);font-weight:500;font-size:var(--h8-text-h3);
+    padding:var(--h8-space-4) 0;list-style:none;display:flex;justify-content:space-between;gap:var(--h8-space-4)}
+  .rs-faq summary::-webkit-details-marker{display:none}
+  .rs-faq summary::after{content:'+';color:var(--h8-electric-blue);font-weight:700}
+  .rs-faq details[open] summary::after{content:'–'}
+  .rs-faq details{border-bottom:1px solid rgba(10,22,40,.08)}
+  .rs-faq p{color:var(--h8-graphite);padding-bottom:var(--h8-space-4);max-width:64ch}
+
+  @media(max-width:920px){
+    .rs-eco{grid-template-columns:repeat(2,1fr)}
+    .rs-apply{grid-template-columns:1fr;gap:var(--h8-space-8)}
+    .rs-hero h1{font-size:var(--h8-text-h1)}
+  }
+  @media(max-width:640px){
+    .rs-eco{grid-template-columns:1fr}
+    .rs-apply-form{padding:var(--h8-space-6)}
+    .rs-compare{display:block;overflow-x:auto}
+  }
+</style>
+</head>
+<body>
+
+<!-- ====================== header.html (shared partial, inlined) ==================== -->
+<header class="cl-header">
+  <div class="cl-wrap">
+    <a class="cl-logo" href="/clarifi/index.html" aria-label="Clarifi by HAIM8 — home">
+      Clarifi <span class="by">by HAIM8</span>
+    </a>
+    <nav class="cl-nav" aria-label="Primary">
+      <a class="cl-nav-link" href="/clarifi/index.html#platform">Platform</a>
+      <a class="cl-nav-link" href="/clarifi/index.html#proof">Proof</a>
+      <a class="cl-nav-link" href="/clarifi/index.html">Resources</a>
+      <a class="cl-nav-link" href="/clarifi/reseller.html" aria-current="page">Partners</a>
+      <a class="h8-btn" href="/book" target="_blank" rel="noopener">
+        Book a call
+      </a>
+    </nav>
+  </div>
+</header>
+<!-- ====================== /header.html ==================== -->
+
+<main>
+
+  <!-- ====================== HERO ==================== -->
+  <section class="rs-hero cl-aurora">
+    <div class="cl-wrap">
+      <span class="h8-pill">Partner programme · White-label</span>
+      <h1>A reporting product to sell — <span class="h8-grad">without building one</span>.</h1>
+      <p class="h8-lead">
+        You already do the work your clients want reported. Clarifi by HAIM8 lets you hand every one of them a
+        branded reporting portal — your name, your logo, their data — with live dashboards, AI-written summaries,
+        and one-click PDF reports. Multi-tenant out of the box. No per-client development on your side.
+      </p>
+      <div class="rs-hero-cta">
+        <a class="h8-btn lg" href="#apply">Apply to become a reseller →</a>
+        <a class="h8-btn ghost lg" href="#book-a-call">Book a 15-minute partner call</a>
+      </div>
+      <div class="rs-hero-proof">
+        <div class="h8-kpi"><span class="val">100%</span><span class="lbl">your brand — white-labeled, multi-tenant client portal</span></div>
+        <div class="h8-kpi"><span class="val">89%</span><span class="lbl">recycling rate, independently verified at a major UK festival</span></div>
+        <div class="h8-kpi"><span class="val">0</span><span class="lbl">per-client development cost to stand it up</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================== THE GAP / WHY PARTNER ==================== -->
+  <section class="cl-section">
+    <div class="cl-narrow cl-center">
+      <span class="h8-caption">The opportunity</span>
+      <h2>Most of your competitors hand clients a <span class="h8-grad">spreadsheet</span>.</h2>
+      <p class="h8-lead" style="margin:var(--h8-space-4) auto 0;max-width:56ch">
+        Reporting is the part of your service that earns the least and costs the most admin time. Turn it into the
+        opposite: a branded, recurring product you can price, retain on, and win competitive renewals with — all
+        running on a platform you didn't have to build.
+      </p>
+    </div>
+  </section>
+
+  <!-- ====================== RESELLER ECONOMICS (G10) ==================== -->
+  <section class="cl-section cl-section-sm" id="economics">
+    <div class="cl-wrap">
+      <div class="cl-center" style="margin-bottom:var(--h8-space-12)">
+        <span class="h8-caption">Reseller economics</span>
+        <h2>Four ways the white-label play <span class="h8-grad">pays</span>.</h2>
+      </div>
+      <div class="rs-eco">
+        <div class="h8-card cl-interactive">
+          <span class="num">01</span>
+          <h3>Differentiate</h3>
+          <p>Stand out at tender. You hand clients a live, branded portal where competitors hand over a spreadsheet and a promise.</p>
+        </div>
+        <div class="h8-card cl-interactive">
+          <span class="num">02</span>
+          <h3>Retain</h3>
+          <p>A client who logs in to their own dashboard every week is a client who doesn't shop around. Reporting becomes a stickiness lever.</p>
+        </div>
+        <div class="h8-card cl-interactive">
+          <span class="num">03</span>
+          <h3>Charge for it</h3>
+          <p>Reporting becomes a line item you can price as a premium — not a cost you quietly absorb into every contract.</p>
+        </div>
+        <div class="h8-card cl-interactive">
+          <span class="num">04</span>
+          <h3>No dev cost</h3>
+          <p>Multi-tenant and white-label as standard. Each client sees only their own numbers, under your brand — with no engineering on your side.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================== HOW WHITE-LABEL WORKS ==================== -->
+  <section class="cl-section cl-aurora" id="how-it-works">
+    <div class="cl-wrap">
+      <div class="cl-split">
+        <div>
+          <span class="h8-caption">How white-label works</span>
+          <h2>One platform. <span class="h8-grad">Every</span> client, under your brand.</h2>
+          <p class="h8-lead" style="max-width:46ch">
+            Your field teams capture data on a phone. Clarifi turns it into a branded, audit-ready report your
+            clients can trust — and your name sits on every screen.
+          </p>
+          <div class="rs-flow" style="margin-top:var(--h8-space-8)">
+            <span class="pill">Configure</span><span class="arrow">→</span>
+            <span class="pill">Capture</span><span class="arrow">→</span>
+            <span class="pill">Enrich</span><span class="arrow">→</span>
+            <span class="pill">Preview</span><span class="arrow">→</span>
+            <span class="pill">Publish</span>
+          </div>
+          <p class="h8-muted" style="margin-top:var(--h8-space-5);font-size:var(--h8-text-body-sm)">
+            The same five-step workflow that runs Clarifi for direct operators — applied across your whole client base.
+          </p>
+        </div>
+        <div class="rs-steps">
+          <div class="rs-step">
+            <div class="n"></div>
+            <div>
+              <h3 style="margin-bottom:var(--h8-space-1)">Brand it once</h3>
+              <p style="margin:0">Your logo and identity sit across the portal. Clients experience a reporting product that looks like yours, because to them it is.</p>
+            </div>
+          </div>
+          <div class="rs-step">
+            <div class="n"></div>
+            <div>
+              <h3 style="margin-bottom:var(--h8-space-1)">Onboard each client</h3>
+              <p style="margin:0">Multi-tenant by design — every client gets their own isolated space and sees only their own data. No cross-contamination, no rebuild.</p>
+            </div>
+          </div>
+          <div class="rs-step">
+            <div class="n"></div>
+            <div>
+              <h3 style="margin-bottom:var(--h8-space-1)">Crews capture in the field</h3>
+              <p style="margin:0">Supervisors log weights, stream types and compaction from a phone. The data lands ready to report — no end-of-month paper chase.</p>
+            </div>
+          </div>
+          <div class="rs-step">
+            <div class="n"></div>
+            <div>
+              <h3 style="margin-bottom:var(--h8-space-1)">Clients self-serve</h3>
+              <p style="margin:0">Live dashboards, AI-written executive summaries and one-click branded PDF exports — available to each client, under your name, whenever they need them.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================== WHAT YOUR CLIENTS GET ==================== -->
+  <section class="cl-section" id="capabilities">
+    <div class="cl-wrap">
+      <div class="cl-center" style="margin-bottom:var(--h8-space-12)">
+        <span class="h8-caption">What sits under your brand</span>
+        <h2>The reporting product your clients <span class="h8-grad">see</span>.</h2>
+      </div>
+      <div class="cl-grid cl-grid-3">
+        <div class="h8-card">
+          <h3>Live branded dashboards</h3>
+          <p>Tonnage, recycling rates, donut charts and environmental-impact cards — rendered live, in your colours, for each client.</p>
+        </div>
+        <div class="h8-card">
+          <h3>AI-written summaries</h3>
+          <p>Executive summaries drafted automatically from the data, so a client report reads like it took a day, not a fortnight.</p>
+        </div>
+        <div class="h8-card">
+          <h3>One-click branded PDF</h3>
+          <p>Audit-ready PDF exports your clients can forward straight to procurement — with your identity on every page.</p>
+        </div>
+        <div class="h8-card">
+          <h3>Multi-tenant isolation</h3>
+          <p>Each client sees only their own numbers. One platform, many clients, zero data crossover — the foundation of a white-label resale.</p>
+        </div>
+        <div class="h8-card">
+          <h3>Mobile field logging</h3>
+          <p>Crews log weights, stream types and compaction from a phone. The capture step that makes the whole report defensible.</p>
+        </div>
+        <div class="h8-card">
+          <h3>Audit-ready support</h3>
+          <p>Timestamped, verifiable data that gives your clients audit-ready support for ISO 14001 reporting and the standards their tenders run on.</p>
+        </div>
+      </div>
+      <p class="h8-muted cl-center" style="margin-top:var(--h8-space-8);font-size:var(--h8-text-body-sm);max-width:60ch;margin-left:auto;margin-right:auto">
+        Sector-specific exporters — including Scope&nbsp;3 footprint, BREEAM and GRESB/MEES ESG outputs — are on the roadmap.
+      </p>
+    </div>
+  </section>
+
+  <!-- ====================== COMPARISON: SPREADSHEET vs WHITE-LABEL ==================== -->
+  <section class="cl-section cl-section-sm">
+    <div class="cl-narrow">
+      <div class="cl-center" style="margin-bottom:var(--h8-space-10)">
+        <span class="h8-caption">Build vs resell</span>
+        <h2>Why partner, rather than <span class="h8-grad">build</span>.</h2>
+      </div>
+      <table class="rs-compare">
+        <thead>
+          <tr>
+            <th scope="col">&nbsp;</th>
+            <th scope="col">Spreadsheet &amp; email</th>
+            <th scope="col">Build it yourself</th>
+            <th scope="col">Resell Clarifi</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Branded client portal</td><td class="no">No</td><td class="no">Months of dev</td><td class="yes">Day one, your brand</td></tr>
+          <tr><td>Per-client development cost</td><td class="no">—</td><td class="no">High &amp; recurring</td><td class="yes">None</td></tr>
+          <tr><td>Multi-tenant data isolation</td><td class="no">Manual &amp; risky</td><td class="no">You own the risk</td><td class="yes">Built in</td></tr>
+          <tr><td>AI-written summaries</td><td class="no">No</td><td class="no">Specialist team</td><td class="yes">Included</td></tr>
+          <tr><td>Audit-ready PDF export</td><td class="no">Hand-built</td><td class="no">You maintain it</td><td class="yes">One click</td></tr>
+          <tr><td>Verified at scale already</td><td class="no">No</td><td class="no">Unproven</td><td class="yes">Yes — see below</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ====================== PROOF (reassurance — safe to put under your brand) ==================== -->
+  <section class="cl-section cl-dark" id="proof">
+    <div class="cl-wrap">
+      <div class="cl-split">
+        <div>
+          <span class="h8-caption">Proof it holds up</span>
+          <h2>Put your brand on numbers that have already been <span class="h8-grad">verified</span>.</h2>
+          <p class="h8-lead" style="max-width:46ch">
+            A wrong number under your logo is your problem, not ours — so the verification has to be real. Clarifi's
+            reporting has already been independently verified at the sharp end of live operations. You'd be reselling
+            something proven, presented under your name.
+          </p>
+          <a class="h8-btn lg" href="#apply" style="margin-top:var(--h8-space-6)">Apply to become a reseller →</a>
+        </div>
+        <div class="cl-grid" style="gap:var(--h8-space-5)">
+          <div class="h8-card h8-on-dark">
+            <div class="h8-kpi"><span class="val">89%</span><span class="lbl">recycling rate, independently verified at a major UK festival</span></div>
+          </div>
+          <div class="h8-card h8-on-dark">
+            <div class="h8-kpi"><span class="val">&gt;80%</span><span class="lbl">diversion, verified at flagship events</span></div>
+          </div>
+          <div class="h8-card h8-on-dark">
+            <div class="h8-kpi"><span class="val">100%</span><span class="lbl">your brand — every dashboard, summary and PDF</span></div>
+          </div>
+        </div>
+      </div>
+      <p class="h8-muted" style="margin-top:var(--h8-space-10);font-size:var(--h8-text-caption);max-width:70ch">
+        Figures independently verified on the Clarifi platform; client and event identities withheld pending consent.
+      </p>
+    </div>
+  </section>
+
+  <!-- ====================== APPLICATION FORM (capture.js) ==================== -->
+  <section class="cl-section" id="apply">
+    <div class="cl-wrap">
+      <div class="rs-apply">
+        <div>
+          <span class="h8-caption">Partner application</span>
+          <h2>Apply to become a <span class="h8-grad">reseller</span>.</h2>
+          <p class="h8-lead" style="max-width:48ch">
+            Tell us about your client base and we'll set up a short partner call to walk through how white-label works
+            and what the commercial arrangement looks like.
+          </p>
+          <ul class="cl-stack" style="list-style:none;padding:0;margin-top:var(--h8-space-8)">
+            <li class="h8-card" style="padding:var(--h8-space-4) var(--h8-space-5)">
+              <strong>No commitment to find out.</strong>
+              <span class="h8-muted"> A 15-minute call to see whether the numbers stack up for your business.</span>
+            </li>
+            <li class="h8-card" style="padding:var(--h8-space-4) var(--h8-space-5)">
+              <strong>Partner terms are tailored.</strong>
+              <span class="h8-muted"> Arrangements scale to the size of your client base. Pricing on application — discussed on the call.</span>
+            </li>
+            <li class="h8-card" style="padding:var(--h8-space-4) var(--h8-space-5)">
+              <strong>One partner, many clients.</strong>
+              <span class="h8-muted"> Stand it up once, then roll a branded portal out across your whole book of business.</span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="rs-apply-form">
+          <form class="cl-form" data-clarifi-capture data-magnet="reseller-application" aria-label="Reseller partner application">
+            <div class="cl-field-row">
+              <div class="cl-field">
+                <label class="cl-label" for="rs-firstname">First name</label>
+                <input class="cl-input" id="rs-firstname" name="firstname" autocomplete="given-name">
+              </div>
+              <div class="cl-field">
+                <label class="cl-label" for="rs-lastname">Last name</label>
+                <input class="cl-input" id="rs-lastname" name="lastname" autocomplete="family-name">
+              </div>
+            </div>
+
+            <div class="cl-field">
+              <label class="cl-label" for="rs-email">Work email <span class="req">*</span></label>
+              <input class="cl-input" id="rs-email" name="email" type="email" autocomplete="email" required>
+              <span class="cl-error"></span>
+            </div>
+
+            <div class="cl-field-row">
+              <div class="cl-field">
+                <label class="cl-label" for="rs-company">Company</label>
+                <input class="cl-input" id="rs-company" name="company" autocomplete="organization">
+              </div>
+              <div class="cl-field">
+                <label class="cl-label" for="rs-jobtitle">Job title</label>
+                <input class="cl-input" id="rs-jobtitle" name="jobtitle" autocomplete="organization-title">
+              </div>
+            </div>
+
+            <div class="cl-field">
+              <label class="cl-label" for="rs-sector">What does your business do? <span class="req">*</span></label>
+              <select class="cl-select" id="rs-sector" name="clarifi_sector">
+                <option value="">Select…</option>
+                <option value="fm-agency">Facilities management agency</option>
+                <option value="waste-contractor">Waste / recycling contractor</option>
+                <option value="events-services">Events &amp; venue services</option>
+                <option value="consultancy">Sustainability / ESG consultancy</option>
+                <option value="other">Other field-service operator</option>
+              </select>
+              <span class="cl-error"></span>
+            </div>
+
+            <div class="cl-field">
+              <label class="cl-label" for="rs-band">How many clients could you white-label to? <span class="req">*</span></label>
+              <select class="cl-select" id="rs-band" name="employee_band">
+                <option value="">Select…</option>
+                <option value="under-50">Under 50</option>
+                <option value="50-99">50–99</option>
+                <option value="100-249">100–249</option>
+                <option value="250-plus">250+</option>
+              </select>
+              <span class="cl-error"></span>
+            </div>
+
+            <div class="cl-field">
+              <label class="cl-label" for="rs-trigger">What's prompting you to look now? <span class="cl-form-note" style="display:inline">(optional)</span></label>
+              <input class="cl-input" id="rs-trigger" name="buying_trigger" placeholder="e.g. an upcoming tender, a retention push, a new client win">
+            </div>
+
+            <label class="cl-consent">
+              <input type="checkbox" name="consent_marketing" value="yes">
+              <span>I agree to be contacted by HAIM8&nbsp;Ltd about the Clarifi partner programme.</span>
+            </label>
+
+            <div class="cl-form-status" data-cl-status></div>
+
+            <button class="h8-btn block lg" type="submit">Apply to become a reseller →</button>
+
+            <p class="cl-form-note">
+              Use your work email and tell us a little about your operation so we can tailor the conversation.
+              We'll only use your details to follow up about the Clarifi partner programme. Unsubscribe anytime.
+            </p>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================== FAQ ==================== -->
+  <section class="cl-section cl-section-sm">
+    <div class="cl-narrow rs-faq">
+      <div class="cl-center" style="margin-bottom:var(--h8-space-8)">
+        <span class="h8-caption">Partner questions</span>
+        <h2>The things partners ask <span class="h8-grad">first</span>.</h2>
+      </div>
+
+      <details>
+        <summary>Is it genuinely my brand the client sees?</summary>
+        <p>Yes. The client portal is white-labeled — your logo and identity across the dashboards, summaries and PDF exports. To your clients, it's your reporting product.</p>
+      </details>
+      <details>
+        <summary>Can different clients see each other's data?</summary>
+        <p>No. The platform is multi-tenant by design: each client gets an isolated space and sees only their own numbers. That isolation is what makes a white-label resale safe.</p>
+      </details>
+      <details>
+        <summary>How much development do we have to do?</summary>
+        <p>None per client. The platform is multi-tenant and white-label out of the box, so you stand it up once and onboard clients into it — there's no per-client build on your side.</p>
+      </details>
+      <details>
+        <summary>What does it cost?</summary>
+        <p>Partner terms are tailored to the size of your client base and discussed on the call. Pricing on application — there's no commitment to find out whether the numbers stack up for you.</p>
+      </details>
+      <details>
+        <summary>Is the data defensible enough to put my name on?</summary>
+        <p>The reporting is built on timestamped, verifiable data and has already been independently verified at the sharp end of live operations — including an 89% recycling rate verified at a major UK festival. It also gives your clients audit-ready support for ISO 14001 reporting.</p>
+      </details>
+    </div>
+  </section>
+
+  <!-- ====================== book-a-call.html (shared partial, inlined) ==================== -->
+  <section class="cl-section cl-aurora cl-bookcall" id="book-a-call" aria-label="Book a call">
+    <div class="cl-narrow cl-center">
+      <span class="h8-pill">15 minutes, no pitch</span>
+      <h2 style="margin-top:var(--h8-space-4)">Walk through the <span class="h8-grad">white-label</span> setup</h2>
+      <p class="h8-lead" style="max-width:52ch;margin:0 auto var(--h8-space-8)">
+        A short, practical partner call — we look at your client base and how a branded, multi-tenant reporting
+        portal would slot into your service. Pricing on application.
+      </p>
+
+      <!-- HubSpot Meetings embed target -->
+      <div class="meetings-iframe-container"
+           data-src="https://meetings-eu1.hubspot.com/mtshuma?embed=true">
+      </div>
+
+      <!-- Styled fallback (always visible; primary action if the embed can't load) -->
+      <div class="cl-meetings-fallback" style="align-items:center;margin-top:var(--h8-space-6)">
+        <a class="h8-btn lg" id="cl-book-fallback"
+           href="/book" target="_blank" rel="noopener">
+          Book a 15-minute partner call →
+        </a>
+        <p class="cl-form-note" style="color:#9fb4d8">
+          Prefer email? <a href="mailto:hello@haim8.com">hello@haim8.com</a>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <script src="https://static-eu1.hsappstatic.net/MeetingsEmbedCode/ex/MeetingsEmbedCode.js"></script>
+  <script>
+    (function () {
+      var fb = document.getElementById('cl-book-fallback');
+      if (fb && window.ClarifiAnalytics) {
+        fb.addEventListener('click', function () { window.ClarifiAnalytics.callBooked({ source: 'fallback_button' }); });
+      }
+      // HubSpot Meetings posts a message on a booking; mirror it to analytics.
+      window.addEventListener('message', function (e) {
+        if (e && e.data && e.data.meetingBookSucceeded && window.ClarifiAnalytics) {
+          window.ClarifiAnalytics.callBooked({ source: 'meetings_embed' });
+        }
+      });
+    })();
+  </script>
+  <!-- ====================== /book-a-call.html ==================== -->
+
+</main>
+
+<!-- ====================== footer.html (shared partial, inlined) ==================== -->
+<footer class="cl-footer">
+  <div class="cl-wrap">
+    <div class="cl-grid cl-grid-4">
+
+      <div>
+        <a class="cl-logo" href="/clarifi/index.html">Clarifi <span class="by">by HAIM8</span></a>
+        <p style="margin-top:var(--h8-space-4);max-width:34ch">
+          The white-labeled, multi-tenant operational &amp; sustainability reporting
+          platform for high-throughput field operations. Close the reporting gap.
+        </p>
+        <a class="h8-btn ghost" href="/book" target="_blank" rel="noopener"
+           style="margin-top:var(--h8-space-2)">Book a 15-minute call</a>
+      </div>
+
+      <div>
+        <h4>Platform</h4>
+        <ul class="cl-footer-links">
+          <li><a href="/clarifi/index.html#platform">How it works</a></li>
+          <li><a href="/clarifi/index.html#proof">Proof &amp; results</a></li>
+          <li><a href="/clarifi/index.html">Resources</a></li>
+          <li><a href="/clarifi/roi-calculator.html">ROI calculator</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4>Sectors</h4>
+        <ul class="cl-footer-links">
+          <li><a href="/clarifi/index.html#proof">Events &amp; venues</a></li>
+          <li><a href="/clarifi/simpler-recycling.html">FM &amp; waste</a></li>
+          <li><a href="/clarifi/reseller.html">Become a reseller</a></li>
+          <li><a href="/clarifi/book-a-call.html">Talk to us</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4>Company</h4>
+        <ul class="cl-footer-links">
+          <li><a href="/clarifi/privacy.html">Privacy Notice</a></li>
+          <li><a href="/clarifi/cookies.html">Cookie Policy</a></li>
+          <li><a href="/clarifi/terms.html">Terms</a></li>
+          <li><a href="mailto:hello@haim8.com">hello@haim8.com</a></li>
+        </ul>
+      </div>
+
+    </div>
+
+    <div class="cl-footer-legal">
+      <p>
+        <strong>HAIM8&nbsp;Ltd</strong>, London, United Kingdom · Registered in England &amp; Wales,
+        Companies&nbsp;House&nbsp;No.&nbsp;17177572. &copy; <span data-cl-year>2026</span> HAIM8&nbsp;Ltd.
+        All rights reserved.
+      </p>
+      <p>
+        Verified figures shown across this site were measured on the Clarifi platform; client and
+        event identities are withheld pending consent. Pricing on application — book a call.
+        Marketing emails from HAIM8&nbsp;Ltd include a one-click unsubscribe link.
+      </p>
+    </div>
+  </div>
+  <script>
+    (function () {
+      var y = document.querySelector('[data-cl-year]');
+      if (y) y.textContent = new Date().getFullYear();
+    })();
+  </script>
+</footer>
+<!-- ====================== /footer.html ==================== -->
+
+<!-- ====================== hubspot.html BLOCK B (consent banner) ==================== -->
+<div class="cl-cc" role="dialog" aria-live="polite" aria-label="Cookie consent">
+  <div class="cl-cc-inner">
+    <p class="cl-cc-text">
+      We use cookies only to understand how this site performs and to improve it.
+      Nothing tracks you until you choose. We never load analytics or advertising
+      tags before you accept. See our
+      <a href="/clarifi/privacy.html">Privacy&nbsp;Notice</a> and
+      <a href="/clarifi/cookies.html">Cookie&nbsp;Policy</a>.
+    </p>
+    <div class="cl-cc-actions">
+      <button type="button" class="h8-btn ghost" data-cc-reject>Reject</button>
+      <button type="button" class="h8-btn" data-cc-accept>Accept</button>
+    </div>
+  </div>
+</div>
+<!-- ====================== /hubspot.html BLOCK B ==================== -->
+
+</body>
+</html>

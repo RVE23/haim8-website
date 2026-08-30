@@ -1,0 +1,56 @@
+<!-- ============================================================================
+     book-a-call.html — Clarifi by HAIM8 · reusable booking component (Wave 1)
+     ----------------------------------------------------------------------------
+     Drop this block anywhere you want a "Book a 15-minute call" CTA.
+     It embeds the HubSpot Meetings scheduler for slug "mtshuma" and ALWAYS
+     shows a styled fallback button (so the section is useful even before the
+     HubSpot meetings embed script loads / if a visitor declines cookies).
+
+     The embed loader is loaded directly here (Meetings embeds are functional,
+     not tracking — they render a calendar the visitor explicitly asked for).
+     Booking success fires the call_booked analytics event.
+
+     Styled by clarifi.css (.cl-bookcall / .cl-meetings-*).
+     ============================================================================ -->
+<section class="cl-section cl-aurora cl-bookcall" id="book-a-call" aria-label="Book a call">
+  <div class="cl-narrow cl-center">
+    <span class="h8-pill">15 minutes, no pitch</span>
+    <h2 style="margin-top:var(--h8-space-4)">See where your <span class="h8-grad">reporting gap</span> is</h2>
+    <p class="h8-lead" style="max-width:52ch;margin:0 auto var(--h8-space-8)">
+      A short, practical call — we look at how your crews capture data today and where
+      verified reporting would win or retain a contract. Pricing on application.
+    </p>
+
+    <!-- HubSpot Meetings embed target -->
+    <div class="meetings-iframe-container"
+         data-src="https://meetings-eu1.hubspot.com/mtshuma?embed=true">
+    </div>
+
+    <!-- Styled fallback (always visible; primary action if the embed can't load) -->
+    <div class="cl-meetings-fallback" style="align-items:center;margin-top:var(--h8-space-6)">
+      <a class="h8-btn lg" id="cl-book-fallback"
+         href="/book" target="_blank" rel="noopener">
+        Book a 15-minute call →
+      </a>
+      <p class="cl-form-note" style="color:#9fb4d8">
+        Prefer email? <a href="mailto:hello@haim8.com">hello@haim8.com</a>
+      </p>
+    </div>
+  </div>
+</section>
+
+<script src="https://static-eu1.hsappstatic.net/MeetingsEmbedCode/ex/MeetingsEmbedCode.js"></script>
+<script>
+  (function () {
+    var fb = document.getElementById('cl-book-fallback');
+    if (fb && window.ClarifiAnalytics) {
+      fb.addEventListener('click', function () { window.ClarifiAnalytics.callBooked({ source: 'fallback_button' }); });
+    }
+    // HubSpot Meetings posts a message on a booking; mirror it to analytics.
+    window.addEventListener('message', function (e) {
+      if (e && e.data && e.data.meetingBookSucceeded && window.ClarifiAnalytics) {
+        window.ClarifiAnalytics.callBooked({ source: 'meetings_embed' });
+      }
+    });
+  })();
+</script>

@@ -78,6 +78,49 @@ Auto-deploys to Vercel on push to `main`. Preview deploys on every PR.
 
 Production: https://www.haim8.com
 
+## Clarifi campaign funnel (`/clarifi`)
+
+Static lead-capture microsite living alongside the React app. Deliberately plain
+HTML, not React routes: the SPA is hash-routed (`#/stack`), and hash routes are
+not separately indexable — campaign landing pages have to be.
+
+```
+public/clarifi/            11 pages, served as-is at /clarifi/*.html
+public/clarifi/_shared/    config.js -> hubspot.html -> capture.js (load in that order)
+api/clarifi-lead.js        POST -> HubSpot contact upsert + deal in "Clarifi Wave 1"
+api/__checks__/            node api/__checks__/clarifi-lead.check.mjs
+```
+
+**Required env var.** `HUBSPOT_TOKEN` (a HubSpot private-app token) on the Vercel
+project, Production *and* Preview. Server-side only — it must never reach the
+bundle or the repo. Without it the pages render fine and only form submission fails.
+
+**Bot defence.** `/api/clarifi-lead` writes to the CRM and this repo is public, so
+the payload shape is known. Three gates, all in `api/clarifi-lead.js`:
+
+| Gate | Stops |
+|---|---|
+| Origin must match Host | direct `curl` / scripted POSTs (no Origin = refused) |
+| Honeypot `cl_website` | form-filling bots — answers 200 so they don't retry |
+| Work-email rule | free mailboxes, enforced server-side not just in the browser |
+
+`HONEYPOT_FIELD` in the function and `HONEYPOT` in `capture.js` must stay equal.
+The field is injected by `capture.js`, so pages never need to declare it.
+
+Smoke-testing the endpoint therefore needs an Origin header:
+
+```bash
+curl -s -o /dev/null -w "%{http_code}\n" -X POST "<URL>/api/clarifi-lead" -H "Content-Type: application/json" -H "Origin: <URL>" -d '{"email":"deploy-test@haim8.com","company":"HAIM8 Internal","clarifi_sector":"facilities-management"}'
+```
+
+200 = working (a real contact + deal are created — delete them). 403 = Origin
+rejected. 500 = `HUBSPOT_TOKEN` missing. 404 = routing.
+
+**Booking link.** Every "Book a call" anchor points at `/book`, redirected in
+`vercel.json` to the HubSpot meetings URL. Change the slug in that one line, not
+across 31 anchors. The `?embed=true` iframes still address HubSpot directly —
+that URL is never visible to a visitor.
+
 ## Design lineage
 
 The site originated from a Claude Design handoff bundle (HTML/CSS/JS prototype loaded
