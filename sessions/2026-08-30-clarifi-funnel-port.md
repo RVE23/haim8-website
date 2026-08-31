@@ -34,6 +34,17 @@ standing write access so he can ship it himself from here.
 - 5 of 11 pages carry no `rel=canonical`. Left to Mendisi (content decision;
   thank-you.html should stay unindexed anyway).
 
+**Codex review (3 passes, each found something real):**
+- Pass 1 — the Origin===Host gate was documented as stopping scripted POSTs. It
+  does not: a script sets the header and passes. Origin is only meaningful because
+  *browsers* enforce it. Docs corrected; per-instance rate limiter added.
+- Pass 2 — the limiter was gameable twice over. `x-forwarded-for` is caller-supplied,
+  so rotating it bought a fresh bucket; and `clear()` at the cap wiped active
+  throttles, so minting keys reset your own allowance.
+- Pass 3 — requested on the eviction rewrite specifically, because the regression
+  test caught that plain oldest-first eviction ALSO evicted the attacker's own
+  throttled bucket. Eviction is now expired -> un-throttled -> oldest.
+
 **Learnings:**
 - Vercel merges matching `headers` rules in order and **last match wins per key** —
   a narrow rule placed before a broad one is silently overridden.
