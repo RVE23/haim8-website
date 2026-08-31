@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Book a 15-minute call · Clarifi by HAIM8</title>
+  <meta name="description" content="A short, practical call about your reporting gap — no pitch. We look at how your crews capture data today and where verified, client-ready reporting wins or retains a contract. Pricing on application.">
+  <link rel="canonical" href="https://www.haim8.com/clarifi/book-a-call.html">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Clarifi by HAIM8">
+  <meta property="og:title" content="Book a 15-minute call · Clarifi by HAIM8">
+  <meta property="og:description" content="Fifteen minutes, no pitch. See where your reporting gap is and what verified reporting would be worth on your next tender.">
+  <meta property="og:url" content="https://www.haim8.com/clarifi/book-a-call.html">
+
+  <!-- ============================ STYLES ============================ -->
+  <link rel="stylesheet" href="/clarifi/_shared/clarifi.css">
+
+  <!-- ============================ BLOCK A — instrumentation (config + consent + analytics) ============================ -->
+  <!-- 1. Shared config (must load before everything else) -->
+  <script src="/clarifi/_shared/config.js"></script>
+
+  <!-- 2. Consent + tag loader + analytics helper (deny-by-default) -->
+  <script>
+  (function () {
+    'use strict';
+    var CFG = window.CLARIFI_CONFIG || {};
+    var STORE_KEY = 'clarifi_consent';            // 'grant' | 'deny'
+
+    /* ---- PENDING partner IDs (install-only — fill, never invent) ----------- */
+    var LINKEDIN_PARTNER_ID = null;  // e.g. '1234567' once the LinkedIn Insight Tag is provisioned
+    var META_PIXEL_ID       = null;  // e.g. '1234567890123456' once the Meta Pixel is provisioned
+
+    function getConsent() {
+      try { return localStorage.getItem(STORE_KEY); } catch (e) { return null; }
+    }
+    function setConsent(v) {
+      try { localStorage.setItem(STORE_KEY, v); } catch (e) {}
+    }
+
+    /* ---- Tag loaders (only ever called AFTER explicit grant) --------------- */
+    function loadHubSpot() {
+      if (document.getElementById('hs-script-loader')) return;
+      var s = document.createElement('script');
+      s.type = 'text/javascript';
+      s.id = 'hs-script-loader';
+      s.async = true;
+      s.defer = true;
+      // EU residency endpoint for portal 148769785
+      s.src = '//js-eu1.hs-scripts.com/' + (CFG.hubspotPortalId || '148769785') + '.js';
+      document.head.appendChild(s);
+    }
+
+    function loadLinkedIn() {
+      if (!LINKEDIN_PARTNER_ID) return; // PENDING — no ID, nothing fires (install-only)
+      window._linkedin_partner_id = LINKEDIN_PARTNER_ID;
+      window._linkedin_data_partner_ids = window._linkedin_data_partner_ids || [];
+      window._linkedin_data_partner_ids.push(LINKEDIN_PARTNER_ID);
+      var b = document.createElement('script');
+      b.type = 'text/javascript'; b.async = true;
+      b.src = 'https://snap.licdn.com/li.lms-analytics/insight.min.js';
+      document.head.appendChild(b);
+    }
+
+    function loadMeta() {
+      if (!META_PIXEL_ID) return; // PENDING — no ID, nothing fires (install-only)
+      !function (f, b, e, v, n, t, s) {
+        if (f.fbq) return; n = f.fbq = function () {
+          n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments);
+        };
+        if (!f._fbq) f._fbq = n; n.push = n; n.loaded = !0; n.version = '2.0';
+        n.queue = []; t = b.createElement(e); t.async = !0; t.src = v;
+        s = b.getElementsByTagName(e)[0]; s.parentNode.insertBefore(t, s);
+      }(window, document, 'script', 'https://connect.facebook.net/en_US/fbevents.js');
+      window.fbq('init', META_PIXEL_ID);
+      window.fbq('track', 'PageView');
+    }
+
+    function fireAllTags() {
+      loadHubSpot();
+      loadLinkedIn();
+      loadMeta();
+    }
+
+    /* ---- Public consent API ----------------------------------------------- */
+    window.ClarifiConsent = {
+      has: function () { return getConsent() === 'grant'; },
+      grant: function () {
+        setConsent('grant');
+        hideBanner();
+        fireAllTags();
+      },
+      deny: function () {
+        setConsent('deny');
+        hideBanner();
+        // nothing loads; existing choice persists
+      },
+      reset: function () { try { localStorage.removeItem(STORE_KEY); } catch (e) {} }
+    };
+
+    /* ---- Banner show/hide -------------------------------------------------- */
+    function banner() { return document.querySelector('.cl-cc'); }
+    function hideBanner() { var b = banner(); if (b) b.classList.remove('is-visible'); }
+    function showBanner() { var b = banner(); if (b) b.classList.add('is-visible'); }
+
+    function wireBanner() {
+      var b = banner();
+      if (!b) return;
+      var accept = b.querySelector('[data-cc-accept]');
+      var reject = b.querySelector('[data-cc-reject]');
+      if (accept) accept.addEventListener('click', function () { window.ClarifiConsent.grant(); });
+      if (reject) reject.addEventListener('click', function () { window.ClarifiConsent.deny(); });
+
+      var state = getConsent();
+      if (state === 'grant') { fireAllTags(); }        // returning, already accepted
+      else if (state === 'deny') { /* stay silent */ } // returning, already rejected
+      else { showBanner(); }                            // first visit -> ask, nothing fires
+    }
+
+    /* ---- Analytics helper (named conversion events) ------------------------
+       Safe to call anytime. If consent is granted and HubSpot is loaded it pushes
+       a custom-behavioural event; otherwise it no-ops on the network but always
+       mirrors to dataLayer so a future GTM/consent-mode setup can pick it up. -- */
+    function track(eventName, props) {
+      props = props || {};
+      window.dataLayer = window.dataLayer || [];
+      window.dataLayer.push(Object.assign({ event: eventName }, props));
+      if (window.ClarifiConsent.has() && window._hsq) {
+        window._hsq.push(['trackCustomBehavioralEvent', { name: eventName, properties: props }]);
+      }
+    }
+    window.ClarifiAnalytics = {
+      track: track,
+      leadSubmitted: function (p) { track('lead_submitted', p); },
+      calcCompleted: function (p) { track('calc_completed', p); },
+      callBooked:    function (p) { track('call_booked', p); }
+    };
+    window._hsq = window._hsq || [];
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', wireBanner);
+    } else { wireBanner(); }
+  })();
+  </script>
+  <!-- ============================ /BLOCK A ============================ -->
+
+  <!-- 3. Form capture handler (no form on this page, but kept for include-order parity / future inline form) -->
+  <script src="/clarifi/_shared/capture.js" defer></script>
+</head>
+
+<body>
+
+  <!-- ============================ HEADER ============================ -->
+  <header class="cl-header">
+    <div class="cl-wrap">
+      <a class="cl-logo" href="/clarifi/index.html" aria-label="Clarifi by HAIM8 — home">
+        Clarifi <span class="by">by HAIM8</span>
+      </a>
+      <nav class="cl-nav" aria-label="Primary">
+        <a class="cl-nav-link" href="/clarifi/index.html#platform">Platform</a>
+        <a class="cl-nav-link" href="/clarifi/index.html#proof">Proof</a>
+        <a class="cl-nav-link" href="/clarifi/index.html">Resources</a>
+        <a class="cl-nav-link" href="/clarifi/reseller.html">Partners</a>
+        <a class="h8-btn" href="#book-a-call" aria-current="page">Book a call</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ============================ HERO ============================ -->
+  <section class="cl-section cl-aurora" aria-label="Book a call — introduction">
+    <div class="cl-wrap">
+      <div class="cl-split">
+
+        <div class="cl-stack">
+          <span class="h8-pill">15 minutes, no pitch</span>
+          <h1 class="h8-display-sm">
+            See where your <span class="h8-grad">reporting gap</span> is — and what it costs you.
+          </h1>
+          <p class="h8-lead" style="max-width:54ch">
+            A short, practical call. We look at how your crews capture data today, where the
+            client report drags on for weeks, and where verified, audit-ready reporting would
+            win or retain a contract. You leave with a clear read on the gap — whether or not
+            you ever work with us.
+          </p>
+
+          <ul class="cl-stack" style="list-style:none;padding:0;margin:var(--h8-space-2) 0 0;gap:var(--h8-space-3)">
+            <li style="display:flex;gap:var(--h8-space-3);align-items:flex-start">
+              <span aria-hidden="true" style="color:#9fc8f7;font-weight:700;line-height:1.5">→</span>
+              <span>How your field data moves from the crew to the client today — and where it stalls.</span>
+            </li>
+            <li style="display:flex;gap:var(--h8-space-3);align-items:flex-start">
+              <span aria-hidden="true" style="color:#9fc8f7;font-weight:700;line-height:1.5">→</span>
+              <span>Which tender or compliance deadline is actually driving the decision.</span>
+            </li>
+            <li style="display:flex;gap:var(--h8-space-3);align-items:flex-start">
+              <span aria-hidden="true" style="color:#9fc8f7;font-weight:700;line-height:1.5">→</span>
+              <span>A live look at a branded dashboard, AI summary, and one-click PDF — your data, your brand.</span>
+            </li>
+          </ul>
+
+          <div class="cl-meetings-fallback" style="margin-top:var(--h8-space-6)">
+            <a class="h8-btn lg" href="#book-a-call">Pick a time below →</a>
+            <p class="cl-form-note" style="color:#9fb4d8;margin:0">
+              Prefer email? <a href="mailto:hello@haim8.com">hello@haim8.com</a> · Pricing on application.
+            </p>
+          </div>
+        </div>
+
+        <!-- Proof rail — anonymized, ledger-backed -->
+        <aside class="h8-card h8-on-dark" aria-label="What operators have measured on Clarifi">
+          <span class="h8-caption">Measured on the Clarifi platform</span>
+          <div class="cl-grid cl-grid-2" style="margin-top:var(--h8-space-4)">
+            <div class="h8-kpi">
+              <span class="val">89%</span>
+              <span class="lbl">recycling rate, independently verified at a major UK festival</span>
+            </div>
+            <div class="h8-kpi">
+              <span class="val">3-year</span>
+              <span class="lbl">waste-management contract won at a flagship London winter attraction</span>
+            </div>
+            <div class="h8-kpi">
+              <span class="val">Weeks → live</span>
+              <span class="lbl">from manual reporting to automated digital summaries</span>
+            </div>
+            <div class="h8-kpi">
+              <span class="val">100%</span>
+              <span class="lbl">your brand — multi-tenant, each client sees only their own data</span>
+            </div>
+          </div>
+          <p class="h8-caption" style="margin-top:var(--h8-space-4)">
+            Client and event identities are withheld pending consent.
+          </p>
+        </aside>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ BOOKING (HubSpot Meetings embed + fallback) ============================ -->
+  <section class="cl-section cl-bookcall" id="book-a-call" aria-label="Choose a time">
+    <div class="cl-narrow cl-center">
+      <span class="h8-pill">Choose a time that suits you</span>
+      <h2 style="margin-top:var(--h8-space-4)">Book your <span class="h8-grad">15 minutes</span></h2>
+      <p class="h8-lead" style="max-width:52ch;margin:0 auto var(--h8-space-8)">
+        Straight to a working session — no qualifying call first. Pick a slot and you'll get a
+        calendar invite with a video link. Pricing on application.
+      </p>
+
+      <!-- HubSpot Meetings embed target (functional, not tracking — renders a calendar the visitor asked for) -->
+      <div class="meetings-iframe-container cl-meetings-embed"
+           data-src="https://meetings-eu1.hubspot.com/mtshuma?embed=true">
+      </div>
+
+      <!-- Styled fallback (always visible; primary action if the embed can't load / cookies declined) -->
+      <div class="cl-meetings-fallback" style="align-items:center;margin-top:var(--h8-space-6)">
+        <a class="h8-btn lg" id="cl-book-fallback"
+           href="/book" target="_blank" rel="noopener">
+          Open the booking page →
+        </a>
+        <p class="cl-form-note">
+          The scheduler not loading? It opens in a new tab. Or email
+          <a href="mailto:hello@haim8.com">hello@haim8.com</a>.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ REASSURANCE / WHAT TO EXPECT ============================ -->
+  <section class="cl-section-sm" aria-label="What to expect">
+    <div class="cl-wrap">
+      <div class="cl-center" style="margin-bottom:var(--h8-space-10)">
+        <span class="cl-eyebrow h8-caption">Straight talk</span>
+        <h2>No pitch. A working <span class="h8-grad">conversation</span>.</h2>
+      </div>
+      <div class="cl-grid cl-grid-3">
+
+        <div class="h8-card">
+          <h3 class="h8-display-sm" style="font-size:var(--h8-text-h3)">Built for forced adopters</h3>
+          <p>
+            Most operators we speak to aren't chasing new software — they've lost a tender on a
+            missing report, or a client now demands live reporting. We start from that, not from a
+            feature list.
+          </p>
+        </div>
+
+        <div class="h8-card">
+          <h3 class="h8-display-sm" style="font-size:var(--h8-text-h3)">Your data, in your words</h3>
+          <p>
+            Bring how your crews log weights and streams today — paper, spreadsheets, WhatsApp.
+            We'll show what that becomes: live dashboards, an AI-written summary, and a branded PDF
+            an auditor will accept.
+          </p>
+        </div>
+
+        <div class="h8-card">
+          <h3 class="h8-display-sm" style="font-size:var(--h8-text-h3)">Compliance, named plainly</h3>
+          <p>
+            If Simpler Recycling 2025, BREEAM, MEES or ISO&nbsp;14001 reporting is bearing down on
+            you, we'll be straight about what Clarifi supports today and what's on the roadmap. No
+            present-tense promises we can't keep.
+          </p>
+        </div>
+
+      </div>
+
+      <p class="h8-caption cl-center" style="margin-top:var(--h8-space-8);max-width:60ch;margin-left:auto;margin-right:auto">
+        Audit-ready support for ISO&nbsp;14001 reporting. BREEAM, MEES and Scope&nbsp;3 exporters are on
+        the roadmap. Pricing on application — tailored to your operation.
+      </p>
+    </div>
+  </section>
+
+  <!-- ============================ FOOTER ============================ -->
+  <footer class="cl-footer">
+    <div class="cl-wrap">
+      <div class="cl-grid cl-grid-4">
+
+        <div>
+          <a class="cl-logo" href="/clarifi/index.html">Clarifi <span class="by">by HAIM8</span></a>
+          <p style="margin-top:var(--h8-space-4);max-width:34ch">
+            The white-labeled, multi-tenant operational &amp; sustainability reporting
+            platform for high-throughput field operations. Close the reporting gap.
+          </p>
+          <a class="h8-btn ghost" href="#book-a-call" style="margin-top:var(--h8-space-2)">Book a 15-minute call</a>
+        </div>
+
+        <div>
+          <h4>Platform</h4>
+          <ul class="cl-footer-links">
+            <li><a href="/clarifi/index.html#platform">How it works</a></li>
+            <li><a href="/clarifi/index.html#proof">Proof &amp; results</a></li>
+            <li><a href="/clarifi/index.html">Resources</a></li>
+            <li><a href="/clarifi/roi-calculator.html">ROI calculator</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4>Sectors</h4>
+          <ul class="cl-footer-links">
+            <li><a href="/clarifi/index.html#proof">Events &amp; venues</a></li>
+            <li><a href="/clarifi/simpler-recycling.html">FM &amp; waste</a></li>
+            <li><a href="/clarifi/reseller.html">Become a reseller</a></li>
+            <li><a href="/clarifi/book-a-call.html">Talk to us</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4>Company</h4>
+          <ul class="cl-footer-links">
+            <li><a href="/clarifi/privacy.html">Privacy Notice</a></li>
+            <li><a href="/clarifi/cookies.html">Cookie Policy</a></li>
+            <li><a href="/clarifi/terms.html">Terms</a></li>
+            <li><a href="mailto:hello@haim8.com">hello@haim8.com</a></li>
+          </ul>
+        </div>
+
+      </div>
+
+      <div class="cl-footer-legal">
+        <p>
+          <strong>HAIM8&nbsp;Ltd</strong>, London, United Kingdom · Registered in England &amp; Wales,
+          Companies&nbsp;House&nbsp;No.&nbsp;17177572. &copy; <span data-cl-year>2026</span> HAIM8&nbsp;Ltd.
+          All rights reserved.
+        </p>
+        <p>
+          Verified figures shown across this site were measured on the Clarifi platform; client and
+          event identities are withheld pending consent. Pricing on application — book a call.
+          Marketing emails from HAIM8&nbsp;Ltd include a one-click unsubscribe link.
+        </p>
+      </div>
+    </div>
+    <script>
+      (function () {
+        var y = document.querySelector('[data-cl-year]');
+        if (y) y.textContent = new Date().getFullYear();
+      })();
+    </script>
+  </footer>
+
+  <!-- ============================ HubSpot Meetings loader + call_booked wiring ============================ -->
+  <script src="https://static-eu1.hsappstatic.net/MeetingsEmbedCode/ex/MeetingsEmbedCode.js"></script>
+  <script>
+    (function () {
+      var fb = document.getElementById('cl-book-fallback');
+      if (fb) {
+        fb.addEventListener('click', function () {
+          if (window.ClarifiAnalytics) window.ClarifiAnalytics.callBooked({ source: 'fallback_button' });
+        });
+      }
+      // HubSpot Meetings posts a message on a successful booking; mirror it to analytics.
+      window.addEventListener('message', function (e) {
+        if (e && e.data && e.data.meetingBookSucceeded && window.ClarifiAnalytics) {
+          window.ClarifiAnalytics.callBooked({ source: 'meetings_embed' });
+        }
+      });
+    })();
+  </script>
+
+  <!-- ============================ BLOCK B — consent banner ============================ -->
+  <div class="cl-cc" role="dialog" aria-live="polite" aria-label="Cookie consent">
+    <div class="cl-cc-inner">
+      <p class="cl-cc-text">
+        We use cookies only to understand how this site performs and to improve it.
+        Nothing tracks you until you choose. We never load analytics or advertising
+        tags before you accept. See our
+        <a href="/clarifi/privacy.html">Privacy&nbsp;Notice</a> and
+        <a href="/clarifi/cookies.html">Cookie&nbsp;Policy</a>.
+      </p>
+      <div class="cl-cc-actions">
+        <button type="button" class="h8-btn ghost" data-cc-reject>Reject</button>
+        <button type="button" class="h8-btn" data-cc-accept>Accept</button>
+      </div>
+    </div>
+  </div>
+  <!-- ============================ /BLOCK B ============================ -->
+
+</body>
+</html>

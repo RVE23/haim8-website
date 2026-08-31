@@ -1,0 +1,641 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Simpler Recycling 2025: comply — and prove it · Free guide — Clarifi by HAIM8</title>
+<meta name="description" content="The practical Simpler Recycling 2025 guide for FM &amp; field operators: what changed, the deadlines that matter, the four actions to take, and the trap most operators miss — complying is not the same as proving it. Free, gated, England.">
+<meta name="robots" content="index,follow">
+<link rel="canonical" href="https://www.haim8.com/clarifi/simpler-recycling.html">
+
+<!-- Social preview -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="Simpler Recycling 2025: comply — and prove it">
+<meta property="og:description" content="The practical guide for FM &amp; field operators — what changed, the deadlines, and the trap most operators miss. Free download.">
+<meta property="og:url" content="https://www.haim8.com/clarifi/simpler-recycling.html">
+<meta property="og:image" content="https://www.haim8.com/clarifi/assets/images/hero-fm-operative.png">
+
+<!-- ===== Design system (single self-contained stylesheet) ===== -->
+<link rel="stylesheet" href="/clarifi/_shared/clarifi.css">
+
+<!-- ============================================================
+     hubspot.html BLOCK A — config + consent + analytics helper
+     (config.js loads first; nothing tracks until Accept)
+     ============================================================ -->
+<!-- 1. Shared config (must load before everything else) -->
+<script src="/clarifi/_shared/config.js"></script>
+
+<!-- 2. Consent + tag loader + analytics helper (deny-by-default) -->
+<script>
+(function () {
+  'use strict';
+  var CFG = window.CLARIFI_CONFIG || {};
+  var STORE_KEY = 'clarifi_consent';            // 'grant' | 'deny'
+
+  /* ---- PENDING partner IDs (install-only — fill, never invent) ----------- */
+  var LINKEDIN_PARTNER_ID = null;  // e.g. '1234567' once the LinkedIn Insight Tag is provisioned
+  var META_PIXEL_ID       = null;  // e.g. '1234567890123456' once the Meta Pixel is provisioned
+
+  function getConsent() {
+    try { return localStorage.getItem(STORE_KEY); } catch (e) { return null; }
+  }
+  function setConsent(v) {
+    try { localStorage.setItem(STORE_KEY, v); } catch (e) {}
+  }
+
+  /* ---- Tag loaders (only ever called AFTER explicit grant) --------------- */
+  function loadHubSpot() {
+    if (document.getElementById('hs-script-loader')) return;
+    var s = document.createElement('script');
+    s.type = 'text/javascript';
+    s.id = 'hs-script-loader';
+    s.async = true;
+    s.defer = true;
+    s.src = '//js-eu1.hs-scripts.com/' + (CFG.hubspotPortalId || '148769785') + '.js';
+    document.head.appendChild(s);
+  }
+
+  function loadLinkedIn() {
+    if (!LINKEDIN_PARTNER_ID) return; // PENDING — no ID, nothing fires (install-only)
+    window._linkedin_partner_id = LINKEDIN_PARTNER_ID;
+    window._linkedin_data_partner_ids = window._linkedin_data_partner_ids || [];
+    window._linkedin_data_partner_ids.push(LINKEDIN_PARTNER_ID);
+    var b = document.createElement('script');
+    b.type = 'text/javascript'; b.async = true;
+    b.src = 'https://snap.licdn.com/li.lms-analytics/insight.min.js';
+    document.head.appendChild(b);
+  }
+
+  function loadMeta() {
+    if (!META_PIXEL_ID) return; // PENDING — no ID, nothing fires (install-only)
+    !function (f, b, e, v, n, t, s) {
+      if (f.fbq) return; n = f.fbq = function () {
+        n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments);
+      };
+      if (!f._fbq) f._fbq = n; n.push = n; n.loaded = !0; n.version = '2.0';
+      n.queue = []; t = b.createElement(e); t.async = !0; t.src = v;
+      s = b.getElementsByTagName(e)[0]; s.parentNode.insertBefore(t, s);
+    }(window, document, 'script', 'https://connect.facebook.net/en_US/fbevents.js');
+    window.fbq('init', META_PIXEL_ID);
+    window.fbq('track', 'PageView');
+  }
+
+  function fireAllTags() {
+    loadHubSpot();
+    loadLinkedIn();
+    loadMeta();
+  }
+
+  /* ---- Public consent API ----------------------------------------------- */
+  window.ClarifiConsent = {
+    has: function () { return getConsent() === 'grant'; },
+    grant: function () {
+      setConsent('grant');
+      hideBanner();
+      fireAllTags();
+    },
+    deny: function () {
+      setConsent('deny');
+      hideBanner();
+    },
+    reset: function () { try { localStorage.removeItem(STORE_KEY); } catch (e) {} }
+  };
+
+  /* ---- Banner show/hide -------------------------------------------------- */
+  function banner() { return document.querySelector('.cl-cc'); }
+  function hideBanner() { var b = banner(); if (b) b.classList.remove('is-visible'); }
+  function showBanner() { var b = banner(); if (b) b.classList.add('is-visible'); }
+
+  function wireBanner() {
+    var b = banner();
+    if (!b) return;
+    var accept = b.querySelector('[data-cc-accept]');
+    var reject = b.querySelector('[data-cc-reject]');
+    if (accept) accept.addEventListener('click', function () { window.ClarifiConsent.grant(); });
+    if (reject) reject.addEventListener('click', function () { window.ClarifiConsent.deny(); });
+
+    var state = getConsent();
+    if (state === 'grant') { fireAllTags(); }
+    else if (state === 'deny') { /* stay silent */ }
+    else { showBanner(); }
+  }
+
+  /* ---- Analytics helper (named conversion events) ------------------------ */
+  function track(eventName, props) {
+    props = props || {};
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push(Object.assign({ event: eventName }, props));
+    if (window.ClarifiConsent.has() && window._hsq) {
+      window._hsq.push(['trackCustomBehavioralEvent', { name: eventName, properties: props }]);
+    }
+  }
+  window.ClarifiAnalytics = {
+    track: track,
+    leadSubmitted: function (p) { track('lead_submitted', p); },
+    calcCompleted: function (p) { track('calc_completed', p); },
+    callBooked:    function (p) { track('call_booked', p); }
+  };
+  window._hsq = window._hsq || [];
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', wireBanner);
+  } else { wireBanner(); }
+})();
+</script>
+
+<!-- 3. Lead-capture handler (after config + consent helper) -->
+<script src="/clarifi/_shared/capture.js" defer></script>
+
+<style>
+  /* ---- Page-local layout (uses design-system tokens only) ------------- */
+  .sr-hero{position:relative;overflow:hidden}
+  .sr-hero .cl-split{align-items:start}
+  .sr-hero-copy{padding-top:var(--h8-space-4)}
+  .sr-hero h1{font-size:var(--h8-text-display-sm);max-width:15ch;margin:var(--h8-space-4) 0}
+  .sr-hero .h8-lead{max-width:46ch}
+  .sr-hero-figure{margin:var(--h8-space-6) 0 0;border-radius:var(--h8-radius-md);
+    overflow:hidden;border:1px solid rgba(255,255,255,.16);box-shadow:var(--h8-shadow-2)}
+  .sr-hero-figure img{width:100%;height:auto}
+  .sr-deadline-strip{display:flex;flex-wrap:wrap;gap:var(--h8-space-3);margin-top:var(--h8-space-8)}
+  .sr-deadline-pill{display:inline-flex;align-items:center;gap:var(--h8-space-2);
+    font-size:var(--h8-text-body-sm);font-weight:500;color:#cdd6e4;
+    background:var(--h8-glass-dark);border:1px solid rgba(255,255,255,.12);
+    border-radius:var(--h8-radius-pill);padding:var(--h8-space-2) var(--h8-space-4)}
+  .sr-deadline-pill strong{color:#fff;font-weight:600}
+  .sr-deadline-pill .dot{width:8px;height:8px;border-radius:50%;flex:0 0 auto}
+  .sr-deadline-pill .dot.live{background:var(--h8-warning)}
+  .sr-deadline-pill .dot.next{background:var(--h8-info)}
+
+  /* Gated form card — premium glass on the dark hero */
+  .sr-formcard{background:var(--h8-glass-dark);border:1px solid rgba(255,255,255,.14);
+    border-radius:var(--h8-radius-lg);padding:var(--h8-space-8);
+    -webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);
+    box-shadow:0 24px 60px -24px rgba(0,0,0,.55)}
+  .sr-formcard h2{font-size:var(--h8-text-h2);margin-bottom:var(--h8-space-2)}
+  .sr-formcard .sr-form-sub{color:#aebdd6;font-size:var(--h8-text-body-sm);margin-bottom:var(--h8-space-6)}
+  .sr-formcard .cl-error{min-height:0}
+  .sr-trustline{display:flex;align-items:center;gap:var(--h8-space-2);
+    margin-top:var(--h8-space-5);font-size:var(--h8-text-caption);color:#97a9c9;line-height:1.6}
+
+  /* Step list */
+  .sr-steps{display:grid;gap:var(--h8-space-5);margin-top:var(--h8-space-8)}
+  .sr-step{display:grid;grid-template-columns:auto 1fr;gap:var(--h8-space-5);align-items:start}
+  .sr-step .num{font-family:var(--h8-font-display);font-weight:700;font-size:var(--h8-text-h1);
+    line-height:1;background:var(--h8-text-gradient);-webkit-background-clip:text;
+    background-clip:text;-webkit-text-fill-color:transparent;min-width:1.4ch}
+  .sr-step h3{margin-bottom:var(--h8-space-1)}
+  .sr-step p{color:var(--h8-graphite);margin:0}
+
+  /* Compliance / trap callout */
+  .sr-callout{background:var(--h8-glass-light);border:1px solid rgba(255,255,255,.7);
+    border-left:3px solid var(--h8-electric-blue);border-radius:var(--h8-radius-md);
+    padding:var(--h8-space-6);box-shadow:var(--h8-shadow-1)}
+  .sr-callout strong{color:var(--h8-navy)}
+
+  /* Readiness checklist */
+  .sr-check{list-style:none;padding:0;margin:var(--h8-space-6) 0 0;display:grid;gap:var(--h8-space-3)}
+  .sr-check li{position:relative;padding-left:var(--h8-space-8);color:var(--h8-graphite)}
+  .sr-check li::before{content:"";position:absolute;left:0;top:2px;width:20px;height:20px;
+    border-radius:50%;background:rgba(31,157,107,.12);
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%231F9D6B' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E");
+    background-repeat:no-repeat;background-position:center}
+
+  .sr-deadline-cards{margin-top:var(--h8-space-8)}
+  .sr-deadline-cards .h8-kpi .lbl{font-size:var(--h8-text-base);line-height:1.55}
+  .sr-disclaimer{font-size:var(--h8-text-caption);color:var(--h8-steel);margin-top:var(--h8-space-6);max-width:70ch}
+
+  @media(max-width:920px){
+    .sr-hero h1{font-size:var(--h8-text-h1)}
+    .sr-formcard{padding:var(--h8-space-6)}
+  }
+</style>
+</head>
+<body>
+
+<!-- ===================== Shared header partial ===================== -->
+<header class="cl-header">
+  <div class="cl-wrap">
+    <a class="cl-logo" href="/clarifi/index.html" aria-label="Clarifi by HAIM8 — home">
+      Clarifi <span class="by">by HAIM8</span>
+    </a>
+    <nav class="cl-nav" aria-label="Primary">
+      <a class="cl-nav-link" href="/clarifi/index.html#platform">Platform</a>
+      <a class="cl-nav-link" href="/clarifi/index.html#proof">Proof</a>
+      <a class="cl-nav-link" href="/clarifi/index.html">Resources</a>
+      <a class="cl-nav-link" href="/clarifi/reseller.html">Partners</a>
+      <a class="h8-btn" href="/book" target="_blank" rel="noopener">
+        Book a call
+      </a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+
+  <!-- ===================== Hero + gated capture ===================== -->
+  <section class="sr-hero cl-aurora cl-section" aria-labelledby="sr-hero-title">
+    <div class="cl-wrap">
+      <div class="cl-split">
+
+        <div class="sr-hero-copy">
+          <span class="h8-pill">Free guide · England · Simpler Recycling 2025</span>
+          <h1 id="sr-hero-title">Comply with the new recycling rules — and <span class="h8-grad">prove</span> it.</h1>
+          <p class="h8-lead">
+            The practical guide for FM &amp; field operators: what changed, the deadlines that
+            actually apply to you, the four actions to take now — and the trap most operators
+            miss. Because complying is one thing; producing the evidence on demand is another.
+          </p>
+
+          <div class="sr-deadline-strip" aria-label="Key deadlines">
+            <span class="sr-deadline-pill"><span class="dot live" aria-hidden="true"></span>
+              <span>10+ employees: <strong>in force since 31 March 2025</strong></span></span>
+            <span class="sr-deadline-pill"><span class="dot next" aria-hidden="true"></span>
+              <span>Under 10: <strong>from 31 March 2027</strong></span></span>
+          </div>
+
+          <figure class="sr-hero-figure">
+            <img src="/clarifi/assets/images/hero-fm-operative.png"
+                 width="1024" height="576"
+                 style="width:100%;height:auto;aspect-ratio:16/9;object-fit:cover;object-position:center;display:block"
+                 alt="A facilities operative in a hi-vis jacket logging waste data on a phone beside clearly segregated recycling bins on site."
+                 loading="eager">
+          </figure>
+        </div>
+
+        <!-- Gated lead-capture form -->
+        <div class="sr-formcard" id="get-the-guide">
+          <h2>Get the guide</h2>
+          <p class="sr-form-sub">Enter your details and we'll open it straight away — no waiting on an email.</p>
+
+          <form class="cl-form" data-clarifi-capture data-magnet="simpler-recycling-guide" aria-label="Download the Simpler Recycling 2025 guide">
+
+            <div class="cl-field-row">
+              <div class="cl-field">
+                <label class="cl-label" for="sr-firstname">First name</label>
+                <input class="cl-input" id="sr-firstname" name="firstname" type="text" autocomplete="given-name">
+              </div>
+              <div class="cl-field">
+                <label class="cl-label" for="sr-lastname">Last name</label>
+                <input class="cl-input" id="sr-lastname" name="lastname" type="text" autocomplete="family-name">
+              </div>
+            </div>
+
+            <div class="cl-field">
+              <label class="cl-label" for="sr-email">Work email <span class="req" aria-hidden="true">*</span></label>
+              <input class="cl-input" id="sr-email" name="email" type="email" required
+                     autocomplete="email" placeholder="you@yourcompany.co.uk"
+                     aria-describedby="sr-email-err">
+              <span class="cl-error" id="sr-email-err"></span>
+            </div>
+
+            <div class="cl-field">
+              <label class="cl-label" for="sr-company">Company</label>
+              <input class="cl-input" id="sr-company" name="company" type="text" autocomplete="organization">
+            </div>
+
+            <div class="cl-field">
+              <label class="cl-label" for="sr-jobtitle">Job title</label>
+              <input class="cl-input" id="sr-jobtitle" name="jobtitle" type="text" autocomplete="organization-title"
+                     placeholder="e.g. Compliance Manager, Operations Director">
+            </div>
+
+            <div class="cl-field">
+              <label class="cl-label" for="sr-sector">Your sector</label>
+              <select class="cl-select" id="sr-sector" name="clarifi_sector">
+                <option value="">Select…</option>
+                <option value="fm-waste">FM / waste management</option>
+                <option value="events-venues">Events / venues</option>
+                <option value="commercial-property">Commercial property</option>
+                <option value="construction">Construction / demolition</option>
+                <option value="other">Other field operations</option>
+              </select>
+              <span class="cl-error"></span>
+            </div>
+
+            <div class="cl-field">
+              <label class="cl-label" for="sr-band">Team size</label>
+              <select class="cl-select" id="sr-band" name="employee_band">
+                <option value="">Select…</option>
+                <option value="under-50">Under 50 employees</option>
+                <option value="50-99">50–99 employees</option>
+                <option value="100-249">100–249 employees</option>
+                <option value="250-plus">250+ employees</option>
+              </select>
+            </div>
+
+            <div class="cl-field">
+              <label class="cl-label" for="sr-trigger">What prompted this? <span class="cl-form-note" style="font-weight:400">(optional)</span></label>
+              <select class="cl-select" id="sr-trigger" name="buying_trigger">
+                <option value="">Select…</option>
+                <option value="compliance-deadline">A compliance deadline I need to be ready for</option>
+                <option value="client-reporting">A client is asking for reporting we can't produce</option>
+                <option value="lost-tender">We recently lost — or want to win — a tender</option>
+                <option value="manual-reporting-burden">We're drowning in manual reporting</option>
+                <option value="just-researching">Just getting up to speed on the rules</option>
+              </select>
+            </div>
+
+            <label class="cl-consent">
+              <input type="checkbox" name="consent_marketing" value="yes">
+              <span>I'd like Clarifi to follow up about closing the reporting gap. You can unsubscribe anytime; we'll send the guide either way.</span>
+            </label>
+
+            <div class="cl-form-status" data-cl-status role="status" aria-live="polite"></div>
+
+            <button class="h8-btn block lg" type="submit">Open the guide&nbsp;&rarr;</button>
+
+            <p class="sr-trustline">
+              Work email required so we can tailor the guide to your operation. We use your
+              details only to send the guide and, if you opt in, to follow up about Clarifi.
+              See our <a href="/clarifi/privacy.html">Privacy&nbsp;Notice</a>.
+            </p>
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== What changed ===================== -->
+  <section class="cl-section" aria-labelledby="sr-changed-title">
+    <div class="cl-narrow">
+      <span class="h8-caption cl-eyebrow">What changed</span>
+      <h2 id="sr-changed-title">One set of rules. Separate streams.</h2>
+      <p class="h8-lead">
+        Under England's Simpler Recycling reforms, workplaces must separate their waste into
+        consistent streams rather than mixing recyclables into general waste — arranging
+        collection of <strong>dry recyclables</strong> (plastic, metal, glass, paper and card)
+        and <strong>food waste</strong> separately from residual general waste. The goal is a
+        single, consistent system across the country, and an end to the patchwork of local rules.
+      </p>
+      <div class="sr-callout" style="margin-top:var(--h8-space-6)">
+        For multi-site and contract operators, the operational reality is the hard part: more
+        streams, more segregation points, and a client who now expects to <em>see</em> the
+        numbers — not just be told the bins were emptied.
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== Two deadlines ===================== -->
+  <section class="cl-section-sm" aria-labelledby="sr-when-title">
+    <div class="cl-narrow">
+      <span class="h8-caption cl-eyebrow">Who it affects &amp; when</span>
+      <h2 id="sr-when-title">Two deadlines — know which one is yours</h2>
+      <div class="cl-grid cl-grid-2 sr-deadline-cards">
+        <div class="h8-card">
+          <div class="h8-kpi">
+            <span class="val">10+</span>
+            <span class="lbl">employees: separate dry-recycling and food-waste collection is required
+              <strong>from 31 March 2025</strong> — in force now.</span>
+          </div>
+        </div>
+        <div class="h8-card">
+          <div class="h8-kpi">
+            <span class="val">&lt;10</span>
+            <span class="lbl">employees (micro-firms): the same requirements apply
+              <strong>from 31 March 2027</strong>.</span>
+          </div>
+        </div>
+      </div>
+      <p class="sr-disclaimer">
+        Guidance only — confirm the current rules and any exemptions for your operation at GOV.UK
+        ("Simpler Recycling: workplace recycling in England") or with your waste regulator.
+        This guide is not legal advice.
+      </p>
+    </div>
+  </section>
+
+  <!-- ===================== The action list ===================== -->
+  <section class="cl-section" aria-labelledby="sr-actions-title">
+    <div class="cl-narrow">
+      <span class="h8-caption cl-eyebrow">The action list</span>
+      <h2 id="sr-actions-title">Four things every operator should do</h2>
+      <div class="sr-steps">
+        <div class="sr-step">
+          <span class="num" aria-hidden="true">1</span>
+          <div>
+            <h3>Map your streams, per site</h3>
+            <p>Document which streams each site produces and how they're segregated. Inconsistent
+              segregation is the most common contamination — and dispute — trigger.</p>
+          </div>
+        </div>
+        <div class="sr-step">
+          <span class="num" aria-hidden="true">2</span>
+          <div>
+            <h3>Fix the capture point</h3>
+            <p>Record weights, stream types and compaction <em>at the point of work</em>, on a
+              phone — not reconstructed from memory days later. Data you didn't capture, you
+              can't report.</p>
+          </div>
+        </div>
+        <div class="sr-step">
+          <span class="num" aria-hidden="true">3</span>
+          <div>
+            <h3>Make the evidence auditable</h3>
+            <p>Timestamped, photo-backed, per-stream records turn "trust us" into "here's the
+              proof" — for inspectors and for clients alike.</p>
+          </div>
+        </div>
+        <div class="sr-step">
+          <span class="num" aria-hidden="true">4</span>
+          <div>
+            <h3>Report in the client's language</h3>
+            <p>Diversion rates, tonnage, environmental impact — presented as a branded report,
+              not a spreadsheet attachment three weeks later.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== The trap (champion's case) ===================== -->
+  <section class="cl-section cl-dark" aria-labelledby="sr-trap-title">
+    <div class="cl-narrow">
+      <span class="h8-caption cl-eyebrow">The trap</span>
+      <h2 id="sr-trap-title">Complying isn't the same as <span class="h8-grad">proving</span> it.</h2>
+      <p class="h8-lead">
+        Most operators will hit the streams requirement. Far fewer can produce, on demand, the
+        verified evidence a client or auditor asks for — which is exactly where contracts are
+        won and lost. The reporting gap — the weeks of manual compilation between the work and
+        the report — is where compliance effort quietly fails to become commercial advantage.
+      </p>
+
+      <div class="cl-grid cl-grid-2" style="margin-top:var(--h8-space-10);align-items:start">
+        <div class="h8-card h8-on-dark">
+          <span class="h8-caption">What "good" looks like</span>
+          <p style="margin-top:var(--h8-space-3)">
+            Field operators running Clarifi turn segregation work into independently verified
+            results, then hand the client a branded, audit-ready report — instead of a backlog
+            of spreadsheets weeks later.
+          </p>
+        </div>
+        <div class="h8-card h8-on-dark">
+          <div class="h8-kpi">
+            <span class="val">89%</span>
+            <span class="lbl">recycling rate, independently verified at a major UK festival —
+              proof the same engine works under live operational pressure.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== Readiness checklist ===================== -->
+  <section class="cl-section" aria-labelledby="sr-ready-title">
+    <div class="cl-narrow">
+      <span class="h8-caption cl-eyebrow">Your readiness check</span>
+      <h2 id="sr-ready-title">Are you Simpler-Recycling ready — and can you prove it?</h2>
+      <p class="h8-lead">Five tests. If you can tick all five, the audit is a formality. If you
+        can't, the guide shows you where the gap is.</p>
+      <ul class="sr-check">
+        <li>Separate dry-recycling and food-waste collection is arranged at every site.</li>
+        <li>Weights and stream types are captured at the point of work.</li>
+        <li>Records are timestamped and photo-backed.</li>
+        <li>You can produce a per-client diversion report in minutes, not weeks.</li>
+        <li>That report carries your brand — not a generic spreadsheet.</li>
+      </ul>
+
+      <div class="sr-callout" style="margin-top:var(--h8-space-8)">
+        <strong>Not all five?</strong> The guide is the fastest way to close the gaps — and the
+        readiness checklist inside doubles as the internal business case you can take to the
+        person who signs off the budget. <a href="#get-the-guide">Get the guide&nbsp;&rarr;</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== Book-a-call component ===================== -->
+  <section class="cl-section cl-aurora cl-bookcall" id="book-a-call" aria-label="Book a call">
+    <div class="cl-narrow cl-center">
+      <span class="h8-pill">15 minutes, no pitch</span>
+      <h2 style="margin-top:var(--h8-space-4)">See where your <span class="h8-grad">reporting gap</span> is</h2>
+      <p class="h8-lead" style="max-width:52ch;margin:0 auto var(--h8-space-8)">
+        A short, practical call — we look at how your crews capture data today and where
+        verified reporting would win or retain a contract. Pricing on application.
+      </p>
+
+      <!-- HubSpot Meetings embed target -->
+      <div class="meetings-iframe-container"
+           data-src="https://meetings-eu1.hubspot.com/mtshuma?embed=true">
+      </div>
+
+      <!-- Styled fallback (always visible; primary action if the embed can't load) -->
+      <div class="cl-meetings-fallback" style="align-items:center;margin-top:var(--h8-space-6)">
+        <a class="h8-btn lg" id="cl-book-fallback"
+           href="/book" target="_blank" rel="noopener">
+          Book a 15-minute call&nbsp;&rarr;
+        </a>
+        <p class="cl-form-note" style="color:#9fb4d8">
+          Prefer email? <a href="mailto:hello@haim8.com">hello@haim8.com</a>
+        </p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ===================== Shared footer partial ===================== -->
+<footer class="cl-footer">
+  <div class="cl-wrap">
+    <div class="cl-grid cl-grid-4">
+
+      <div>
+        <a class="cl-logo" href="/clarifi/index.html">Clarifi <span class="by">by HAIM8</span></a>
+        <p style="margin-top:var(--h8-space-4);max-width:34ch">
+          The white-labeled, multi-tenant operational &amp; sustainability reporting
+          platform for high-throughput field operations. Close the reporting gap.
+        </p>
+        <a class="h8-btn ghost" href="/book" target="_blank" rel="noopener"
+           style="margin-top:var(--h8-space-2)">Book a 15-minute call</a>
+      </div>
+
+      <div>
+        <h4>Platform</h4>
+        <ul class="cl-footer-links">
+          <li><a href="/clarifi/index.html#platform">How it works</a></li>
+          <li><a href="/clarifi/index.html#proof">Proof &amp; results</a></li>
+          <li><a href="/clarifi/index.html">Resources</a></li>
+          <li><a href="/clarifi/roi-calculator.html">ROI calculator</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4>Sectors</h4>
+        <ul class="cl-footer-links">
+          <li><a href="/clarifi/index.html#proof">Events &amp; venues</a></li>
+          <li><a href="/clarifi/simpler-recycling.html">FM &amp; waste</a></li>
+          <li><a href="/clarifi/reseller.html">Become a reseller</a></li>
+          <li><a href="/clarifi/book-a-call.html">Talk to us</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4>Company</h4>
+        <ul class="cl-footer-links">
+          <li><a href="/clarifi/privacy.html">Privacy Notice</a></li>
+          <li><a href="/clarifi/cookies.html">Cookie Policy</a></li>
+          <li><a href="/clarifi/terms.html">Terms</a></li>
+          <li><a href="mailto:hello@haim8.com">hello@haim8.com</a></li>
+        </ul>
+      </div>
+
+    </div>
+
+    <div class="cl-footer-legal">
+      <p>
+        <strong>HAIM8&nbsp;Ltd</strong>, London, United Kingdom · Registered in England &amp; Wales,
+        Companies&nbsp;House&nbsp;No.&nbsp;17177572. &copy; <span data-cl-year>2026</span> HAIM8&nbsp;Ltd.
+        All rights reserved.
+      </p>
+      <p>
+        Verified figures shown across this site were measured on the Clarifi platform; client and
+        event identities are withheld pending consent. Regulatory details are guidance, not legal
+        advice — verify the current rules at GOV.UK. Pricing on application — book a call.
+        Marketing emails from HAIM8&nbsp;Ltd include a one-click unsubscribe link.
+      </p>
+    </div>
+  </div>
+  <script>
+    (function () {
+      var y = document.querySelector('[data-cl-year]');
+      if (y) y.textContent = new Date().getFullYear();
+    })();
+  </script>
+</footer>
+
+<!-- Book-a-call embed loader + analytics wiring (functional, not tracking) -->
+<script src="https://static-eu1.hsappstatic.net/MeetingsEmbedCode/ex/MeetingsEmbedCode.js"></script>
+<script>
+  (function () {
+    var fb = document.getElementById('cl-book-fallback');
+    if (fb && window.ClarifiAnalytics) {
+      fb.addEventListener('click', function () { window.ClarifiAnalytics.callBooked({ source: 'fallback_button' }); });
+    }
+    window.addEventListener('message', function (e) {
+      if (e && e.data && e.data.meetingBookSucceeded && window.ClarifiAnalytics) {
+        window.ClarifiAnalytics.callBooked({ source: 'meetings_embed' });
+      }
+    });
+  })();
+</script>
+
+<!-- ============================================================
+     hubspot.html BLOCK B — cookie-consent banner (deny-by-default)
+     ============================================================ -->
+<div class="cl-cc" role="dialog" aria-live="polite" aria-label="Cookie consent">
+  <div class="cl-cc-inner">
+    <p class="cl-cc-text">
+      We use cookies only to understand how this site performs and to improve it.
+      Nothing tracks you until you choose. We never load analytics or advertising
+      tags before you accept. See our
+      <a href="/clarifi/privacy.html">Privacy&nbsp;Notice</a> and
+      <a href="/clarifi/cookies.html">Cookie&nbsp;Policy</a>.
+    </p>
+    <div class="cl-cc-actions">
+      <button type="button" class="h8-btn ghost" data-cc-reject>Reject</button>
+      <button type="button" class="h8-btn" data-cc-accept>Accept</button>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
