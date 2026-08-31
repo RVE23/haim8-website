@@ -97,6 +97,11 @@ const FREE_EMAIL_DOMAINS = new Set([
 const RATE_WINDOW_MS = 60_000;
 const RATE_MAX_PER_WINDOW = 5;
 const RATE_MAX_TRACKED_IPS = 5000;
+// Sweeping the moment we cross the cap means every subsequent insertion scans the
+// whole map — under a many-source flood the limiter becomes the CPU amplifier.
+// Let the map overshoot instead and sweep back down to the cap, so one O(n) scan
+// is amortised over RATE_EVICT_AT - RATE_MAX_TRACKED_IPS insertions.
+const RATE_EVICT_AT = 6000;
 const rateHits = new Map();
 
 // x-vercel-forwarded-for is written by Vercel's edge and cannot be set by the
@@ -144,7 +149,7 @@ function evict(now) {
 function isRateLimited(req) {
   const ip = clientIp(req);
   const now = Date.now();
-  if (rateHits.size > RATE_MAX_TRACKED_IPS) evict(now);
+  if (rateHits.size >= RATE_EVICT_AT) evict(now);
   const rec = rateHits.get(ip);
   if (!rec || now - rec.start > RATE_WINDOW_MS) {
     rateHits.set(ip, { start: now, count: 1 });

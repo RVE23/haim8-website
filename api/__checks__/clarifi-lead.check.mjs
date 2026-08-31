@@ -65,8 +65,8 @@ const rotated = await call({ ...spoof, 'x-forwarded-for': `192.0.2.${Math.floor(
 assert.equal(rotated.code, 429, 'spoofed x-forwarded-for must not reset the bucket');
 
 // Regression, Codex P2: overflowing the map must not clear an ACTIVE throttle.
-// Push past the 5000-key cap, then confirm the throttled bucket is still throttled.
-for (let i = 0; i < 5200; i++) {
+// Push past RATE_EVICT_AT (6000) so a sweep genuinely runs, then confirm the throttled bucket is still throttled.
+for (let i = 0; i < 6200; i++) {
   await call({ origin: `https://${SITE}`, 'x-vercel-forwarded-for': `172.16.${(i >> 8) & 255}.${i & 255}` }, { email: 'nope' });
 }
 assert.equal((await call(spoof, { email: 'nope' })).code, 429, 'eviction must not reset an active throttle');
